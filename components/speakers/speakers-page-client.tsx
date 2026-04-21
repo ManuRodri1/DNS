@@ -152,42 +152,6 @@ function SpeakersHero({ onApply, t }: { onApply: () => void; t: typeof content["
   )
 }
 
-// ─── Featured speakers section ─────────────────────────────────────────────────
-function FeaturedSection({ speakers, t }: { speakers: Speaker[]; t: typeof content["en"] }) {
-  const { ref, visible } = useInView(0.08)
-  if (speakers.length === 0) return null
-  const [primary, ...rest] = speakers.slice(0, 6)
-
-  return (
-    <section ref={ref as React.RefObject<HTMLElement>} className="w-full bg-black py-20 md:py-28" aria-label="Featured speakers">
-      <div className="mx-auto max-w-7xl px-6 md:px-10">
-        <div className="mb-12" style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(20px)", transition: "opacity 0.6s ease, transform 0.6s ease" }}>
-          <p className="flex items-center gap-2.5 text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#FF5757] mb-4">
-            <span className="inline-block h-px w-6 bg-[#FF5757]" />{t.featuredLabel}
-          </p>
-          <h2 className="text-white font-bold leading-tight" style={{ fontFamily: "var(--font-display), sans-serif", fontSize: "clamp(1.8rem, 3.5vw, 2.5rem)" }}>
-            {t.featuredHeadline}
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {primary && (
-            <div style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(30px)", transition: "opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s" }}>
-              <FeaturedSpeakerCard speaker={primary} hero />
-            </div>
-          )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
-            {rest.map((speaker, i) => (
-              <div key={speaker.id} style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(30px)", transition: `opacity 0.7s ease ${0.15 + i * 0.08}s, transform 0.7s ease ${0.15 + i * 0.08}s` }}>
-                <FeaturedSpeakerCard speaker={speaker} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
 
 // ─── All speakers section ──────────────────────────────────────────────────────
 function AllSpeakersSection({ speakers, t }: { speakers: Speaker[]; t: typeof content["en"] }) {
@@ -276,10 +240,8 @@ function SpeakerApplicationCTA({ onApply, t }: { onApply: () => void; t: typeof 
 // ─── Root client component ─────────────────────────────────────────────────────
 export function SpeakersPageClient({
   speakers,
-  featuredSpeakers,
 }: {
   speakers: Speaker[]
-  featuredSpeakers: Speaker[]
 }) {
   const [modalOpen, setModalOpen] = useState(false)
   const { language } = useLanguage()
@@ -293,7 +255,6 @@ export function SpeakersPageClient({
         <NoSpeakersPublished onApply={() => setModalOpen(true)} t={t} />
       ) : (
         <>
-          {featuredSpeakers.length > 0 && <FeaturedSection speakers={featuredSpeakers} t={t} />}
           <AllSpeakersSection speakers={speakers} t={t} />
         </>
       )}

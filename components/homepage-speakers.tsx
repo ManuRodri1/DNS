@@ -9,6 +9,12 @@ import Image from "next/image"
 import Link from "next/link"
 import { CompanyLogos } from "@/components/speakers/company-logos"
 import { useLanguage } from "@/lib/language-context"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel"
 
 // ─── Translations ──────────────────────────────────────────────────────────────────────────────
 const content = {
@@ -153,6 +159,7 @@ export function HomepageSpeakers() {
   const [speakers, setSpeakers] = useState<HomepageSpeaker[]>([])
   const [loading, setLoading] = useState(true)
   const [visible, setVisible] = useState(false)
+  const [api, setApi] = useState<CarouselApi>()
   const sectionRef = useRef<HTMLElement>(null)
 
   // Intersection observer for entrance animation
@@ -189,6 +196,21 @@ export function HomepageSpeakers() {
     }
     load()
   }, [])
+
+  // Autoplay logic for carousel
+  useEffect(() => {
+    if (!api) return
+    
+    const interval = setInterval(() => {
+      if (api.canScrollNext()) {
+        api.scrollNext()
+      } else {
+        api.scrollTo(0)
+      }
+    }, 5000) // Rotate every 5 seconds
+
+    return () => clearInterval(interval)
+  }, [api])
 
   return (
     <section
@@ -285,20 +307,33 @@ export function HomepageSpeakers() {
             </div>
           ) : (
             /* Speaker cards */
-            <div className="flex sm:grid sm:grid-cols-3 gap-6 overflow-x-auto sm:overflow-visible pb-4 sm:pb-0 -mx-6 px-6 sm:mx-0 sm:px-0 scrollbar-none">
-              {speakers.slice(0, 3).map((speaker, i) => (
-                <div
-                  key={speaker.id}
-                  style={{
-                    opacity: visible ? 1 : 0,
-                    transform: visible ? "translateY(0)" : "translateY(20px)",
-                    transition: `opacity 0.6s ease ${0.1 + i * 0.1}s, transform 0.6s ease ${0.1 + i * 0.1}s`,
-                  }}
-                  className="sm:w-auto"
-                >
-                  <SpeakerCard speaker={speaker} viewProfileLabel={t.viewProfile} />
-                </div>
-              ))}
+            <div className="-mx-6 px-6 sm:mx-0 sm:px-0">
+              <Carousel
+                setApi={setApi}
+                opts={{
+                  align: "start",
+                  loop: true,
+                  skipSnaps: false,
+                  dragFree: false,
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="-ml-4 md:-ml-6">
+                  {speakers.map((speaker, i) => (
+                    <CarouselItem 
+                      key={speaker.id} 
+                      className="pl-4 md:pl-6 basis-[85%] sm:basis-1/2 lg:basis-1/3"
+                      style={{
+                        opacity: visible ? 1 : 0,
+                        transform: visible ? "translateY(0)" : "translateY(20px)",
+                        transition: `opacity 0.6s ease ${0.1 + (i % 3) * 0.1}s, transform 0.6s ease ${0.1 + (i % 3) * 0.1}s`,
+                      }}
+                    >
+                      <SpeakerCard speaker={speaker} viewProfileLabel={t.viewProfile} />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
             </div>
           )}
         </div>

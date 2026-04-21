@@ -9,26 +9,23 @@ export async function GET() {
   try {
     const all = await getSpeakers()
 
-    // Only featured, already sorted by Display Order from getSpeakers()
-    const featured = all
-      .filter((s) => s.featured)
-      .slice(0, 3)
-      .map((s) => ({
-        id: s.id,
-        fullName: s.fullName,
-        slug: s.slug,
-        jobTitle: s.jobTitle,
-        company: s.company,
-        // Homepage: Poster Image first, Headshot as fallback
-        posterImage: s.posterImage,
-        headshot: s.headshot,
-        // Company logos for trust-building display
-        companyLogoPrimary: s.companyLogoPrimary,
-        companyLogoSecondary: s.companyLogoSecondary,
-      }))
+    // Return all published speakers, already sorted by Display Order from getSpeakers()
+    const speakers = all.map((s) => ({
+      id: s.id,
+      fullName: s.fullName,
+      slug: s.slug,
+      jobTitle: s.jobTitle,
+      company: s.company,
+      // Homepage: Poster Image first, Headshot as fallback
+      posterImage: s.posterImage,
+      headshot: s.headshot,
+      // Company logos for trust-building display
+      companyLogoPrimary: s.companyLogoPrimary,
+      companyLogoSecondary: s.companyLogoSecondary,
+    }))
 
     return NextResponse.json(
-      { speakers: featured, count: featured.length },
+      { speakers, count: speakers.length },
       {
         headers: {
           "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",

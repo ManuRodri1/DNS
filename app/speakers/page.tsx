@@ -10,12 +10,10 @@ export const revalidate = 300
 
 export default async function SpeakersPage() {
   const speakers: Speaker[] = await getSpeakers()
-  const featuredSpeakers = speakers.filter((s) => s.featured)
 
   return (
     <SpeakersPageClient
       speakers={speakers}
-      featuredSpeakers={featuredSpeakers}
     />
   )
 }
