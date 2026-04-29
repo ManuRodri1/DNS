@@ -54,10 +54,11 @@ const getCachedInfluencers = unstable_cache(
 );
 
 export async function buildDNSContext() {
+  // Temporary: Call directly without cache for diagnostic
   const [speakers, partners, influencers] = await Promise.all([
-    getCachedSpeakers(),
-    getCachedPartners(),
-    getCachedInfluencers(),
+    getSpeakers(),
+    getPartners(),
+    getInfluencers(),
   ]);
 
   const sponsors = partners.filter(p => p.category === "Sponsor");
