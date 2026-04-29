@@ -8,8 +8,7 @@ import {
   formatPartnersForAI, 
   formatInfluencersForAI, 
   formatTicketsForAI, 
-  formatAgendaForAI,
-  formatTeamForAI
+  formatTeamForAI 
 } from "./formatters";
 
 // Cached Speakers
@@ -55,11 +54,10 @@ const getCachedInfluencers = unstable_cache(
 );
 
 export async function buildDNSContext() {
-  // Temporary: Call directly without cache for diagnostic
   const [speakers, partners, influencers] = await Promise.all([
-    getSpeakers(),
-    getPartners(),
-    getInfluencers(),
+    getCachedSpeakers(),
+    getCachedPartners(),
+    getCachedInfluencers(),
   ]);
 
   const sponsors = partners.filter(p => p.category === "Sponsor");
@@ -67,21 +65,50 @@ export async function buildDNSContext() {
   const mediaPartners = partners.filter(p => p.category === "Media Partner");
 
   return `
---- OFFICIAL DNS 2026 INFO ---
+--- OFFICIAL DNS 2026 OVERVIEW ---
 Event: ${STATIC_DNS_CONTEXT.event_name} (${STATIC_DNS_CONTEXT.acronym})
+Tagline: ${STATIC_DNS_CONTEXT.tagline}
+Hero: ${STATIC_DNS_CONTEXT.hero_phrase}
 Date: ${STATIC_DNS_CONTEXT.date}
 Location: ${STATIC_DNS_CONTEXT.venue} - ${STATIC_DNS_CONTEXT.address}
+Website: ${STATIC_DNS_CONTEXT.website}
 Description: ${STATIC_DNS_CONTEXT.short_description}
-Vision: ${STATIC_DNS_CONTEXT.vision}
+Positioning (EN): ${STATIC_DNS_CONTEXT.core_positioning.english}
+Positioning (ES): ${STATIC_DNS_CONTEXT.core_positioning.spanish}
+
+--- PRESENTED BY ---
+Org: ${STATIC_DNS_CONTEXT.organizer_info.presented_by}
+About: ${STATIC_DNS_CONTEXT.organizer_info.description}
+Focus: ${STATIC_DNS_CONTEXT.organizer_info.focus_areas.join(", ")}
+Website: ${STATIC_DNS_CONTEXT.organizer_info.website}
+
+--- VALUE PROPOSITIONS ---
+${STATIC_DNS_CONTEXT.value_proposition.map(v => `- For ${v.audience}: ${v.value}`).join("\n")}
+
+--- SUMMIT PILLARS ---
+${STATIC_DNS_CONTEXT.summit_pillars.map(p => `* ${p.title} (${p.theme}): ${p.description}`).join("\n")}
 
 --- TICKETS ---
 ${formatTicketsForAI(STATIC_DNS_CONTEXT.tickets)}
 
---- AGENDA ---
-${formatAgendaForAI(STATIC_DNS_CONTEXT.agenda_base)}
+--- PARTNERSHIP & SPONSORSHIP STRUCTURES ---
+Categories: ${STATIC_DNS_CONTEXT.sponsor_categories.join(", ")}
+Tiers:
+${STATIC_DNS_CONTEXT.partnership_structures.map(s => `- ${s.name}: ${s.price}. Focus: ${s.focus}`).join("\n")}
+Notes: ${STATIC_DNS_CONTEXT.important_notes.custom_partnerships} | ${STATIC_DNS_CONTEXT.important_notes.small_support}
 
---- DYNAMIC DIRECTORY (REAL-TIME) ---
+--- FLAGSHIP VENTURE: ZARI MOBILITY ---
+Title: ${STATIC_DNS_CONTEXT.zari_mobility.title}
+Desc: ${STATIC_DNS_CONTEXT.zari_mobility.description}
+Investor Info: ${STATIC_DNS_CONTEXT.zari_mobility.investor_access}
 
+--- STRATEGIC REPORT: DITER 2026 ---
+Title: ${STATIC_DNS_CONTEXT.diter_2026.title}
+Subtitle: ${STATIC_DNS_CONTEXT.diter_2026.subtitle}
+Desc: ${STATIC_DNS_CONTEXT.diter_2026.description}
+Academic/Institutional Partners: ${STATIC_DNS_CONTEXT.diter_2026.partners.join(", ")}
+
+--- DYNAMIC DIRECTORY (LIVE FROM AIRTABLE/SUPABASE) ---
 SPEAKERS:
 ${formatSpeakersForAI(speakers)}
 
@@ -97,38 +124,18 @@ ${formatPartnersForAI(mediaPartners)}
 INFLUENCERS:
 ${formatInfluencersForAI(influencers)}
 
---- ORGANIZERS ---
-Organized by: ${STATIC_DNS_CONTEXT.organizer_info.primary_organizer}
-About Organizers: ${STATIC_DNS_CONTEXT.organizer_info.description}
-Key Partners: ${STATIC_DNS_CONTEXT.organizer_info.partners.join(", ")}
-
---- TEAM (Behind DNS 2026) ---
-${formatTeamForAI(STATIC_DNS_CONTEXT.team)}
-
---- CONTACT & SOCIAL ---
-Email: ${STATIC_DNS_CONTEXT.contact.email}
+--- TEAM & CONTACT ---
+Team Members:
+${formatTeamForAI(STATIC_DNS_CONTEXT.team || [])}
+Contact Email: ${STATIC_DNS_CONTEXT.contact.email}
+CEO Contact: ${STATIC_DNS_CONTEXT.contact.ceo_email}
 Instagram: ${STATIC_DNS_CONTEXT.contact.instagram}
-ZARI Mobility: ${STATIC_DNS_CONTEXT.zari_mobility.description} (${STATIC_DNS_CONTEXT.zari_mobility.url})
 
---- TRAVEL & LOGISTICS ---
+--- LOGISTICS & LANGUAGE ---
+Language Rule: ${STATIC_DNS_CONTEXT.important_notes.language}
 Airport: ${STATIC_DNS_CONTEXT.logistics.airport}
 Transport: ${STATIC_DNS_CONTEXT.logistics.transportation}
-Hotels: ${STATIC_DNS_CONTEXT.logistics.accommodation.join(", ")}
-Venue: ${STATIC_DNS_CONTEXT.venue_details.hotel_name} - ${STATIC_DNS_CONTEXT.venue_details.features}
-
---- DOMINICAN REPUBLIC CONTEXT ---
-Visa/Entry: ${STATIC_DNS_CONTEXT.dr_context.visa_info}
-Weather: ${STATIC_DNS_CONTEXT.dr_context.weather}
-Currency: ${STATIC_DNS_CONTEXT.dr_context.currency}
-
---- DESTINATION & CONNECTIVITY ---
-Why SD: ${STATIC_DNS_CONTEXT.destination_highlights.connectivity}
-Culture: ${STATIC_DNS_CONTEXT.destination_highlights.culture}
-
---- PARTICIPATION & FAQ ---
-Language: ${STATIC_DNS_CONTEXT.participation_faq.language}
-Call for Speakers: ${STATIC_DNS_CONTEXT.participation_faq.call_for_speakers}
-Press/Media: ${STATIC_DNS_CONTEXT.participation_faq.press_media}
-Recordings: ${STATIC_DNS_CONTEXT.participation_faq.recordings}
+Weather: ${STATIC_DNS_CONTEXT.logistics.weather}
+Currency: ${STATIC_DNS_CONTEXT.logistics.currency}
   `.trim();
 }
