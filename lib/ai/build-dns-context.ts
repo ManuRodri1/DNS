@@ -8,7 +8,8 @@ import {
   formatPartnersForAI, 
   formatInfluencersForAI, 
   formatTicketsForAI, 
-  formatAgendaForAI 
+  formatAgendaForAI,
+  formatTeamForAI
 } from "./formatters";
 
 // Cached Speakers
@@ -95,6 +96,14 @@ ${formatPartnersForAI(mediaPartners)}
 
 INFLUENCERS:
 ${formatInfluencersForAI(influencers)}
+
+--- ORGANIZERS ---
+Organized by: ${STATIC_DNS_CONTEXT.organizer_info.primary_organizer}
+About Organizers: ${STATIC_DNS_CONTEXT.organizer_info.description}
+Key Partners: ${STATIC_DNS_CONTEXT.organizer_info.partners.join(", ")}
+
+--- TEAM (Behind DNS 2026) ---
+${formatTeamForAI(STATIC_DNS_CONTEXT.team)}
 
 --- CONTACT & SOCIAL ---
 Email: ${STATIC_DNS_CONTEXT.contact.email}

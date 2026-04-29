@@ -39,3 +39,11 @@ export function formatAgendaForAI(agenda: any): string {
   
   return `${formatDay("Day 1", agenda.day_1)}\n\n${formatDay("Day 2", agenda.day_2)}`;
 }
+
+export function formatTeamForAI(team: any[]): string {
+  if (!team || team.length === 0) return "Team information is currently unavailable.";
+  
+  return team
+    .map(m => `- ${m.name} (${m.role}): ${m.bio}`)
+    .join("\n");
+}

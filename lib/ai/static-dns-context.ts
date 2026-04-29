@@ -131,5 +131,37 @@ export const STATIC_DNS_CONTEXT = {
   contact: {
     email: "digitalnomadsummit@gmail.com",
     instagram: "@thedigitalnomadsummit"
-  }
+  },
+  organizer_info: {
+    primary_organizer: "Successment",
+    description: "Successment is a revenue operations firm driving visibility and growth for startups, founded by Jonathan Joel Mentor.",
+    partners: ["ZARI Mobility", "SWI Management Group", "The Social Bar"]
+  },
+  team: [
+    {
+      name: "Jonathan Joel Mentor",
+      role: "Founder & CEO of Successment and ZARI Mobility",
+      bio: "Founder & CEO of Successment and ZARI Mobility, Jonathan Joel Mentor is a revenue strategist and innovation architect focused on scaling underrepresented founders and building global innovation platforms across emerging markets. He is the creator of RevOps Science® and lead of the Digital Nomad Summit."
+    },
+    {
+      name: "Sacha Walton-Gutierrez",
+      role: "Co-founder of Digital Nomad Summit & CEO of SWI Management Group",
+      bio: "Business strategist with over 25 years of experience in high-level international event production. She has produced business summits and international gatherings across the Dominican Republic."
+    },
+    {
+      name: "Ivanna Price",
+      role: "Founder & CEO of The Social Bar",
+      bio: "Digital creative agency specialist in social media strategy, brand storytelling, and content production for entrepreneurs and organizations."
+    },
+    {
+      name: "Esther Akanbi",
+      role: "Program Operations Lead",
+      bio: "Leads program operations and cross-functional coordination, aligning marketing, sponsorship, and communications teams."
+    },
+    {
+      name: "Jose Manuel De Jesus Rodriguez",
+      role: "Software Engineer & BI Specialist",
+      bio: "Expert in transforming complex data into strategic insights, web development, business intelligence, and process automation."
+    }
+  ]
 };
