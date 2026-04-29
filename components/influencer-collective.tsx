@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
 import { useLanguage } from "@/lib/language-context"
-import type { Influencer } from "@/lib/airtable"
+import type { Influencer } from "@/lib/data/influencers"
 
 function extractUsername(url: string, platform: "Instagram" | "YouTube"): string {
   try {

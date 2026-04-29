@@ -4,6 +4,7 @@ import { Sora, Inter } from "next/font/google"
 import "./globals.css"
 import { Header } from "@/components/header"
 import { LanguageProvider } from "@/lib/language-context"
+import { AIGuideWidget } from "@/components/ai-guide/ai-guide-widget"
 
 const sora = Sora({
   variable: "--font-display",
@@ -188,6 +189,7 @@ export default function RootLayout({
         <LanguageProvider>
           <Header />
           {children}
+          <AIGuideWidget />
         </LanguageProvider>
       </body>
     </html>

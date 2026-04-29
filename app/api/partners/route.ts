@@ -1,9 +1,9 @@
-import { getActivePartners } from "@/lib/airtable"
+import { getPartners } from "@/lib/data/partners"
 import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    const partners = await getActivePartners()
+    const partners = await getPartners()
 
     return NextResponse.json(
       {

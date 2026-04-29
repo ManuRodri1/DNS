@@ -112,8 +112,8 @@ function TeamCard({ member, t, priority = false }: TeamCardProps) {
       }}
     >
       {/* Headshot */}
-      <div className="relative flex justify-center pt-8 pb-6 px-8">
-        <div className="relative w-28 h-28 rounded-full overflow-hidden ring-2 ring-white/10 flex-shrink-0">
+      <div className="relative flex justify-center pt-10 pb-8 px-8">
+        <div className="relative w-36 h-36 rounded-full overflow-hidden ring-4 ring-white/10 flex-shrink-0 shadow-2xl">
           {!imageLoaded && (
             <div className="absolute inset-0 rounded-full bg-white/10 animate-pulse" />
           )}
@@ -121,8 +121,8 @@ function TeamCard({ member, t, priority = false }: TeamCardProps) {
             src={member.image}
             alt={member.name}
             fill
-            sizes="112px"
-            className={`object-cover object-top transition-opacity duration-500 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+            sizes="144px"
+            className={`object-cover object-center transition-opacity duration-500 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
             priority={priority}
             onLoad={() => setImageLoaded(true)}
           />
