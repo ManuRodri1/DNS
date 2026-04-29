@@ -154,5 +154,33 @@ export const STATIC_DNS_CONTEXT = {
     transportation: "Uber is widely available and safe. Private hotel shuttles or authorized airport taxis are also recommended.",
     weather: "Hot and tropical. August is summer (28°C-32°C). Lightweight business casual clothing is recommended.",
     currency: "Dominican Peso (DOP), but USD is widely accepted in hotels and tourist areas."
-  }
+  },
+
+  team: [
+    {
+      name: "Jonathan Joel Mentor",
+      role: "Founder & CEO, Successment",
+      bio: "A RevOps and innovation expert with global reach in NYC, Miami, and Santo Domingo."
+    },
+    {
+      name: "Sacha Walton-Gutierrez",
+      role: "Co-founder, DNS",
+      bio: "Strategic leader focused on international partnerships and ecosystem growth."
+    },
+    {
+      name: "Ivanna Price",
+      role: "Digital Creative Strategy",
+      bio: "Specialist in digital presence and narrative building for transnational platforms."
+    },
+    {
+      name: "Esther Akanbi",
+      role: "Program Operations",
+      bio: "Operational excellence lead ensuring seamless execution of DNS initiatives."
+    },
+    {
+      name: "Jose Manuel De Jesus Rodriguez",
+      role: "Software Engineer & BI Specialist",
+      bio: "Expert in transforming complex data into strategic insights, web development, and business intelligence."
+    }
+  ]
 };
