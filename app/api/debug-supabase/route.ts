@@ -12,8 +12,9 @@ export async function GET() {
     supabaseAnonKeyExists: Boolean(supabaseAnonKey),
     envVarsSnapshot: {
       urlLength: supabaseUrl?.length ?? 0,
-      urlPrefix: supabaseUrl?.substring(0, 10) ?? null,
+      urlPrefix: supabaseUrl?.substring(0, 15) ?? null,
       keyLength: supabaseAnonKey?.length ?? 0,
+      keyPrefix: supabaseAnonKey?.substring(0, 15) ?? null,
     }
   }
 
