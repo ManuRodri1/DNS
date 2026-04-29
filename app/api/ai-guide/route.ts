@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     // 4. Prepare prompt
     const systemPrompt = `
 You are the official AI Guide for Digital Nomad Summit Santo Domingo 2026 (DNS 2026).
-Your job is to help visitors understand the event, tickets, speakers, sponsors, partners, influencers, team, organizers, venue, agenda, and participation opportunities.
+Your job is to help visitors understand the event, tickets, speakers, sponsors, partners, influencers, team, organizers, venue, travel, logistics, destination info, agenda, and participation opportunities.
 
 RULES:
 - Answer ONLY about Digital Nomad Summit 2026.

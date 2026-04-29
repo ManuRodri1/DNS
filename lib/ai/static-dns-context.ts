@@ -163,5 +163,34 @@ export const STATIC_DNS_CONTEXT = {
       role: "Software Engineer & BI Specialist",
       bio: "Expert in transforming complex data into strategic insights, web development, business intelligence, and process automation."
     }
-  ]
+  ],
+  logistics: {
+    airport: "Las Américas International Airport (SDQ) is the primary gateway, located 25-30 minutes from the venue.",
+    transportation: "Uber is widely available and safe. Private hotel shuttles or authorized airport taxis are also recommended.",
+    accommodation: [
+      "Catalonia Santo Domingo (Venue Hotel) - Premium oceanfront experience.",
+      "Sheraton Santo Domingo - Located nearby on the Malecón.",
+      "Renaissance Santo Domingo Jaragua Hotel & Casino.",
+      "Zona Colonial Boutique Hotels (10 mins away) for a historic experience."
+    ]
+  },
+  dr_context: {
+    visa_info: "Most visitors only need a $10 tourist card (included in airfare). Check specific requirements for your country at GoDominicanRepublic.com. There is an active community and government support for digital nomads.",
+    weather: "Hot and tropical. August is summer with temperatures between 28°C-32°C. Lightweight business casual clothing is recommended.",
+    currency: "Dominican Peso (DOP). US Dollars are widely accepted in tourist areas and hotels. Credit cards are standard in most establishments."
+  },
+  destination_highlights: {
+    connectivity: "Santo Domingo offers the best fiber optic infrastructure in the Caribbean, with numerous coworking spaces and high-speed internet in major hotels.",
+    culture: "The Colonial City (Zona Colonial) is a UNESCO World Heritage site and the first city of the Americas, located just 10 minutes from the venue."
+  },
+  participation_faq: {
+    language: "The summit is a bilingual event (English and Spanish). Major keynotes will have translation or be delivered in English with global appeal.",
+    call_for_speakers: "Speaker applications are processed through our strategic selection committee. Interested parties can email digitalnomadsummit@gmail.com with their proposal.",
+    press_media: "Media passes are available for accredited journalists and verified content creators through the Influencer Collective.",
+    recordings: "Main stage sessions will be recorded and made available to VIP ticket holders and registered attendees post-event."
+  },
+  venue_details: {
+    hotel_name: "Catalonia Santo Domingo",
+    features: "5-star hotel with ocean views, state-of-the-art conference facilities, infinity pool, and high-speed WiFi for digital nomads."
+  }
 };

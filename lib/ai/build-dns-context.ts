@@ -109,5 +109,26 @@ ${formatTeamForAI(STATIC_DNS_CONTEXT.team)}
 Email: ${STATIC_DNS_CONTEXT.contact.email}
 Instagram: ${STATIC_DNS_CONTEXT.contact.instagram}
 ZARI Mobility: ${STATIC_DNS_CONTEXT.zari_mobility.description} (${STATIC_DNS_CONTEXT.zari_mobility.url})
+
+--- TRAVEL & LOGISTICS ---
+Airport: ${STATIC_DNS_CONTEXT.logistics.airport}
+Transport: ${STATIC_DNS_CONTEXT.logistics.transportation}
+Hotels: ${STATIC_DNS_CONTEXT.logistics.accommodation.join(", ")}
+Venue: ${STATIC_DNS_CONTEXT.venue_details.hotel_name} - ${STATIC_DNS_CONTEXT.venue_details.features}
+
+--- DOMINICAN REPUBLIC CONTEXT ---
+Visa/Entry: ${STATIC_DNS_CONTEXT.dr_context.visa_info}
+Weather: ${STATIC_DNS_CONTEXT.dr_context.weather}
+Currency: ${STATIC_DNS_CONTEXT.dr_context.currency}
+
+--- DESTINATION & CONNECTIVITY ---
+Why SD: ${STATIC_DNS_CONTEXT.destination_highlights.connectivity}
+Culture: ${STATIC_DNS_CONTEXT.destination_highlights.culture}
+
+--- PARTICIPATION & FAQ ---
+Language: ${STATIC_DNS_CONTEXT.participation_faq.language}
+Call for Speakers: ${STATIC_DNS_CONTEXT.participation_faq.call_for_speakers}
+Press/Media: ${STATIC_DNS_CONTEXT.participation_faq.press_media}
+Recordings: ${STATIC_DNS_CONTEXT.participation_faq.recordings}
   `.trim();
 }
