@@ -86,12 +86,12 @@ export function AIGuideWidget() {
     <>
       <AIGuideBubble onOpen={() => setIsOpen(true)} isChatOpen={isOpen} />
 
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
         {/* Chat Window */}
         <div 
           className={cn(
-            "mb-4 w-[90vw] sm:w-[400px] h-[500px] max-h-[70vh] bg-black/95 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right",
-            isOpen ? "scale-100 opacity-100 pointer-events-auto" : "scale-95 opacity-0 pointer-events-none"
+            "mb-4 w-[90vw] sm:w-[400px] h-[500px] max-h-[70vh] bg-black/95 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right pointer-events-auto",
+            isOpen ? "scale-100 opacity-100" : "scale-95 opacity-0 pointer-events-none hidden"
           )}
         >
           {/* Header */}
@@ -211,7 +211,7 @@ export function AIGuideWidget() {
         <button 
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            "w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-90 relative",
+            "w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-90 relative pointer-events-auto",
             isOpen ? "bg-white text-black rotate-90" : "bg-[#FF5757] text-white rotate-0"
           )}
         >

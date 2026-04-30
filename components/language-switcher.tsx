@@ -11,7 +11,7 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
       <button
         onClick={() => setLanguage("es")}
         className={cn(
-          "transition-all duration-300 hover:scale-110",
+          "transition-all duration-300 hover:scale-110 relative z-20 cursor-pointer",
           language === "es" ? "opacity-100 scale-105" : "opacity-40 hover:opacity-70",
         )}
         aria-label="Switch to Spanish"
@@ -19,18 +19,18 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
         <img
           src="/images/design-mode/dominican-republic.png"
           alt="Español"
-          className="w-8 h-8 rounded-sm"
+          className="w-8 h-8 rounded-sm pointer-events-none"
         />
       </button>
       <button
         onClick={() => setLanguage("en")}
         className={cn(
-          "transition-all duration-300 hover:scale-110",
+          "transition-all duration-300 hover:scale-110 relative z-20 cursor-pointer",
           language === "en" ? "opacity-100 scale-105" : "opacity-40 hover:opacity-70",
         )}
         aria-label="Switch to English"
       >
-        <img src="/images/design-mode/usa.png" alt="English" className="w-8 h-8 rounded-sm" />
+        <img src="/images/design-mode/usa.png" alt="English" className="w-8 h-8 rounded-sm pointer-events-none" />
       </button>
     </div>
   )

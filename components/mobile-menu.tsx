@@ -7,10 +7,10 @@ import { LanguageSwitcher } from "./language-switcher"
 
 interface MobileMenuProps {
   className?: string
-  isDarkMode?: boolean
+  isWhiteHeader?: boolean
 }
 
-export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) => {
+export const MobileMenu = ({ className, isWhiteHeader = false }: MobileMenuProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isWeeklyOpen, setIsWeeklyOpen] = useState(false)
   const [isAboutOpen, setIsAboutOpen] = useState(false)
@@ -52,8 +52,8 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "group lg:hidden p-2 transition-colors relative z-[60] shrink-0",
-          isDarkMode ? "text-black" : "text-white",
+          "group xl:hidden p-2 transition-colors relative z-[60] shrink-0",
+          isWhiteHeader ? "text-black" : "text-white",
           className,
         )}
         aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -71,7 +71,7 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
       {/* Backdrop */}
       <div
         className={cn(
-          "fixed inset-0 bg-black/50 z-[55] lg:hidden backdrop-blur-sm transition-opacity duration-300",
+          "fixed inset-0 bg-black/50 z-[55] xl:hidden backdrop-blur-sm transition-opacity duration-300",
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
         )}
         onClick={handleOverlayClick}
@@ -81,23 +81,23 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
       {/* Drawer panel — always full-height, anchored to viewport top-right */}
       <div
         className={cn(
-          "fixed top-0 right-0 h-[100dvh] w-[85vw] max-w-sm z-[60] lg:hidden",
+          "fixed top-0 right-0 h-[100dvh] w-[85vw] max-w-sm z-[60] xl:hidden",
           "flex flex-col",
           "transform transition-transform duration-300 ease-out",
           "shadow-2xl",
           isOpen ? "translate-x-0" : "translate-x-full",
-          isDarkMode ? "bg-white" : "bg-[#0a0a0a]",
+          isWhiteHeader ? "bg-white" : "bg-[#0a0a0a]",
         )}
       >
         {/* Drawer header row — logo area + close button, fixed height */}
         <div
           className={cn(
             "flex items-center justify-between shrink-0 px-6 h-[72px] border-b",
-            isDarkMode ? "border-black/10" : "border-white/10",
+            isWhiteHeader ? "border-black/10" : "border-white/10",
           )}
         >
           <span
-            className={cn("text-xs font-medium tracking-widest uppercase font-sans", isDarkMode ? "text-black/40" : "text-white/40")}
+            className={cn("text-xs font-medium tracking-widest uppercase font-sans", isWhiteHeader ? "text-black/40" : "text-white/40")}
           >
             Menu
           </span>
@@ -105,7 +105,7 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
             onClick={() => setIsOpen(false)}
             className={cn(
               "p-2 rounded-full transition-colors",
-              isDarkMode ? "text-black hover:text-[#FF5757] hover:bg-black/5" : "text-white hover:text-[#FF5757] hover:bg-white/5",
+              isWhiteHeader ? "text-black hover:text-[#FF5757] hover:bg-black/5" : "text-white hover:text-[#FF5757] hover:bg-white/5",
             )}
             aria-label="Close menu"
           >
@@ -124,7 +124,7 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
                 onClick={() => setIsAboutOpen(!isAboutOpen)}
                 className={cn(
                   "w-full flex items-center justify-between py-3.5 min-h-[48px] text-sm font-medium font-sans transition-colors duration-150",
-                  isDarkMode ? "text-black hover:text-[#FF5757]" : "text-white hover:text-[#FF5757]",
+                  isWhiteHeader ? "text-black hover:text-[#FF5757]" : "text-white hover:text-[#FF5757]",
                 )}
                 aria-expanded={isAboutOpen}
               >
@@ -132,7 +132,7 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
                 <svg
                   className={cn(
                     "w-4 h-4 shrink-0 transition-transform duration-200",
-                    isAboutOpen ? "rotate-180 text-[#FF5757]" : isDarkMode ? "text-black/40" : "text-white/40",
+                    isAboutOpen ? "rotate-180 text-[#FF5757]" : isWhiteHeader ? "text-black/40" : "text-white/40",
                   )}
                   fill="none"
                   viewBox="0 0 24 24"
@@ -154,7 +154,7 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
                     onClick={handleLinkClick}
                     className={cn(
                       "block py-3 text-sm font-sans min-h-[44px] flex items-center transition-colors duration-150",
-                      isDarkMode ? "text-black/70 hover:text-[#FF5757]" : "text-white/60 hover:text-[#FF5757]",
+                      isWhiteHeader ? "text-black/70 hover:text-[#FF5757]" : "text-white/60 hover:text-[#FF5757]",
                     )}
                   >
                     About DNS
@@ -164,7 +164,7 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
                     onClick={handleLinkClick}
                     className={cn(
                       "block py-3 text-sm font-sans min-h-[44px] flex items-center transition-colors duration-150",
-                      isDarkMode ? "text-black/70 hover:text-[#FF5757]" : "text-white/60 hover:text-[#FF5757]",
+                      isWhiteHeader ? "text-black/70 hover:text-[#FF5757]" : "text-white/60 hover:text-[#FF5757]",
                     )}
                   >
                     Team
@@ -181,7 +181,7 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
                 onClick={handleLinkClick}
                 className={cn(
                   "flex items-center py-3.5 min-h-[48px] text-sm font-medium font-sans transition-colors duration-150",
-                  isDarkMode ? "text-black hover:text-[#FF5757]" : "text-white hover:text-[#FF5757]",
+                  isWhiteHeader ? "text-black hover:text-[#FF5757]" : "text-white hover:text-[#FF5757]",
                 )}
                 {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               >
@@ -190,12 +190,12 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
             ))}
 
             {/* Digital Nomad Weekly accordion */}
-            <div className={cn("border-t mt-2 pt-2", isDarkMode ? "border-black/10" : "border-white/10")}>
+            <div className={cn("border-t mt-2 pt-2", isWhiteHeader ? "border-black/10" : "border-white/10")}>
               <button
                 onClick={() => setIsWeeklyOpen(!isWeeklyOpen)}
                 className={cn(
                   "w-full flex items-center justify-between py-3.5 min-h-[48px] text-sm font-medium font-sans transition-colors duration-150",
-                  isDarkMode ? "text-black hover:text-[#FF5757]" : "text-white hover:text-[#FF5757]",
+                  isWhiteHeader ? "text-black hover:text-[#FF5757]" : "text-white hover:text-[#FF5757]",
                 )}
                 aria-expanded={isWeeklyOpen}
               >
@@ -203,7 +203,7 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
                 <svg
                   className={cn(
                     "w-4 h-4 shrink-0 transition-transform duration-200",
-                    isWeeklyOpen ? "rotate-180 text-[#FF5757]" : isDarkMode ? "text-black/40" : "text-white/40",
+                    isWeeklyOpen ? "rotate-180 text-[#FF5757]" : isWhiteHeader ? "text-black/40" : "text-white/40",
                   )}
                   fill="none"
                   viewBox="0 0 24 24"
@@ -227,7 +227,7 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
                     onClick={handleLinkClick}
                     className={cn(
                       "block py-3 text-sm font-sans min-h-[44px] flex items-center transition-colors duration-150",
-                      isDarkMode ? "text-black/70 hover:text-[#FF5757]" : "text-white/60 hover:text-[#FF5757]",
+                      isWhiteHeader ? "text-black/70 hover:text-[#FF5757]" : "text-white/60 hover:text-[#FF5757]",
                     )}
                   >
                     Dominican Today
@@ -239,7 +239,7 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
                     onClick={handleLinkClick}
                     className={cn(
                       "block py-3 text-sm font-sans min-h-[44px] flex items-center transition-colors duration-150",
-                      isDarkMode ? "text-black/70 hover:text-[#FF5757]" : "text-white/60 hover:text-[#FF5757]",
+                      isWhiteHeader ? "text-black/70 hover:text-[#FF5757]" : "text-white/60 hover:text-[#FF5757]",
                     )}
                   >
                     Periódico elDinero
@@ -254,7 +254,7 @@ export const MobileMenu = ({ className, isDarkMode = false }: MobileMenuProps) =
         <div
           className={cn(
             "shrink-0 px-6 py-5 border-t",
-            isDarkMode ? "border-black/10" : "border-white/10",
+            isWhiteHeader ? "border-black/10" : "border-white/10",
           )}
         >
           <LanguageSwitcher />

@@ -48,7 +48,7 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" data-header="dark" className="relative bg-white py-24 md:py-32 overflow-hidden">
+    <section id="contact" data-header-theme="white" className="relative bg-white py-24 md:py-32 overflow-hidden">
       <div className="container mx-auto px-4 md:px-6 max-w-[1200px]">
         <div className="text-center mb-16 md:mb-20 animate-fade-up">
           <h2 className="font-['League_Spartan'] text-4xl md:text-5xl font-bold text-black mb-3">{t.title}</h2>

@@ -179,7 +179,7 @@ export function InfluencerCollective() {
   const t = content[language]
 
   return (
-    <section ref={sectionRef} data-header="dark" className="relative bg-white py-12 md:py-16">
+    <section ref={sectionRef} data-header-theme="white" className="relative bg-white py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
         <div className="mb-8 text-center">

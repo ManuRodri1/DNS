@@ -97,7 +97,7 @@ export function Tickets() {
   const t = content[language]
 
   return (
-    <section id="tickets" data-header="dark" className="relative w-full overflow-hidden bg-white py-32">
+    <section id="tickets" data-header-theme="white" className="relative w-full overflow-hidden bg-white py-32">
       {/* Section Header */}
       <div className="relative z-10 mx-auto max-w-5xl px-6 pb-16 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
         <Pill className="mb-6 bg-black/5 text-black border-black/10 font-display">{t.badge}</Pill>

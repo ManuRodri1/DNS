@@ -182,5 +182,23 @@ export const STATIC_DNS_CONTEXT = {
       role: "Software Engineer & BI Specialist",
       bio: "Expert in transforming complex data into strategic insights, web development, and business intelligence."
     }
-  ]
+  ],
+  agenda: {
+    day_1: {
+      date: "August 6, 2026",
+      theme: "Market Momentum & Global Positioning",
+      morning: ["VIP & Speaker Breakfast (Invite Only)", "Opening Ceremony & Vision Keynote", "Flagship Panels: Innovation, AI, Mobility, Tourism 3.0"],
+      midday: ["Keynote", "Branded Networking & Sponsor Activations", "Ecosystem Breakouts (Capital, Policy, Tech)"],
+      afternoon: ["Fireside Chats with Global Leaders", "Curated Networking Experiences", "Pitch Lab"],
+      evening: ["VIP Dinner on the Malecón", "Signature DNS Experience"]
+    },
+    day_2: {
+      date: "August 7, 2026",
+      theme: "Activation, Talent & The Future",
+      morning: ["Coffee Circles & Executive Roundtables", "Keynote: The Japan of the Caribbean (TBD)"],
+      midday: ["University & Workforce Spotlights", "Sponsor-Led Activations & Pitch Moments / Competition", "ZARI Mobility Reveal"],
+      afternoon: ['"The Corridor" Sessions (U.S. ↔ DR)', "Curated Cultural & Economic Excursion", "Influencer Panel"],
+      evening: ["VIP Closing Reception (Invite Only, TBD)"]
+    }
+  }
 };

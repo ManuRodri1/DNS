@@ -8,7 +8,8 @@ import {
   formatPartnersForAI, 
   formatInfluencersForAI, 
   formatTicketsForAI, 
-  formatTeamForAI 
+  formatTeamForAI,
+  formatAgendaForAI
 } from "./formatters";
 
 // Cached Speakers
@@ -90,6 +91,9 @@ ${STATIC_DNS_CONTEXT.summit_pillars.map(p => `* ${p.title} (${p.theme}): ${p.des
 
 --- TICKETS ---
 ${formatTicketsForAI(STATIC_DNS_CONTEXT.tickets)}
+
+--- AGENDA ---
+${formatAgendaForAI(STATIC_DNS_CONTEXT.agenda)}
 
 --- PARTNERSHIP & SPONSORSHIP STRUCTURES ---
 Categories: ${STATIC_DNS_CONTEXT.sponsor_categories.join(", ")}

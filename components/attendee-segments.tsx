@@ -88,7 +88,7 @@ export function AttendeeSegments() {
   const t = content[language]
 
   return (
-    <section ref={sectionRef} data-header="dark" className="relative py-12 md:py-16 bg-[rgba(245,245,245,1)]">
+    <section ref={sectionRef} data-header-theme="white" className="relative py-12 md:py-16 bg-[rgba(245,245,245,1)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mb-12 text-center md:mb-16">

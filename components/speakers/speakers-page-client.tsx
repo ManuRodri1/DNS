@@ -115,7 +115,6 @@ function SpeakersHero({ onApply, t }: { onApply: () => void; t: typeof content["
   return (
     <section
       className="relative w-full min-h-[72vh] flex items-center overflow-hidden bg-black pt-32 pb-20"
-      data-header="dark"
       aria-label="Speakers hero"
     >
       <div aria-hidden="true" className="pointer-events-none absolute -top-40 right-0 w-[700px] h-[700px] rounded-full opacity-25" style={{ background: "radial-gradient(circle at 65% 35%, #FF5757 0%, transparent 60%)" }} />

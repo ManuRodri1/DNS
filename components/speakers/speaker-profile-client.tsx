@@ -142,7 +142,6 @@ export function SpeakerProfileClient({
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
       <section
         className="relative w-full bg-black overflow-hidden"
-        data-header="dark"
         aria-label="Speaker profile"
       >
         {/* Coral gradient bg */}

@@ -94,7 +94,7 @@ export function SignatureExperiences() {
   return (
     <section
       ref={sectionRef}
-      data-header="dark"
+      data-header-theme="white"
       className="relative w-full overflow-hidden bg-[#F5F6F7] py-24 md:py-32"
     >
       <div className="relative z-10 mx-auto max-w-7xl px-6">

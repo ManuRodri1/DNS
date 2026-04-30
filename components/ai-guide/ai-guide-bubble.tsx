@@ -53,13 +53,13 @@ export function AIGuideBubble({ onOpen, isChatOpen }: AIGuideBubbleProps) {
   return (
     <div 
       className={cn(
-        "fixed bottom-24 right-6 z-[45] max-w-[240px] animate-in fade-in slide-in-from-bottom-4 duration-500",
+        "fixed bottom-24 right-6 z-[45] max-w-[240px] animate-in fade-in slide-in-from-bottom-4 duration-500 pointer-events-none",
         "motion-reduce:animate-none"
       )}
     >
       <div 
         onClick={onOpen}
-        className="relative bg-black/90 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-2xl cursor-pointer group hover:border-[#FF5757]/50 transition-colors"
+        className="relative bg-black/90 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-2xl cursor-pointer group hover:border-[#FF5757]/50 transition-colors pointer-events-auto"
       >
         <button 
           onClick={handleDismiss}
