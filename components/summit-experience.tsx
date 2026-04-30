@@ -6,46 +6,28 @@ import { useLanguage } from "@/lib/language-context"
 
 const content = {
   en: {
-    title: "SUMMIT EXPERIENCE",
-    subtitle: "Two Days of Strategic Momentum.",
-    description:
-      "From executive roundtables and global keynotes to curated networking and signature VIP experiences on the Malecón, DNS is designed to move capital, talent, and narrative across borders.",
-    columns: [
-      {
-        heading: "GLOBAL VOICES",
-        body: "International leaders, policymakers, founders, and investors shaping the future of mobility, innovation, and emerging markets.",
-      },
-      {
-        heading: "CAPITAL & ACTIVATION",
-        body: "Pitch labs, investor sessions, sponsor activations, and curated networking designed to create real opportunity.",
-      },
-      {
-        heading: "CULTURE & CORRIDOR",
-        body: "VIP signature experiences, curated cultural moments, and cross-border dialogue between the U.S. and the Caribbean.",
-      },
+    label: "What You Gain",
+    title: "What You Walk Away With",
+    bullets: [
+      "High-level networking with founders, investors, and decision-makers",
+      "Access to strategic partnerships across industries",
+      "Market insights on tourism, real estate, startups, and digital mobility",
+      "Exposure to Caribbean innovation and global expansion opportunities",
+      "Conversations designed to create real business outcomes",
     ],
-    cta: "Explore the Full Agenda",
+    cta: "Get Your Pass",
   },
   es: {
-    title: "EXPERIENCIA DEL SUMMIT",
-    subtitle: "Dos días de impulso estratégico.",
-    description:
-      "Desde mesas ejecutivas y keynotes globales hasta networking curado y experiencias VIP en el Malecón, DNS está diseñado para mover capital, talento y narrativa a través de fronteras.",
-    columns: [
-      {
-        heading: "VOCES GLOBALES",
-        body: "Líderes internacionales, policymakers, fundadores e inversionistas que están moldeando el futuro de la movilidad y la innovación.",
-      },
-      {
-        heading: "CAPITAL Y ACTIVACIÓN",
-        body: "Pitch labs, sesiones con inversionistas, activaciones de sponsors y networking estratégico diseñado para generar oportunidades reales.",
-      },
-      {
-        heading: "CULTURA Y CORREDOR",
-        body: "Experiencias VIP signature, momentos culturales curados y diálogo transfronterizo entre EE. UU. y el Caribe.",
-      },
+    label: "Qué obtienes",
+    title: "Con qué sales de esta experiencia",
+    bullets: [
+      "Networking de alto nivel con fundadores, inversionistas y tomadores de decisión",
+      "Acceso a alianzas estratégicas entre industrias",
+      "Perspectivas de mercado sobre turismo, real estate, startups y movilidad digital",
+      "Exposición a la innovación caribeña y oportunidades de expansión global",
+      "Conversaciones diseñadas para generar resultados reales de negocio",
     ],
-    cta: "Explorar la Agenda Completa",
+    cta: "Comprar mi pase",
   },
 }
 
@@ -112,78 +94,55 @@ export function SummitExperience() {
             transition: "opacity 900ms ease-out, transform 900ms ease-out",
           }}
         >
-          <h2 className="font-display text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl">
+          <span className="text-[#FF5757] font-display font-bold uppercase tracking-widest text-sm md:text-base">
+            {t.label}
+          </span>
+          <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl">
             {t.title}
           </h2>
 
           {/* Animated coral underline */}
-          <div className="mx-auto mt-4 h-[2px] w-16 rounded-full bg-[#FF5757]" />
-
-          <p className="mx-auto mt-6 max-w-xl font-display text-xl font-semibold leading-snug text-white/75 md:text-2xl">
-            {t.subtitle}
-          </p>
+          <div className="mx-auto mt-6 h-[2px] w-24 rounded-full bg-[#FF5757]" />
         </div>
 
-        {/* Description */}
-        <div
-          ref={descRef}
-          className="mx-auto mt-8 max-w-3xl text-center"
-          style={{
-            opacity: descVisible ? 1 : 0,
-            transform: descVisible ? "translateY(0)" : "translateY(24px)",
-            transition: "opacity 900ms ease-out 150ms, transform 900ms ease-out 150ms",
-          }}
-        >
-          <p className="font-display text-lg leading-relaxed text-white/65 md:text-xl text-pretty">
-            {t.description}
-          </p>
-        </div>
-
-        {/* 3-column grid */}
+        {/* Bullets List */}
         <div
           ref={gridRef}
-          className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-16 mx-auto max-w-4xl"
+          style={{
+            opacity: gridVisible ? 1 : 0,
+            transform: gridVisible ? "translateY(0)" : "translateY(40px)",
+            transition: "opacity 900ms ease-out 200ms, transform 900ms ease-out 200ms",
+          }}
         >
-          {t.columns.map((col, i) => (
-            <div
-              key={i}
-              className="group relative rounded-2xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:border-white/20 hover:shadow-[0_8px_40px_rgba(255,87,87,0.12)]"
-              style={{
-                opacity: gridVisible ? 1 : 0,
-                transform: gridVisible ? "translateY(0)" : "translateY(40px)",
-                transition: `opacity 700ms ease-out ${i * 150}ms, transform 700ms ease-out ${i * 150}ms`,
-              }}
-            >
-              {/* Coral accent dot */}
-              <div className="mb-5 h-2 w-2 rounded-full bg-[#FF5757] transition-all duration-300 group-hover:shadow-[0_0_14px_rgba(255,87,87,0.9)] group-hover:scale-125" />
-
-              <h3 className="font-display text-xl font-bold tracking-tight text-white md:text-2xl">
-                {col.heading}
-              </h3>
-
-              {/* Thin coral rule under heading */}
-              <div className="mt-3 h-px w-10 bg-[#FF5757]/50 transition-all duration-300 group-hover:w-16 group-hover:bg-[#FF5757]" />
-
-              <p className="mt-4 font-display text-base leading-relaxed text-white/60 transition-colors duration-300 group-hover:text-white/80">
-                {col.body}
-              </p>
-            </div>
-          ))}
+          <div className="grid gap-6 md:grid-cols-1">
+            {t.bullets.map((bullet, i) => (
+              <div
+                key={i}
+                className="group flex items-start gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-white/5"
+              >
+                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#FF5757] shadow-[0_0_10px_rgba(255,87,87,0.5)] group-hover:scale-125 transition-transform" />
+                <p className="font-display text-lg md:text-xl text-white/80 group-hover:text-white transition-colors">
+                  {bullet}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* CTA */}
         <div
           ref={ctaRef}
-          className="mt-14 flex justify-center"
+          className="mt-16 flex justify-center"
           style={{
             opacity: ctaVisible ? 1 : 0,
             transform: ctaVisible ? "translateY(0)" : "translateY(20px)",
-            transition: "opacity 900ms ease-out 200ms, transform 900ms ease-out 200ms",
+            transition: "opacity 900ms ease-out 400ms, transform 900ms ease-out 400ms",
           }}
         >
           <Link
-            href="/agenda"
-            className="group inline-flex items-center justify-center rounded-md border-2 border-[#FF5757] bg-[#FF5757] px-8 py-4 font-display text-base font-semibold text-white shadow-lg transition-all duration-300 hover:bg-white hover:text-[#FF5757]"
+            href="/#tickets"
+            className="group inline-flex items-center justify-center rounded-full border-2 border-[#FF5757] bg-[#FF5757] px-10 py-5 font-display text-lg font-bold text-white shadow-lg transition-all duration-300 hover:bg-white hover:text-[#FF5757] uppercase tracking-wider"
           >
             {t.cta}
             <svg
@@ -193,7 +152,7 @@ export function SummitExperience() {
               stroke="currentColor"
               aria-hidden="true"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </Link>
         </div>

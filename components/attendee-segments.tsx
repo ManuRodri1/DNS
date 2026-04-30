@@ -27,59 +27,44 @@ export function AttendeeSegments() {
 
   const content = {
     en: {
-      title: "ATTENDEE SEGMENTS",
-      subtitle: "Who Attends and What They Gain",
+      label: "Who Should Attend",
+      title: "Who Should Be in This Room",
       segments: [
         {
-          name: "Nomads & Remote Operators",
+          name: "Founders & Entrepreneurs",
           description:
-            "Residency pathways, real estate opportunities, and startup playbooks in the Dominican Republic.",
+            "Build strategic partnerships, access capital, and connect with leaders who can help you scale beyond borders.",
         },
         {
-          name: "Local Entrepreneurs",
-          description: "International visibility, access to capital, and global partnership opportunities.",
-        },
-        {
-          name: "VCs & Investors",
-          description: "Early access to Dominican ventures, deals, and emerging digital talent.",
-        },
-        {
-          name: "Government & Tourism Orgs",
+          name: "Investors",
           description:
-            "Innovation funnel to activate startup growth, tourism modernization, and national competitiveness.",
+            "Discover emerging opportunities, high-growth sectors, and new market entry points across the Caribbean.",
         },
         {
-          name: "Media & Influencers",
-          description: "Architects of the Caribbean's innovation story and global narrative.",
+          name: "Brands & Ecosystem Builders",
+          description:
+            "Position your organization at the center of innovation, talent, tourism, real estate, and global mobility.",
         },
       ],
     },
     es: {
-      title: "SEGMENTOS DE ASISTENTES",
-      subtitle: "Quiénes asisten y qué obtienen",
+      label: "Para quién es",
+      title: "Quién debe estar en esta sala",
       segments: [
         {
-          name: "Nómadas y Operadores Remotos",
+          name: "Fundadores y emprendedores",
           description:
-            "Vías de residencia, oportunidades inmobiliarias y playbooks de startups en la República Dominicana.",
+            "Construye alianzas estratégicas, accede a capital y conecta con líderes que pueden ayudarte a escalar más allá de fronteras.",
         },
         {
-          name: "Emprendedores Locales",
-          description: "Visibilidad internacional, acceso a capital y oportunidades de alianzas globales.",
-        },
-        {
-          name: "VCs e Inversionistas",
+          name: "Inversionistas",
           description:
-            "Acceso temprano a emprendimientos dominicanos, oportunidades de inversión y talento digital emergente.",
+            "Descubre oportunidades emergentes, sectores de alto crecimiento y nuevos puntos de entrada al mercado del Caribe.",
         },
         {
-          name: "Gobierno y Organismos de Turismo",
+          name: "Marcas y constructores de ecosistema",
           description:
-            "Un embudo de innovación para activar el crecimiento de startups, la modernización turística y la competitividad nacional.",
-        },
-        {
-          name: "Medios e Influencers",
-          description: "Arquitectos de la narrativa de innovación del Caribe y su proyección global.",
+            "Posiciona tu organización en el centro de la innovación, el talento, el turismo, el real estate y la movilidad global.",
         },
       ],
     },
@@ -88,34 +73,37 @@ export function AttendeeSegments() {
   const t = content[language]
 
   return (
-    <section ref={sectionRef} data-header-theme="white" className="relative py-12 md:py-16 bg-[rgba(245,245,245,1)]">
+    <section ref={sectionRef} data-header-theme="white" className="relative py-24 md:py-32 bg-[rgba(245,245,245,1)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-12 text-center md:mb-16">
-          <h2 className="font-league-spartan text-3xl font-bold uppercase tracking-wide text-black md:text-4xl lg:text-5xl">
+        <div className="mb-16 text-center md:mb-20">
+          <span className="text-[#FF5757] font-display font-bold uppercase tracking-widest text-sm md:text-base">
+            {t.label}
+          </span>
+          <h2 className="mt-4 font-league-spartan text-3xl font-bold uppercase tracking-wide text-black md:text-4xl lg:text-5xl">
             {t.title}
           </h2>
-          <p className="mt-4 font-poppins text-base text-gray-600 md:text-lg">{t.subtitle}</p>
+          <div className="mx-auto mt-6 h-0.5 w-24 bg-[#FF5757]" />
         </div>
 
         {/* Segments Grid */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {t.segments.map((segment, index) => (
             <div
               key={index}
-              className={`group rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all duration-500 hover:shadow-lg md:p-8 ${
-                hasAnimated ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+              className={`group rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-500 hover:shadow-xl md:p-10 ${
+                hasAnimated ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
               }`}
               style={{
-                transitionDelay: hasAnimated ? `${index * 100}ms` : "0ms",
+                transitionDelay: hasAnimated ? `${index * 150}ms` : "0ms",
               }}
             >
-              <h3 className="mb-4 font-league-spartan text-lg font-bold uppercase leading-tight text-black md:text-xl">
+              <h3 className="mb-6 font-league-spartan text-xl font-bold uppercase leading-tight text-black md:text-2xl">
                 {segment.name}
               </h3>
-              <p className="font-poppins text-sm leading-relaxed text-gray-700 md:text-base">{segment.description}</p>
+              <p className="font-poppins text-base leading-relaxed text-gray-700 md:text-lg">{segment.description}</p>
               {/* Subtle accent line on hover */}
-              <div className="mt-4 h-0.5 w-0 bg-[#FF5757] transition-all duration-300 group-hover:w-full" />
+              <div className="mt-8 h-1 w-0 bg-[#FF5757] transition-all duration-300 group-hover:w-full rounded-full" />
             </div>
           ))}
         </div>

@@ -27,18 +27,18 @@ export function Location() {
 
   const content = {
     en: {
-      sectionTitle: "Location",
+      sectionTitle: "Venue",
       title: "Catalonia Santo Domingo",
       description:
-        "Set against the stunning waterfront of Santo Domingo, Dominican Republic, the Catalonia Santo Domingo sits prominently on George Washington Avenue, right along the famous Malecón — a vibrant coastal promenade and a top attraction for attendees of the Digital Nomad Summit.",
+        "A premier waterfront destination on the Malecón, perfectly situated to host the most significant gathering of digital nomads and innovators in the region.",
       badge: "Santo Domingo · Dominican Republic",
       clickToOpen: "Click to open in Google Maps",
     },
     es: {
-      sectionTitle: "Ubicación",
+      sectionTitle: "Sede",
       title: "Catalonia Santo Domingo",
       description:
-        "Frente al impresionante malecón de Santo Domingo, República Dominicana, el Catalonia Santo Domingo se ubica prominentemente en la Avenida George Washington, justo a lo largo del famoso Malecón — un vibrante paseo costero y una atracción principal para los asistentes del Digital Nomad Summit.",
+        "Un destino frente al mar de primer nivel en el Malecón, perfectamente ubicado para albergar el encuentro más significativo de nómadas digitales e innovadores en la región.",
       badge: "Santo Domingo · República Dominicana",
       clickToOpen: "Haz clic para abrir en Google Maps",
     },

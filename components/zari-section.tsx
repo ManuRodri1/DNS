@@ -5,23 +5,23 @@ import Image from "next/image"
 
 const content = {
   en: {
-    label: "SUCCESSMENT FLAGSHIP",
-    headline: "INTRODUCING ZARI MOBILITY™",
-    subheadline: "A mobility-data platform built in the Caribbean and designed for global scale.",
-    body: "ZARI Mobility™ powers the next generation of mobility-driven financial infrastructure — enabling mobility-based credit, real-time risk scoring, and modern rental ecosystems across emerging and developed markets.",
-    whyDNSTitle: "Why DNS",
+    label: "Ecosystem",
+    headline: "From Founders, For Founders",
+    subheadline: "Building the infrastructure for the next generation of global nomads.",
+    body: "The Digital Nomad Summit is more than an event — it is a convening of the Successment Venture Labs ecosystem. We are building the tools and networks that enable cross-border innovation, starting with ZARI Mobility™.",
+    whyDNSTitle: "Why It Matters",
     whyDNS:
-      "ZARI is the clearest example of the innovation emerging from Successment Venture Labs — Caribbean-built, U.S.-investable, and globally relevant.",
+      "ZARI is the flagship example of Caribbean-built innovation designed for global scale — moving from regional potential to international investability.",
     ctaText: "Visit ZARI Mobility",
   },
   es: {
-    label: "FLAGSHIP DE SUCCESSMENT",
-    headline: "PRESENTAMOS ZARI MOBILITY™",
-    subheadline: "Una plataforma de datos de movilidad creada en el Caribe y diseñada para escalar a nivel global.",
-    body: "ZARI Mobility™ impulsa la próxima generación de infraestructura financiera basada en movilidad, habilitando crédito impulsado por movilidad, scoring de riesgo en tiempo real y ecosistemas modernos de renta en mercados emergentes y desarrollados.",
-    whyDNSTitle: "¿Por qué DNS?",
+    label: "Ecosistema",
+    headline: "De fundadores, para fundadores",
+    subheadline: "Construyendo la infraestructura para la próxima generación de nómadas globales.",
+    body: "El Digital Nomad Summit es más que un evento — es el punto de encuentro del ecosistema de Successment Venture Labs. Estamos creando las herramientas y redes que habilitan la innovación transfronteriza, comenzando con ZARI Mobility™.",
+    whyDNSTitle: "Por qué es importante",
     whyDNS:
-      "ZARI es el ejemplo más claro de la innovación que surge desde Successment Venture Labs — creada en el Caribe, invertible desde EE. UU. y con relevancia global.",
+      "ZARI es el ejemplo emblemático de innovación caribeña diseñada para escala global — pasando del potencial regional a la invertibilidad internacional.",
     ctaText: "Visitar ZARI Mobility",
   },
 }

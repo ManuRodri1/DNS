@@ -9,14 +9,18 @@ const SponsorModal = dynamic(() => import("./sponsor-modal").then((mod) => mod.S
 
 const content = {
   en: {
-    title: "Partners & Sponsors",
-    subtitle: "Global innovators powering the Digital Nomad Summit",
-    ctaText: "Partner With the Summit",
+    label: "Trusted Network",
+    title: "Featuring Leaders, Institutions & Global Innovators",
+    subtitle:
+      "DNS brings together the people and organizations shaping the next wave of innovation, investment, tourism, and talent across the Caribbean and beyond.",
+    ctaText: "Sponsor DNS",
   },
   es: {
-    title: "Socios y Patrocinadores",
-    subtitle: "Innovadores globales impulsando el Digital Nomad Summit",
-    ctaText: "Asociarse con el Summit",
+    label: "Red de confianza",
+    title: "Con líderes, instituciones e innovadores globales",
+    subtitle:
+      "DNS reúne a las personas y organizaciones que están impulsando la próxima ola de innovación, inversión, turismo y talento en el Caribe y más allá.",
+    ctaText: "Patrocinar DNS",
   },
 }
 
@@ -73,11 +77,14 @@ export function SponsorsCarousel() {
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         {/* Section Header */}
         <div className="mb-16 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
-          <h2 className="font-display text-4xl font-bold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+          <span className="text-white/80 font-display font-bold uppercase tracking-widest text-sm md:text-base">
+            {t.label}
+          </span>
+          <h2 className="mt-4 font-display text-4xl font-bold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
             {t.title}
           </h2>
-          <div className="mx-auto mt-4 h-[1px] w-32 bg-white/60" />
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-white md:text-xl">
+          <div className="mx-auto mt-6 h-[1px] w-32 bg-white/60" />
+          <p className="mx-auto mt-6 max-w-3xl text-pretty text-lg leading-relaxed text-white md:text-xl">
             {t.subtitle}
           </p>
         </div>

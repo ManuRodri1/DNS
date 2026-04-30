@@ -21,14 +21,14 @@ const translations = {
     ),
     headline: (
       <>
-        Where <span className="text-[#FF5757]">Creativity</span> and <span className="text-[#FF5757]">Innovation</span>{" "}
-        Converge to Redefine Tourism, <span className="text-[#FF5757]">Real Estate</span> &{" "}
-        <span className="text-[#FF5757]">Start-Ups</span>
+        Where <span className="text-[#FF5757]">Founders</span>, <span className="text-[#FF5757]">Investors</span> &{" "}
+        <span className="text-[#FF5757]">Policymakers</span> Meet to Build in the Caribbean
       </>
     ),
-    subheadline: "Join the global summit shaping the future of remote work, investment and digital mobility.",
-    cta: "Reserve Your Pass",
-    ctaSponsor: "Partner With DNS",
+    subheadline: "Access capital, strategic partnerships, and expansion opportunities in one of the fastest-growing emerging markets.",
+    cta: "Get Your Pass",
+    ctaSponsor: "Sponsor DNS",
+    trustLine: "Featuring global speakers, institutional partners, and high-growth innovators",
   },
   es: {
     badge: (
@@ -43,14 +43,14 @@ const translations = {
     ),
     headline: (
       <>
-        Donde la <span className="text-[#FF5757]">Creatividad</span> y la{" "}
-        <span className="text-[#FF5757]">Innovación</span> Convergen para Redefinir Turismo,{" "}
-        <span className="text-[#FF5757]">Bienes Raíces</span> y <span className="text-[#FF5757]">Startups</span>
+        Donde <span className="text-[#FF5757]">fundadores</span>, <span className="text-[#FF5757]">inversionistas</span> y{" "}
+        <span className="text-[#FF5757]">líderes públicos</span> se reúnen para construir en el Caribe
       </>
     ),
-    subheadline: "Únete al summit global que impulsa el futuro del trabajo remoto, inversión y movilidad digital.",
-    cta: "Reserva Tu Pase",
-    ctaSponsor: "Asociarse con DNS",
+    subheadline: "Accede a capital, alianzas estratégicas y oportunidades de expansión en uno de los mercados emergentes de mayor crecimiento.",
+    cta: "Comprar mi pase",
+    ctaSponsor: "Patrocinar DNS",
+    trustLine: "Con la participación de speakers globales, aliados institucionales e innovadores de alto crecimiento",
   },
 }
 
@@ -72,7 +72,7 @@ export function Hero() {
           {t.dates}
         </div>
         <h1
-          className="px-4 leading-tight mx-auto font-display"
+          className="px-4 leading-tight mx-auto font-display text-white"
           style={{
             fontSize: "clamp(1.5rem, 4.5vw, 4rem)",
             maxWidth: "85vw",
@@ -80,14 +80,14 @@ export function Hero() {
         >
           {t.headline}
         </h1>
-        <p className="font-display text-xs sm:text-sm md:text-base text-foreground/80 text-balance mt-4 md:mt-6 lg:mt-8 max-w-[90vw] md:max-w-[440px] mx-auto px-4">
+        <p className="font-display text-xs sm:text-sm md:text-base text-foreground/80 text-balance mt-4 md:mt-6 lg:mt-8 max-w-[90vw] md:max-w-[540px] mx-auto px-4">
           {t.subheadline}
         </p>
 
         <div className="mt-6 md:mt-10 lg:mt-14 flex flex-col sm:flex-row gap-3 md:gap-4 items-center justify-center px-4">
-          <Link href="/#tickets">
+          <Link href="/#tickets" className="w-full sm:w-auto">
             <Button
-              className="bg-[#FF5757] hover:bg-white hover:text-[#FF5757] hover:border-[#FF5757] border-2 border-[#FF5757] transition-all duration-300 hover:scale-[1.03] px-6 md:px-8 py-4 md:py-6 text-sm md:text-base w-full sm:w-auto text-white font-display font-semibold"
+              className="bg-[#FF5757] hover:bg-white hover:text-[#FF5757] hover:border-[#FF5757] border-2 border-[#FF5757] transition-all duration-300 hover:scale-[1.03] px-6 md:px-10 py-4 md:py-7 text-sm md:text-base w-full sm:w-auto text-white font-display font-bold uppercase tracking-wider"
               onMouseEnter={() => setHovering(true)}
               onMouseLeave={() => setHovering(false)}
             >
@@ -96,13 +96,18 @@ export function Hero() {
           </Link>
           <Button
             onClick={() => setIsSponsorModalOpen(true)}
-            className="bg-[#FF5757] hover:bg-white hover:text-[#FF5757] hover:border-[#FF5757] border-2 border-[#FF5757] transition-all duration-300 hover:scale-[1.03] px-6 md:px-8 py-4 md:py-6 text-sm md:text-base text-white w-full sm:w-auto font-display font-semibold"
+            variant="outline"
+            className="bg-transparent hover:bg-white/10 text-white border-2 border-white transition-all duration-300 hover:scale-[1.03] px-6 md:px-10 py-4 md:py-7 text-sm md:text-base w-full sm:w-auto font-display font-bold uppercase tracking-wider"
             onMouseEnter={() => setHovering(true)}
             onMouseLeave={() => setHovering(false)}
           >
             {t.ctaSponsor}
           </Button>
         </div>
+
+        <p className="mt-8 text-[10px] md:text-xs text-white/50 font-display uppercase tracking-[0.15em] max-w-[80vw] mx-auto">
+          {t.trustLine}
+        </p>
       </div>
 
       {isSponsorModalOpen && (

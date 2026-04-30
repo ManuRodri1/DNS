@@ -1,148 +1,269 @@
 "use client"
 
+import type React from "react"
+
+import Link from "next/link"
+import { ArrowRight } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
-import { useEffect, useRef } from "react"
+import { useState } from "react"
+
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xwpdaprd"
+
+const content = {
+  en: {
+    tagline: "Work. Live. Scale.",
+    copy:
+      "Digital Nomad Summit Santo Domingo 2026 brings founders, investors, policymakers, brands, and global innovators together to build from the Caribbean.",
+    primaryCta: "Get Tickets",
+    getInvolved: {
+      heading: "Get Involved",
+      links: [
+        { label: "Become a Sponsor", href: "/#partners-sponsor-invite" },
+        { label: "Speakers", href: "/speakers" },
+        { label: "Contact", href: "/#contact" },
+      ],
+    },
+    event: {
+      heading: "Event",
+      links: [
+        { label: "About DNS", href: "/#about" },
+        { label: "Tickets", href: "/#tickets" },
+        { label: "Location", href: "/#location" },
+        { label: "Partners", href: "/#partners-section" },
+      ],
+    },
+    ecosystem: {
+      heading: "Ecosystem",
+      links: [
+        { label: "Successment", href: "https://www.successment.co/", external: true },
+        { label: "ZARI Mobility", href: "https://www.zariautoclub.com/", external: true },
+        { label: "Digital Nomad Weekly", href: "https://dominicantoday.com/dr/digital-nomad/", external: true },
+      ],
+    },
+    newsletter: {
+      heading: "Subscribe to DNS Updates",
+      description:
+        "Get speaker announcements, partner updates, ticket releases, and strategic opportunities around DNS 2026.",
+      placeholder: "Enter your email",
+      button: "Subscribe",
+      sending: "Subscribing...",
+      success: "You're subscribed. Watch your inbox for DNS updates.",
+      error: "Something went wrong. Please try again.",
+    },
+    rights: "© 2026 Digital Nomad Summit. All rights reserved.",
+    presentedBy: "Presented by Successment.",
+    contact: "Contact",
+    designedBy: "Designed by ING. JMDR",
+  },
+  es: {
+    tagline: "Trabaja. Vive. Escala.",
+    copy:
+      "Digital Nomad Summit Santo Domingo 2026 reúne a fundadores, inversionistas, líderes públicos, marcas e innovadores globales para construir desde el Caribe.",
+    primaryCta: "Comprar boletas",
+    getInvolved: {
+      heading: "Participa",
+      links: [
+        { label: "Patrocinar DNS", href: "/#partners-sponsor-invite" },
+        { label: "Speakers", href: "/speakers" },
+        { label: "Contacto", href: "/#contact" },
+      ],
+    },
+    event: {
+      heading: "Evento",
+      links: [
+        { label: "Sobre DNS", href: "/#about" },
+        { label: "Boletas", href: "/#tickets" },
+        { label: "Ubicación", href: "/#location" },
+        { label: "Aliados", href: "/#partners-section" },
+      ],
+    },
+    ecosystem: {
+      heading: "Ecosistema",
+      links: [
+        { label: "Successment", href: "https://www.successment.co/", external: true },
+        { label: "ZARI Mobility", href: "https://www.zariautoclub.com/", external: true },
+        { label: "Digital Nomad Weekly", href: "https://dominicantoday.com/dr/digital-nomad/", external: true },
+      ],
+    },
+    newsletter: {
+      heading: "Suscríbete a novedades de DNS",
+      description:
+        "Recibe anuncios de speakers, actualizaciones de aliados, lanzamientos de boletas y oportunidades estratégicas alrededor de DNS 2026.",
+      placeholder: "Ingresa tu email",
+      button: "Suscribirme",
+      sending: "Suscribiendo...",
+      success: "Listo. Recibirás novedades de DNS en tu correo.",
+      error: "Algo salió mal. Inténtalo nuevamente.",
+    },
+    rights: "© 2026 Digital Nomad Summit. Todos los derechos reservados.",
+    presentedBy: "Presentado por Successment.",
+    contact: "Contacto",
+    designedBy: "Designed by ING. JMDR",
+  },
+}
+
+type FooterLink = {
+  label: string
+  href: string
+  external?: boolean
+}
+
+function FooterColumn({ heading, links }: { heading: string; links: FooterLink[] }) {
+  return (
+    <div>
+      <h3 className="font-display text-sm font-bold uppercase tracking-[0.18em] text-white">{heading}</h3>
+      <ul className="mt-5 space-y-3">
+        {links.map((link) => {
+          const className =
+            "font-sans text-sm text-white/60 transition-colors duration-200 hover:text-[#FF5757] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5757] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+
+          return (
+            <li key={link.label}>
+              {link.external ? (
+                <a href={link.href} target="_blank" rel="noopener noreferrer" className={className}>
+                  {link.label}
+                </a>
+              ) : (
+                <Link href={link.href} className={className}>
+                  {link.label}
+                </Link>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
+}
 
 export function Footer() {
   const { language } = useLanguage()
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const t = content[language]
+  const [email, setEmail] = useState("")
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
 
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
+  const handleNewsletterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setStatus("submitting")
 
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-
-    let animationFrameId: number
-    let particles: Array<{
-      x: number
-      y: number
-      vx: number
-      vy: number
-      size: number
-      opacity: number
-    }> = []
-
-    const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth * window.devicePixelRatio
-      canvas.height = canvas.offsetHeight * window.devicePixelRatio
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
-    }
-
-    const initParticles = () => {
-      particles = []
-      const numParticles = Math.floor((canvas.offsetWidth * canvas.offsetHeight) / 8000)
-      for (let i = 0; i < numParticles; i++) {
-        particles.push({
-          x: Math.random() * canvas.offsetWidth,
-          y: Math.random() * canvas.offsetHeight,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          size: Math.random() * 1.5 + 0.5,
-          opacity: Math.random() * 0.4 + 0.1,
-        })
-      }
-    }
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight)
-
-      particles.forEach((p) => {
-        p.x += p.vx
-        p.y += p.vy
-
-        if (p.x < 0) p.x = canvas.offsetWidth
-        if (p.x > canvas.offsetWidth) p.x = 0
-        if (p.y < 0) p.y = canvas.offsetHeight
-        if (p.y > canvas.offsetHeight) p.y = 0
-
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`
-        ctx.fill()
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          source: "DNS footer newsletter",
+          language,
+          subject: "DNS footer newsletter signup",
+        }),
       })
 
-      animationFrameId = requestAnimationFrame(animate)
+      if (!response.ok) {
+        throw new Error("Newsletter signup failed")
+      }
+
+      setEmail("")
+      setStatus("success")
+    } catch {
+      setStatus("error")
     }
-
-    resizeCanvas()
-    initParticles()
-    animate()
-
-    window.addEventListener("resize", () => {
-      resizeCanvas()
-      initParticles()
-    })
-
-    return () => {
-      cancelAnimationFrame(animationFrameId)
-      window.removeEventListener("resize", resizeCanvas)
-    }
-  }, [])
-
-  const content = {
-    en: {
-      rights: "© 2026 · All Rights Reserved",
-      designedBy: "Designed by ING. JMDR",
-      fromSuccessment: "From Successment",
-    },
-    es: {
-      rights: "© 2026 · Todos los Derechos Reservados",
-      designedBy: "Diseñado por ING. JMDR",
-      fromSuccessment: "From Successment",
-    },
   }
 
-  const t = content[language]
-
   return (
-    <footer className="relative bg-black overflow-hidden">
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.6 }} />
+    <footer className="relative overflow-hidden bg-black text-white">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(255,87,87,0.16),transparent_34%)] pointer-events-none" />
 
-      {/* Top Divider */}
-      <div className="relative z-10 w-full h-[1px] bg-white/15" />
-
-      {/* Footer Content */}
-      <div className="relative z-10 py-12 md:py-14">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 items-center">
-            {/* COLUMN 1 - LOGO */}
-            <div className="flex justify-center md:justify-start">
+      <div className="relative mx-auto max-w-7xl px-6 py-14 md:py-16 lg:py-20">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.45fr_0.8fr_0.75fr_0.85fr_1.35fr] lg:gap-10">
+          <div className="max-w-md">
+            <Link href="/" className="inline-flex" aria-label="Digital Nomad Summit home">
               <img
                 src="/logo digital nomad summit - Editado.png"
-                alt="Digital Nomad Summit - Remote Work Conference Santo Domingo 2026"
-                width={200}
-                height={200}
+                alt="Digital Nomad Summit"
+                width={160}
+                height={160}
                 loading="lazy"
-                className="w-[180px] md:w-[200px] h-auto rounded-lg shadow-[0_4px_20px_rgba(255,255,255,0.06)]"
+                className="h-auto w-[132px] rounded-md shadow-[0_10px_35px_rgba(255,255,255,0.05)] md:w-[150px]"
               />
-            </div>
+            </Link>
 
-            {/* COLUMN 2 - COPYRIGHT */}
-            <div className="flex flex-col items-center text-center gap-3">
-              <div className="flex flex-col gap-1">
-                <h3 className="text-white font-['League_Spartan'] font-bold text-lg md:text-xl tracking-wide">
-                  Digital Nomad <span className="text-[#FF5757]">Summit</span>
-                </h3>
-                <p className="text-white/70 font-['Inter'] text-xs md:text-sm">{t.fromSuccessment}</p>
+            <p className="mt-7 font-display text-2xl font-bold tracking-tight text-white">{t.tagline}</p>
+            <p className="mt-4 max-w-sm font-sans text-sm leading-6 text-white/70">{t.copy}</p>
+            <Link
+              href="/#tickets"
+              className="mt-7 inline-flex items-center gap-2 rounded-full border border-[#FF5757] bg-[#FF5757] px-5 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-white transition-all duration-200 hover:bg-white hover:text-[#FF5757] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5757] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            >
+              {t.primaryCta}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+
+          <FooterColumn heading={t.getInvolved.heading} links={t.getInvolved.links} />
+          <FooterColumn heading={t.event.heading} links={t.event.links} />
+          <FooterColumn heading={t.ecosystem.heading} links={t.ecosystem.links} />
+
+          <div className="min-w-0">
+            <h3 className="font-display text-sm font-bold uppercase tracking-[0.18em] text-white">
+              {t.newsletter.heading}
+            </h3>
+            <p className="mt-5 font-sans text-sm leading-6 text-white/70">{t.newsletter.description}</p>
+
+            <form onSubmit={handleNewsletterSubmit} className="mt-6">
+              <div className="flex min-w-0 overflow-hidden rounded-full border border-white/15 bg-white/[0.06] p-1 shadow-inner shadow-white/5 transition-colors duration-200 focus-within:border-[#FF5757]/80">
+                <input
+                  type="email"
+                  name="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
+                  placeholder={t.newsletter.placeholder}
+                  className="min-w-0 flex-1 bg-transparent px-4 py-2.5 font-sans text-sm text-white outline-none placeholder:text-white/38"
+                  aria-label={t.newsletter.placeholder}
+                />
+                <button
+                  type="submit"
+                  disabled={status === "submitting"}
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FF5757] text-white transition-all duration-200 hover:bg-white hover:text-[#FF5757] disabled:cursor-not-allowed disabled:opacity-60"
+                  aria-label={status === "submitting" ? t.newsletter.sending : t.newsletter.button}
+                >
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </button>
               </div>
-              <p className="text-white/80 font-['Inter'] text-sm">{t.rights}</p>
+
+              <p
+                className={`mt-3 min-h-5 font-sans text-xs ${
+                  status === "success" ? "text-[#FF5757]" : status === "error" ? "text-white/80" : "text-white/45"
+                }`}
+                aria-live="polite"
+              >
+                {status === "success" ? t.newsletter.success : status === "error" ? t.newsletter.error : " "}
+              </p>
+            </form>
+          </div>
+        </div>
+
+        <div className="mt-14 border-t border-white/10 pt-6 md:mt-16">
+          <div className="flex flex-col gap-5 text-sm text-white/52 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-1 font-sans">
+              <p>{t.rights}</p>
+              <p>{t.presentedBy}</p>
             </div>
 
-            {/* COLUMN 3 - DESIGNER CREDIT */}
-            <div className="flex flex-col items-center md:items-end text-center md:text-right gap-3">
-              <p className="text-white font-['Inter'] text-sm">{t.designedBy}</p>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 font-sans">
+              <Link href="/#contact" className="transition-colors duration-200 hover:text-[#FF5757]">
+                {t.contact}
+              </Link>
               <a
                 href="https://www.linkedin.com/in/jose-manuel-de-jesus-rodriguez-5a0981177"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-[#FF5757] font-['Inter'] text-sm hover:underline hover:drop-shadow-[0_0_8px_rgba(255,87,87,0.6)] transition-all duration-300"
+                className="text-white/38 transition-colors duration-200 hover:text-white/70"
               >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
-                <span>LinkedIn</span>
+                {t.designedBy}
               </a>
             </div>
           </div>

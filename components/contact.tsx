@@ -11,32 +11,34 @@ export function Contact() {
 
   const content = {
     en: {
-      title: "Contact",
-      subtitle: "Have a question, want to partner, or need support? Reach out and we'll respond.",
-      emailLabel: "Email",
-      instagramLabel: "Instagram",
+      label: "Stay Updated",
+      title: "Join the DNS Insider List",
+      subtitle: "Get first access to speaker announcements, early-bird tickets, and exclusive ecosystem updates.",
+      emailLabel: "Direct Email",
+      instagramLabel: "Follow Us",
       nameLabel: "Full Name",
-      namePlaceholder: "Your full name",
-      emailLabelForm: "Email",
+      namePlaceholder: "Enter your name",
+      emailLabelForm: "Email Address",
       emailPlaceholder: "you@example.com",
-      messageLabel: "Message",
-      messagePlaceholder: "Tell us how we can help you…",
-      submitButton: "Send Message",
-      submittingButton: "Sending...",
+      messageLabel: "Tell us about your interest (Optional)",
+      messagePlaceholder: "Founder, Investor, Nomad...",
+      submitButton: "Subscribe",
+      submittingButton: "Subscribing...",
     },
     es: {
-      title: "Contacto",
-      subtitle: "¿Tienes alguna pregunta, quieres colaborar o necesitas apoyo? Escríbenos y te responderemos.",
-      emailLabel: "Correo",
-      instagramLabel: "Instagram",
-      nameLabel: "Nombre Completo",
-      namePlaceholder: "Tu nombre completo",
-      emailLabelForm: "Correo Electrónico",
+      label: "Mantente actualizado",
+      title: "Únete a la lista DNS Insider",
+      subtitle: "Recibe acceso prioritario a anuncios de speakers, tickets early-bird y actualizaciones exclusivas.",
+      emailLabel: "Correo directo",
+      instagramLabel: "Síguenos",
+      nameLabel: "Nombre completo",
+      namePlaceholder: "Tu nombre",
+      emailLabelForm: "Correo electrónico",
       emailPlaceholder: "tu@ejemplo.com",
-      messageLabel: "Mensaje",
-      messagePlaceholder: "Cuéntanos cómo podemos ayudarte…",
-      submitButton: "Enviar Mensaje",
-      submittingButton: "Enviando...",
+      messageLabel: "Cuéntanos sobre tu interés (Opcional)",
+      messagePlaceholder: "Fundador, Inversionista, Nómada...",
+      submitButton: "Suscribirme",
+      submittingButton: "Suscribiendo...",
     },
   }
 
@@ -51,6 +53,9 @@ export function Contact() {
     <section id="contact" data-header-theme="white" className="relative bg-white py-24 md:py-32 overflow-hidden">
       <div className="container mx-auto px-4 md:px-6 max-w-[1200px]">
         <div className="text-center mb-16 md:mb-20 animate-fade-up">
+          <span className="text-[#FF5757] font-['Inter'] font-bold uppercase tracking-widest text-sm mb-4 inline-block">
+            {t.label}
+          </span>
           <h2 className="font-['League_Spartan'] text-4xl md:text-5xl font-bold text-black mb-3">{t.title}</h2>
           <div className="flex justify-center mb-6">
             <div className="h-[3px] w-20 bg-[#FF5757] rounded-full" />

@@ -9,40 +9,40 @@ const SponsorModal = dynamic(() => import("./sponsor-modal").then((mod) => mod.S
 
 const content = {
   en: {
-    headline: "Partner With the Digital Nomad Summit",
-    subheadline: "Powering innovation, mobility, and global competitiveness from the Caribbean",
+    label: "Partnerships",
+    headline: "Partner with the Future of Innovation",
+    subheadline: "Accelerating investment, mobility, and global competitiveness.",
     paragraph1:
-      "The Digital Nomad Summit Santo Domingo 2026 is a strategic convening platform bringing together founders, investors, policymakers, ecosystem builders, and global operators shaping the future of work, mobility, tourism 3.0, real estate, and emerging-market innovation.",
+      "The Digital Nomad Summit is a strategic convening platform bringing together founders, investors, and policymakers shaping the future of business and emerging-market innovation.",
     paragraph2:
-      "As a partner, your organization is not simply sponsoring an event — you are aligning with a movement accelerating the Dominican Republic's position as a global hub for innovation, investment, and cross-border growth.",
+      "Align your organization with a movement accelerating the Caribbean's position as a global hub for investment and cross-border growth.",
     outcomesTitle: "Strategic Alignment & Outcomes",
     outcomes: [
-      "High-value decision-makers across technology, investment, and public sector leadership",
-      "Cross-border business operators and global mobility leaders",
-      "Government-adjacent innovation and policy conversations",
-      "Diaspora influence and international narrative shaping",
-      "The Caribbean's fastest-emerging innovation and investment corridor",
+      "Access to high-level decision-makers and investors",
+      "Visibility within the Caribbean's fastest-growing innovation corridor",
+      "Direct engagement with global mobility and industry leaders",
+      "Alignment with government-adjacent innovation and policy conversations",
     ],
-    ctaText: "Request the Partnership Deck",
-    ctaHelper: "Request partnership details and sponsorship opportunities",
+    ctaInquiry: "Submit Sponsorship Inquiry",
+    ctaHelper: "Share your partnership interest through the sponsorship inquiry form.",
   },
   es: {
-    headline: "Conviértete en Socio del Digital Nomad Summit",
-    subheadline: "Impulsando innovación, movilidad y competitividad global desde el Caribe",
+    label: "Alianzas",
+    headline: "Únete al futuro de la innovación",
+    subheadline: "Acelerando la inversión, movilidad y competitividad global.",
     paragraph1:
-      "El Digital Nomad Summit Santo Domingo 2026 es una plataforma estratégica que reúne a fundadores, inversionistas, formuladores de políticas, constructores de ecosistema y operadores globales que están definiendo el futuro del trabajo, la movilidad, el turismo 3.0, el sector inmobiliario y la innovación en mercados emergentes.",
+      "El Digital Nomad Summit es una plataforma estratégica que reúne a fundadores, inversionistas y líderes públicos que están definiendo el futuro de los negocios y la innovación.",
     paragraph2:
-      "Como socio, tu organización no solo apoya un evento — se alinea con un movimiento que acelera el posicionamiento de la República Dominicana como un hub global de innovación, inversión y crecimiento transfronterizo.",
+      "Alinea tu organización con un movimiento que posiciona al Caribe como un hub global de inversión y crecimiento transfronterizo.",
     outcomesTitle: "Alineación Estratégica y Resultados",
     outcomes: [
-      "Tomadores de decisiones de alto nivel en tecnología, inversión y sector público",
-      "Operadores de negocios transfronterizos y líderes en movilidad global",
-      "Espacios de innovación y diálogo alineados con políticas públicas",
-      "Influencia de la diáspora y posicionamiento narrativo internacional",
-      "El corredor de innovación e inversión de mayor crecimiento en el Caribe",
+      "Acceso a tomadores de decisiones e inversionistas de alto nivel",
+      "Visibilidad en el corredor de innovación de mayor crecimiento en el Caribe",
+      "Interacción directa con líderes de la industria y movilidad global",
+      "Sincronía con espacios de innovación y diálogo de políticas públicas",
     ],
-    ctaText: "Solicitar el Deck de Asociación",
-    ctaHelper: "Solicitar detalles de asociación y oportunidades de patrocinio",
+    ctaInquiry: "Enviar solicitud de patrocinio",
+    ctaHelper: "Comparte tu interés de alianza a través del formulario de solicitud de patrocinio.",
   },
 }
 
@@ -81,6 +81,14 @@ export function SponsorCTA() {
       }}
     >
       <div className="relative z-10 mx-auto max-w-4xl px-6">
+        <div className="text-center mb-8">
+          <span className={`text-[#FF5757] font-display font-bold uppercase tracking-widest text-sm transition-all duration-700 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+          }`}>
+            {t.label}
+          </span>
+        </div>
+
         <h2
           className={`font-display text-4xl font-bold uppercase leading-tight text-white md:text-5xl lg:text-6xl text-center transition-all duration-700 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
@@ -90,7 +98,7 @@ export function SponsorCTA() {
         </h2>
 
         <p
-          className={`mt-6 text-xl md:text-2xl text-[#FF5757] font-display font-semibold text-center transition-all duration-700 delay-100 ${
+          className={`mt-6 text-xl md:text-2xl text-white/80 font-display font-semibold text-center transition-all duration-700 delay-100 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
           }`}
         >
@@ -102,8 +110,8 @@ export function SponsorCTA() {
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
           }`}
         >
-          <p className="text-lg leading-relaxed text-white md:text-xl font-sans">{t.paragraph1}</p>
-          <p className="text-lg leading-relaxed text-white md:text-xl font-sans">{t.paragraph2}</p>
+          <p className="text-lg leading-relaxed text-white md:text-xl font-sans text-center max-w-3xl mx-auto">{t.paragraph1}</p>
+          <p className="text-lg leading-relaxed text-white md:text-xl font-sans text-center max-w-3xl mx-auto">{t.paragraph2}</p>
         </div>
 
         <div
@@ -115,31 +123,31 @@ export function SponsorCTA() {
             {t.outcomesTitle}
           </h3>
 
-          <ul className="space-y-4 max-w-3xl mx-auto">
+          <ul className="grid gap-4 md:grid-cols-2 max-w-4xl mx-auto">
             {t.outcomes.map((outcome, index) => (
-              <li key={index} className="flex items-start text-white">
-                <span className="text-[#FF5757] mr-3 mt-1 flex-shrink-0">•</span>
-                <span className="text-lg leading-relaxed font-sans">{outcome}</span>
+              <li key={index} className="flex items-start text-white p-4 rounded-xl bg-white/5 border border-white/10">
+                <span className="text-[#FF5757] mr-3 mt-1 flex-shrink-0">✓</span>
+                <span className="text-base md:text-lg leading-snug font-sans">{outcome}</span>
               </li>
             ))}
           </ul>
         </div>
 
         <div
-          className={`mt-16 text-center transition-all duration-700 delay-400 ${
+          className={`mt-16 flex flex-col items-center justify-center gap-6 transition-all duration-700 delay-400 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
           }`}
         >
           <Button
             onClick={() => setIsSponsorModalOpen(true)}
             size="lg"
-            className="bg-[#FF5757] text-white hover:bg-white hover:text-[#FF5757] hover:border-[#FF5757] border-2 border-[#FF5757] transition-all duration-300 px-10 py-6 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl hover:scale-[1.02]"
+            className="bg-[#FF5757] text-white hover:bg-white hover:text-[#FF5757] hover:border-[#FF5757] border-2 border-[#FF5757] transition-all duration-300 px-10 py-6 text-lg font-bold rounded-full shadow-lg hover:shadow-xl hover:scale-[1.05] w-full sm:w-auto uppercase tracking-wider"
           >
-            {t.ctaText}
+            {t.ctaInquiry}
           </Button>
-
-          <p className="mt-4 text-sm text-white/80 font-sans">{t.ctaHelper}</p>
         </div>
+        <p className="mt-8 text-center text-sm text-white/60 font-sans italic">{t.ctaHelper}</p>
+
       </div>
 
       {/* Sponsor Modal */}

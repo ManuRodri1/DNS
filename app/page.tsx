@@ -14,6 +14,7 @@ import { SponsorsCarousel } from "@/components/sponsors-carousel"
 import { SponsorCTA } from "@/components/sponsor-cta"
 import { Location } from "@/components/location"
 import { Contact } from "@/components/contact"
+import { FinalCTA } from "@/components/final-cta"
 import { Footer } from "@/components/footer"
 import { Leva } from "leva"
 
@@ -34,6 +35,7 @@ export default function Home() {
       {/* 12 — Sponsor partnership CTA (sponsor modal only, no speaker content) */ }<SponsorCTA />
       {/* 13 */ }<Location />
       {/* 14 */ }<Contact />
+      <FinalCTA />
       <Footer />
       <Leva hidden />
     </>

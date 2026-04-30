@@ -19,10 +19,10 @@ import {
 // ─── Translations ──────────────────────────────────────────────────────────────────────────────
 const content = {
   en: {
-    sectionLabel: "Speakers",
-    headline1: "Voices Shaping",
-    headline2: "the Future",
-    subheadline: "Founders, policymakers, innovators, and operators joining Digital Nomad Summit 2026.",
+    sectionLabel: "Speakers & Leaders",
+    headline: "Meet the Leaders Driving Global Impact",
+    subheadline:
+      "From government executives to global entrepreneurs, investors, innovators, and ecosystem builders — these are the voices shaping the future of business across borders.",
     allSpeakers: "All Speakers",
     viewProfile: "View Profile",
     exploreAll: "Explore All Speakers",
@@ -30,10 +30,10 @@ const content = {
     comingSoon: "Speaker announcements coming soon.",
   },
   es: {
-    sectionLabel: "Speakers",
-    headline1: "Voces que Dan Forma",
-    headline2: "al Futuro",
-    subheadline: "Fundadores, legisladores, innovadores y operadores que se unen al Digital Nomad Summit 2026.",
+    sectionLabel: "Speakers y líderes",
+    headline: "Conoce a los líderes que impulsan impacto global",
+    subheadline:
+      "Desde líderes gubernamentales hasta emprendedores globales, inversionistas, innovadores y constructores de ecosistema — estas son las voces que están moldeando el futuro de los negocios sin fronteras.",
     allSpeakers: "Todos los Speakers",
     viewProfile: "Ver Perfil",
     exploreAll: "Ver Todos los Speakers",
@@ -258,9 +258,7 @@ export function HomepageSpeakers() {
                   fontSize: "clamp(2.25rem, 5vw, 4rem)",
                 }}
               >
-                {t.headline1}
-                <br />
-                <span className="text-[#FF5757]">{t.headline2}</span>
+                {t.headline}
               </h2>
               <p className="mt-4 font-sans text-white/50 text-base md:text-lg leading-relaxed max-w-2xl">
                 {t.subheadline}
