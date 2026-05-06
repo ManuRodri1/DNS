@@ -217,7 +217,7 @@ export function HomepageSpeakers() {
       id="speakers"
       ref={sectionRef}
       aria-label="Featured Speakers"
-      className="relative w-full overflow-hidden bg-black py-24 md:py-32"
+      className="relative w-full overflow-hidden bg-black py-16 md:py-24"
     >
       {/* Ambient coral glow — top right */}
       <div

@@ -108,6 +108,7 @@ export function AIGuideWidget() {
             <button 
               onClick={() => setIsOpen(false)}
               className="p-2 text-white/40 hover:text-white transition-colors"
+              suppressHydrationWarning
             >
               <X size={20} />
             </button>
@@ -134,6 +135,7 @@ export function AIGuideWidget() {
                         key={idx}
                         onClick={() => handleSend(prompt.en)}
                         className="text-[11px] bg-white/5 hover:bg-[#FF5757]/20 border border-white/10 hover:border-[#FF5757]/30 text-white/70 py-1.5 px-3 rounded-full transition-all"
+                        suppressHydrationWarning
                       >
                         {prompt.en} / {prompt.es}
                       </button>
@@ -214,6 +216,7 @@ export function AIGuideWidget() {
             "w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-90 relative pointer-events-auto",
             isOpen ? "bg-white text-black rotate-90" : "bg-[#FF5757] text-white rotate-0"
           )}
+          suppressHydrationWarning
         >
           {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
           {!isOpen && (

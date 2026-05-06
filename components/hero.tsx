@@ -61,10 +61,10 @@ export function Hero() {
   const t = translations[language]
 
   return (
-    <div className="flex flex-col h-svh justify-between">
+    <div className="flex flex-col min-h-[700px] md:min-h-[850px] lg:h-svh justify-center relative overflow-hidden">
       <GL hovering={hovering} />
 
-      <div className="pb-16 mt-auto text-center relative">
+      <div className="pt-20 pb-16 text-center relative z-10">
         <Pill className="mb-4 md:mb-6 text-sm md:text-base lg:text-xl px-4 md:px-6 lg:px-8 py-2 md:py-3 tracking-wider">
           {t.badge}
         </Pill>
@@ -72,15 +72,15 @@ export function Hero() {
           {t.dates}
         </div>
         <h1
-          className="px-4 leading-tight mx-auto font-display text-white"
+          className="px-4 leading-[1.1] mx-auto font-display text-white"
           style={{
-            fontSize: "clamp(1.5rem, 4.5vw, 4rem)",
-            maxWidth: "85vw",
+            fontSize: "clamp(1.75rem, 5vw, 4.5rem)",
+            maxWidth: "1100px",
           }}
         >
           {t.headline}
         </h1>
-        <p className="font-display text-xs sm:text-sm md:text-base text-foreground/80 text-balance mt-4 md:mt-6 lg:mt-8 max-w-[90vw] md:max-w-[540px] mx-auto px-4">
+        <p className="font-display text-xs sm:text-sm md:text-base lg:text-lg text-foreground/80 text-balance mt-4 md:mt-6 lg:mt-8 max-w-[90vw] md:max-w-[580px] mx-auto px-4">
           {t.subheadline}
         </p>
 

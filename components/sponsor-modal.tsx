@@ -477,31 +477,31 @@ export function SponsorForm({
               <label htmlFor="fullName" className={labelClass}>
                 {t.fields.fullName} <span className="text-red-500">*</span>
               </label>
-              <input type="text" id="fullName" name="fullName" required className={inputClass} />
+              <input type="text" id="fullName" name="fullName" required className={inputClass} suppressHydrationWarning />
             </div>
             <div>
               <label htmlFor="company" className={labelClass}>
                 {t.fields.company} <span className="text-red-500">*</span>
               </label>
-              <input type="text" id="company" name="company" required className={inputClass} />
+              <input type="text" id="company" name="company" required className={inputClass} suppressHydrationWarning />
             </div>
             <div>
               <label htmlFor="titleRole" className={labelClass}>
                 {t.fields.titleRole} <span className="text-red-500">*</span>
               </label>
-              <input type="text" id="titleRole" name="titleRole" required className={inputClass} />
+              <input type="text" id="titleRole" name="titleRole" required className={inputClass} suppressHydrationWarning />
             </div>
             <div>
               <label htmlFor="email" className={labelClass}>
                 {t.fields.email} <span className="text-red-500">*</span>
               </label>
-              <input type="email" id="email" name="email" required className={inputClass} />
+              <input type="email" id="email" name="email" required className={inputClass} suppressHydrationWarning />
             </div>
             <div>
               <label htmlFor="phone" className={labelClass}>
                 {t.fields.phone} <span className="text-gray-400 font-normal">{t.optionalPrompt}</span>
               </label>
-              <input type="tel" id="phone" name="phone" className={inputClass} />
+              <input type="tel" id="phone" name="phone" className={inputClass} suppressHydrationWarning />
             </div>
             <div>
               <label htmlFor="website" className={labelClass}>
@@ -541,6 +541,7 @@ export function SponsorForm({
                   required
                   className={`${inputClass} appearance-none pr-10`}
                   defaultValue=""
+                  suppressHydrationWarning
                 >
                   <option value="" disabled>
                     {t.selectPlaceholder}
@@ -568,7 +569,7 @@ export function SponsorForm({
           </h3>
           <fieldset className="space-y-6">
             <div>
-              <legend className={labelClass}>{t.fields.partnershipType}</legend>
+              <span className={labelClass}>{t.fields.partnershipType}</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                 {t.options.partnershipTypes.map((opt) => (
                   <label
@@ -611,9 +612,9 @@ export function SponsorForm({
             </div>
 
             <div>
-              <legend className={labelClass}>
+              <span className={labelClass}>
                 {t.fields.leading} <span className="text-red-500">*</span>
-              </legend>
+              </span>
               <div className="flex flex-col sm:flex-row gap-4 mt-3">
                 {t.options.leadingAnswers.map((opt) => (
                   <label key={opt} className="flex items-center space-x-2 cursor-pointer">
@@ -658,6 +659,7 @@ export function SponsorForm({
                     value={opt}
                     required
                     className="w-4 h-4 text-[#FF5757] border-gray-300 focus:ring-[#FF5757]/20"
+                    suppressHydrationWarning
                   />
                   <span className="text-sm text-gray-800 font-medium">{opt}</span>
                 </label>
@@ -673,9 +675,9 @@ export function SponsorForm({
           </h3>
           <fieldset className="space-y-6">
             <div>
-              <legend className={labelClass}>
+              <span className={labelClass}>
                 {t.fields.decisionMaker} <span className="text-red-500">*</span>
-              </legend>
+              </span>
               <div className="flex flex-col sm:flex-row gap-4 mt-3">
                 {t.options.decisionMakerAnswers.map((opt) => (
                   <label key={opt} className="flex items-center space-x-2 cursor-pointer">
@@ -703,6 +705,7 @@ export function SponsorForm({
                   required
                   className={`${inputClass} appearance-none pr-10`}
                   defaultValue=""
+                  suppressHydrationWarning
                 >
                   <option value="" disabled>
                     {t.selectPlaceholder}

@@ -29,7 +29,7 @@ const content = {
         { label: "About DNS", href: "/#about" },
         { label: "Tickets", href: "/#tickets" },
         { label: "Location", href: "/#location" },
-        { label: "Partners", href: "/#partners-section" },
+        { label: "Partners", href: "/partners" },
       ],
     },
     ecosystem: {
@@ -74,7 +74,7 @@ const content = {
         { label: "Sobre DNS", href: "/#about" },
         { label: "Boletas", href: "/#tickets" },
         { label: "Ubicación", href: "/#location" },
-        { label: "Aliados", href: "/#partners-section" },
+        { label: "Aliados", href: "/partners" },
       ],
     },
     ecosystem: {

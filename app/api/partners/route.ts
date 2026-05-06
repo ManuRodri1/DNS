@@ -1,9 +1,16 @@
 import { getPartners } from "@/lib/data/partners"
 import { NextResponse } from "next/server"
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const partners = await getPartners()
+    const { searchParams } = new URL(request.url)
+    const showOnHome = searchParams.get("show_on_home") === "true"
+    
+    let partners = await getPartners()
+    
+    if (showOnHome) {
+      partners = partners.filter(p => p.show_on_home === true)
+    }
 
     return NextResponse.json(
       {

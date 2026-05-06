@@ -77,7 +77,7 @@ export function SummitExperience() {
   return (
     <section
       id="summit-experience"
-      className="relative w-full overflow-hidden bg-black py-28 md:py-36"
+      className="relative w-full overflow-hidden bg-black py-16 md:py-24"
     >
       {/* Subtle radial accent */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,87,87,0.04)_0%,transparent_70%)]" />

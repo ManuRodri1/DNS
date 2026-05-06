@@ -31,7 +31,7 @@ export const MobileMenu = ({ className, isWhiteHeader = false }: MobileMenuProps
     { name: "Agenda", href: "/agenda" },
     { name: "Tickets", href: "/#tickets" },
     { name: "Location", href: "#location" },
-    { name: "Sponsors & Partners", href: "#partners-section" },
+    { name: "Sponsors & Partners", href: "/partners" },
     { name: "Contact", href: "#contact" },
     { name: "Successment", href: "https://www.successment.co/", external: true },
   ]

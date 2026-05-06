@@ -31,7 +31,7 @@ export function ZariSection() {
   const t = content[language]
 
   return (
-    <section className="relative w-full overflow-hidden bg-black py-24 md:py-32">
+    <section className="relative w-full overflow-hidden bg-black py-16 md:py-24">
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         {/* Desktop: Two Column Layout | Mobile: Stacked with image below */}
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">

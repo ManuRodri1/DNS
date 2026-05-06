@@ -47,7 +47,7 @@ export function FinalCTA() {
     <section
       id="final-cta"
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-black py-24 md:py-32"
+      className="relative w-full overflow-hidden bg-black py-12 md:py-20"
     >
       {/* Background visual - subtle coral mesh gradient */}
       <div className="absolute inset-0 z-0 opacity-20">

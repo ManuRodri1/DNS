@@ -64,6 +64,7 @@ export function AIGuideBubble({ onOpen, isChatOpen }: AIGuideBubbleProps) {
         <button 
           onClick={handleDismiss}
           className="absolute -top-2 -right-2 bg-black border border-white/10 rounded-full p-1 text-white/40 hover:text-white transition-colors"
+          suppressHydrationWarning
         >
           <X size={12} />
         </button>

@@ -15,6 +15,7 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
           language === "es" ? "opacity-100 scale-105" : "opacity-40 hover:opacity-70",
         )}
         aria-label="Switch to Spanish"
+        suppressHydrationWarning
       >
         <img
           src="/images/design-mode/dominican-republic.png"
@@ -29,6 +30,7 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
           language === "en" ? "opacity-100 scale-105" : "opacity-40 hover:opacity-70",
         )}
         aria-label="Switch to English"
+        suppressHydrationWarning
       >
         <img src="/images/design-mode/usa.png" alt="English" className="w-8 h-8 rounded-sm pointer-events-none" />
       </button>

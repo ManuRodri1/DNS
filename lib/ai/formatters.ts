@@ -11,10 +11,20 @@ export function formatSpeakersForAI(speakers: Speaker[]): string {
 }
 
 export function formatPartnersForAI(partners: Partner[]): string {
-  if (partners.length === 0) return "The current partner or sponsor list is temporarily unavailable.";
+  if (partners.length === 0) return "None active.";
   
   return partners
-    .map(p => `- ${p.name} (${p.category}): Based in ${p.category === 'Sponsor' ? 'Global' : 'Strategic Area'}. Website: ${p.websiteUrl}`)
+    .map(p => {
+      const label = p.short_label || p.partner_type || p.category || "Partner";
+      const status = p.status || "Active";
+      const website = p.website_url || p.websiteUrl ? `Website: ${p.website_url || p.websiteUrl}` : "No website available";
+      
+      let details = `- ${p.name} — ${label} — ${status} — ${website}`;
+      if (p.description) details += `\n  Description: ${p.description}`;
+      if (p.initiative) details += `\n  Initiative: ${p.initiative}`;
+      if (p.country) details += `\n  Country: ${p.country}`;
+      return details;
+    })
     .join("\n");
 }
 

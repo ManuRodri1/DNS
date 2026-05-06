@@ -61,9 +61,11 @@ export async function buildDNSContext() {
     getCachedInfluencers(),
   ]);
 
-  const sponsors = partners.filter(p => p.category === "Sponsor");
-  const strategicPartners = partners.filter(p => p.category === "Strategic Partner");
-  const mediaPartners = partners.filter(p => p.category === "Media Partner");
+  const brandSponsors = partners.filter(p => p.section === "brand_sponsors");
+  const diterIntellectualSponsors = partners.filter(p => p.section === "diter_intellectual_sponsors");
+  const technicalAlignment = partners.filter(p => p.section === "technical_alignment");
+  const institutionalEcosystem = partners.filter(p => p.section === "institutional_ecosystem");
+  const mediaPartners = partners.filter(p => p.section === "media_partners");
 
   return `
 --- OFFICIAL DNS 2026 OVERVIEW ---
@@ -111,18 +113,32 @@ Title: ${STATIC_DNS_CONTEXT.diter_2026.title}
 Subtitle: ${STATIC_DNS_CONTEXT.diter_2026.subtitle}
 Desc: ${STATIC_DNS_CONTEXT.diter_2026.description}
 Academic/Institutional Partners: ${STATIC_DNS_CONTEXT.diter_2026.partners.join(", ")}
+Note: DITER is not a normal partner logo. It is an intellectual framework and strategic assessment. Supporting organizations are represented through Intellectual Sponsors, Technical Alignment, and Institutional Ecosystem.
 
 --- DYNAMIC DIRECTORY (LIVE FROM AIRTABLE/SUPABASE) ---
 SPEAKERS:
 ${formatSpeakersForAI(speakers)}
 
-SPONSORS:
-${formatPartnersForAI(sponsors)}
+PARTNERS FROM SUPABASE — SOURCE OF TRUTH
 
-STRATEGIC PARTNERS:
-${formatPartnersForAI(strategicPartners)}
+Brand Sponsors & Partners:
+Brand Sponsors & Partners supporting the DNS ecosystem.
+${formatPartnersForAI(brandSponsors)}
 
-MEDIA PARTNERS:
+DITER 2026 Intellectual Sponsors:
+DITER 2026 Intellectual Sponsors. These are tied to the Dominican Innovation & Transnational Export Report.
+${formatPartnersForAI(diterIntellectualSponsors)}
+
+Technical Alignment:
+Organizations in technical alignment with the DITER 2026 framework. These must NOT be called sponsors unless their partner_type/category says so.
+${formatPartnersForAI(technicalAlignment)}
+
+Institutional & Ecosystem Alignment:
+Institutional and ecosystem collaborators advancing innovation, exports, entrepreneurship, investment, and global competitiveness.
+${formatPartnersForAI(institutionalEcosystem)}
+
+Media Partners:
+Media, content, press, influencer, or distribution partners.
 ${formatPartnersForAI(mediaPartners)}
 
 INFLUENCERS:

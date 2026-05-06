@@ -92,6 +92,7 @@ export const Header = () => {
               }`}
               aria-expanded={isAboutOpen}
               aria-haspopup="true"
+              suppressHydrationWarning
             >
               About
               <svg
@@ -136,7 +137,7 @@ export const Header = () => {
             { label: "Agenda", href: "/agenda" },
             { label: "Tickets", href: "/#tickets" },
             { label: "Location", href: "/#location" },
-            { label: "Sponsors & Partners", href: "/#partners-section" },
+            { label: "Sponsors & Partners", href: "/partners" },
             { label: "Contact", href: "/#contact" },
             { label: "Successment", href: "https://www.successment.co/", external: true },
           ].map((item) => (
@@ -173,6 +174,7 @@ export const Header = () => {
               }`}
               aria-expanded={isDropdownOpen}
               aria-haspopup="true"
+              suppressHydrationWarning
             >
               Digital Nomad Weekly
               <svg

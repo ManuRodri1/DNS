@@ -27,8 +27,8 @@ interface CompanyLogosProps {
 
 const sizeMap = {
   sm: {
-    // Grid card: h-7 (28px) max-height, compact chip
-    imgClass: "h-7 w-auto max-w-[96px]",
+    // Grid card: increased size for better visibility
+    imgClass: "h-8 w-auto max-w-[110px]",
     chipClass: "px-3 py-1.5",
     gap: "gap-2.5",
   },
@@ -58,9 +58,9 @@ export function CompanyLogos({
 
   const { imgClass, chipClass, gap } = sizeMap[size]
 
-  // Shared glass chip style — subtle frosted dark container
+  // Shared glass chip style — subtle frosted dark container, slightly brightened for better dark logo contrast
   const chipBase =
-    "inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-sm transition-all duration-200 group-hover:border-white/20 group-hover:bg-white/[0.10]"
+    "inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.15] backdrop-blur-md transition-all duration-200 group-hover:border-white/25 group-hover:bg-white/[0.20]"
 
   return (
     <div className={`flex flex-wrap items-center ${gap} ${className}`}>

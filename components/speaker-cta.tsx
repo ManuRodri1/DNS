@@ -78,7 +78,7 @@ export function SpeakerCTA() {
           style={{ background: "radial-gradient(circle at center, rgba(255,87,87,0.06) 0%, transparent 65%)" }}
         />
 
-        <div className="relative z-10 mx-auto max-w-5xl px-6 md:px-10 py-24 md:py-32">
+        <div className="relative z-10 mx-auto max-w-5xl px-6 md:px-10 py-16 md:py-24">
           <div
             className="text-center"
             style={{

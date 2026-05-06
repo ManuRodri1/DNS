@@ -47,7 +47,7 @@ export function About() {
   return (
     <section id="about" className="relative w-full overflow-hidden bg-black">
       {/* Section Label + Headline */}
-      <div className="relative z-10 mx-auto max-w-5xl px-6 pb-8 pt-32 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <div className="relative z-10 mx-auto max-w-5xl px-6 pb-8 pt-20 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
         <span className="text-[#FF5757] font-display font-bold uppercase tracking-widest text-sm md:text-base">
           {t.label}
         </span>
@@ -105,7 +105,7 @@ export function About() {
       </div>
 
       {/* Body Content */}
-      <div className="relative z-10 mx-auto max-w-4xl px-6 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 text-center">
+      <div className="relative z-10 mx-auto max-w-4xl px-6 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 text-center">
         {t.body}
       </div>
     </section>
