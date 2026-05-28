@@ -87,15 +87,9 @@ export const STATIC_DNS_CONTEXT = {
 
   tickets: [
     {
-      name: "Early Bird",
-      price: "USD $99",
-      description: "Limited offer for early decision-makers. Secure your pass at the best price.",
-      includes: ["Full Summit Access", "Keynotes and Panels", "Networking Sessions"]
-    },
-    {
       name: "General Admission",
       price: "USD $149",
-      description: "The standard pass for attendees seeking the full DNS experience.",
+      description: "The standard pass for attendees seeking the full Digital Nomad Summit experience.",
       includes: ["Full Summit Access", "Keynotes and Panels", "Networking Sessions", "Access to the Expo Area"]
     },
     {

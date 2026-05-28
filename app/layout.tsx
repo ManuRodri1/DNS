@@ -5,6 +5,7 @@ import "./globals.css"
 import { Header } from "@/components/header"
 import { LanguageProvider } from "@/lib/language-context"
 import { AIGuideWidget } from "@/components/ai-guide/ai-guide-widget"
+import Script from "next/script"
 
 const sora = Sora({
   variable: "--font-display",
@@ -168,7 +169,7 @@ export default function RootLayout({
                 "A global summit uniting leaders shaping the future of remote work, tourism 3.0, innovation, and emerging markets in the Caribbean.",
               offers: {
                 "@type": "AggregateOffer",
-                lowPrice: "99",
+                lowPrice: "149",
                 highPrice: "399",
                 priceCurrency: "USD",
                 url: "https://www.digitalnomadsummit.co/#tickets",
@@ -191,6 +192,13 @@ export default function RootLayout({
           {children}
           <AIGuideWidget />
         </LanguageProvider>
+        {/* Klaviyo Onsite Script */}
+        {/* TODO: Replace TODO_KLAVIYO_COMPANY_ID with the actual Klaviyo Company ID/Public API Key from the client */}
+        <Script
+          id="klaviyo-onsite"
+          strategy="afterInteractive"
+          src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=TODO_KLAVIYO_COMPANY_ID"
+        />
       </body>
     </html>
   )

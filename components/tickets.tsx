@@ -6,25 +6,16 @@ import { Pill } from "@/components/pill"
 const content = {
   en: {
     label: "Admission",
-    badge: "Limited Availability · Early Bird ending soon",
+    badge: "Limited Availability · Secure your ticket",
     title: "Secure Your Place at the Summit",
     subtitle: "Join the most influential network of innovators and decision-makers in the Caribbean.",
     tickets: [
       {
-        title: "Early Bird",
-        price: "$99",
-        description: "Special rate for early action-takers. Available for a limited time.",
-        benefits: ["Full 2-Day Summit Access", "Keynotes & Panel Discussions", "Standard Networking Lounge", "Access to Business Expo area"],
-        ctaText: "Get Early Bird",
-        ctaLink: "https://buy.stripe.com/5kQ9AT4fL1kf5HM7Ee8EM06",
-        highlight: false,
-      },
-      {
         title: "General Admission",
         price: "$149",
-        description: "The full DNS experience for founders, operators, and professionals.",
-        benefits: ["Full 2-Day Summit Access", "Keynotes & Panel Discussions", "Strategic Networking Lounge", "Access to Business Expo area", "Official Event Swag Bag"],
-        ctaText: "Get Standard Pass",
+        description: "The standard pass for attendees seeking the full Digital Nomad Summit experience.",
+        benefits: ["Full Summit Access", "Keynotes and Panels", "Networking Sessions", "Access to the Expo Area"],
+        ctaText: "Get General Admission",
         ctaLink: "https://buy.stripe.com/fZubJ127De71eei4s28EM05",
         highlight: false,
       },
@@ -49,25 +40,16 @@ const content = {
   },
   es: {
     label: "Admisión",
-    badge: "Disponibilidad limitada · Early Bird por finalizar",
+    badge: "Disponibilidad limitada · Asegura tu ticket",
     title: "Asegura tu lugar en el Summit",
     subtitle: "Únete a la red más influyente de innovadores y tomadores de decisiones en el Caribe.",
     tickets: [
       {
-        title: "Early Bird",
-        price: "$99",
-        description: "Tarifa especial para quienes toman acción temprana. Por tiempo limitado.",
-        benefits: ["Acceso completo al Summit (2 días)", "Keynotes y paneles de discusión", "Networking Lounge estándar", "Acceso al área de Business Expo"],
-        ctaText: "Comprar Early Bird",
-        ctaLink: "https://buy.stripe.com/5kQ9AT4fL1kf5HM7Ee8EM06",
-        highlight: false,
-      },
-      {
-        title: "Admisión General",
+        title: "Entrada General",
         price: "$149",
-        description: "La experiencia completa de DNS para fundadores, operadores y profesionales.",
-        benefits: ["Acceso completo al Summit (2 días)", "Keynotes y paneles de discusión", "Strategic Networking Lounge", "Acceso al área de Business Expo", "Kit oficial del evento (Swag Bag)"],
-        ctaText: "Comprar Pase Estándar",
+        description: "El pase estándar para asistentes que desean vivir la experiencia completa del Digital Nomad Summit.",
+        benefits: ["Acceso completo al summit", "Conferencias principales y paneles", "Sesiones de networking", "Acceso al área de exposición"],
+        ctaText: "Comprar Entrada General",
         ctaLink: "https://buy.stripe.com/fZubJ127De71eei4s28EM05",
         highlight: false,
       },
@@ -76,7 +58,7 @@ const content = {
         price: "$399",
         description: "Acceso premium para líderes e inversionistas que buscan networking de alto nivel.",
         benefits: [
-          "Todos los beneficios de Admisión General",
+          "Todos los beneficios de Entrada General",
           "Cena VIP exclusiva en el Malecón",
           "Desayuno ejecutivo VIP (Mesa Redonda)",
           "Asientos reservados prioritarios",
@@ -110,8 +92,8 @@ export function Tickets() {
       </div>
 
       {/* Ticket Cards Grid */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="relative z-10 mx-auto max-w-4xl px-6">
+        <div className="grid gap-8 md:grid-cols-2">
           {t.tickets.map((ticket, index) => (
             <div
               key={index}

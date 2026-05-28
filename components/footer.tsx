@@ -1,13 +1,8 @@
 "use client"
 
-import type React from "react"
-
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
-import { useState } from "react"
-
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/xwpdaprd"
 
 const content = {
   en: {
@@ -139,38 +134,6 @@ function FooterColumn({ heading, links }: { heading: string; links: FooterLink[]
 export function Footer() {
   const { language } = useLanguage()
   const t = content[language]
-  const [email, setEmail] = useState("")
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
-
-  const handleNewsletterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setStatus("submitting")
-
-    try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          source: "DNS footer newsletter",
-          language,
-          subject: "DNS footer newsletter signup",
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Newsletter signup failed")
-      }
-
-      setEmail("")
-      setStatus("success")
-    } catch {
-      setStatus("error")
-    }
-  }
 
   return (
     <footer className="relative overflow-hidden bg-black text-white">
@@ -212,37 +175,9 @@ export function Footer() {
             </h3>
             <p className="mt-5 font-sans text-sm leading-6 text-white/70">{t.newsletter.description}</p>
 
-            <form onSubmit={handleNewsletterSubmit} className="mt-6">
-              <div className="flex min-w-0 overflow-hidden rounded-full border border-white/15 bg-white/[0.06] p-1 shadow-inner shadow-white/5 transition-colors duration-200 focus-within:border-[#FF5757]/80">
-                <input
-                  type="email"
-                  name="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  required
-                  placeholder={t.newsletter.placeholder}
-                  className="min-w-0 flex-1 bg-transparent px-4 py-2.5 font-sans text-sm text-white outline-none placeholder:text-white/38"
-                  aria-label={t.newsletter.placeholder}
-                />
-                <button
-                  type="submit"
-                  disabled={status === "submitting"}
-                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FF5757] text-white transition-all duration-200 hover:bg-white hover:text-[#FF5757] disabled:cursor-not-allowed disabled:opacity-60"
-                  aria-label={status === "submitting" ? t.newsletter.sending : t.newsletter.button}
-                >
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </button>
-              </div>
-
-              <p
-                className={`mt-3 min-h-5 font-sans text-xs ${
-                  status === "success" ? "text-[#FF5757]" : status === "error" ? "text-white/80" : "text-white/45"
-                }`}
-                aria-live="polite"
-              >
-                {status === "success" ? t.newsletter.success : status === "error" ? t.newsletter.error : " "}
-              </p>
-            </form>
+            <div className="mt-6">
+              <div className="klaviyo-form-S7wKKK"></div>
+            </div>
           </div>
         </div>
 

@@ -13,7 +13,7 @@ export function Contact() {
     en: {
       label: "Stay Updated",
       title: "Join the DNS Insider List",
-      subtitle: "Get first access to speaker announcements, early-bird tickets, and exclusive ecosystem updates.",
+      subtitle: "Get first access to speaker announcements, tickets, and exclusive ecosystem updates.",
       emailLabel: "Direct Email",
       instagramLabel: "Follow Us",
       nameLabel: "Full Name",
@@ -28,7 +28,7 @@ export function Contact() {
     es: {
       label: "Mantente actualizado",
       title: "Únete a la lista DNS Insider",
-      subtitle: "Recibe acceso prioritario a anuncios de speakers, tickets early-bird y actualizaciones exclusivas.",
+      subtitle: "Recibe acceso prioritario a anuncios de speakers, tickets y actualizaciones exclusivas.",
       emailLabel: "Correo directo",
       instagramLabel: "Síguenos",
       nameLabel: "Nombre completo",
