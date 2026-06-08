@@ -172,7 +172,7 @@ export default function RootLayout({
                 lowPrice: "149",
                 highPrice: "399",
                 priceCurrency: "USD",
-                url: "https://www.digitalnomadsummit.co/#tickets",
+                url: "https://www.digitalnomadsummit.co/tickets",
                 availability: "https://schema.org/InStock",
               },
               organizer: {

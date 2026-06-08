@@ -141,7 +141,7 @@ export function SummitExperience() {
           }}
         >
           <Link
-            href="/#tickets"
+            href="/tickets"
             className="group inline-flex items-center justify-center rounded-full border-2 border-[#FF5757] bg-[#FF5757] px-10 py-5 font-display text-lg font-bold text-white shadow-lg transition-all duration-300 hover:bg-white hover:text-[#FF5757] uppercase tracking-wider"
           >
             {t.cta}

@@ -353,7 +353,7 @@ export function SpeakerProfileClient({
                 <p className="text-white font-bold font-sans text-base mb-1">DNS Santo Domingo 2026</p>
                 <p className="text-white/50 text-sm font-sans mb-1">{t.eventDate}</p>
                 <p className="text-white/40 text-sm font-sans mb-4">{t.eventVenue}</p>
-                <Link href="/#tickets" className="inline-flex items-center gap-2 text-[#FF5757] text-sm font-bold font-sans hover:gap-3 transition-all duration-200">
+                <Link href="/tickets" className="inline-flex items-center gap-2 text-[#FF5757] text-sm font-bold font-sans hover:gap-3 transition-all duration-200">
                   {t.getTicket}
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />

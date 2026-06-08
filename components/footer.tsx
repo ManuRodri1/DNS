@@ -22,7 +22,7 @@ const content = {
       heading: "Event",
       links: [
         { label: "About DNS", href: "/#about" },
-        { label: "Tickets", href: "/#tickets" },
+        { label: "Tickets", href: "/tickets" },
         { label: "Location", href: "/#location" },
         { label: "Partners", href: "/partners" },
       ],
@@ -67,7 +67,7 @@ const content = {
       heading: "Evento",
       links: [
         { label: "Sobre DNS", href: "/#about" },
-        { label: "Boletas", href: "/#tickets" },
+        { label: "Boletas", href: "/tickets" },
         { label: "Ubicación", href: "/#location" },
         { label: "Aliados", href: "/partners" },
       ],
@@ -157,7 +157,7 @@ export function Footer() {
             <p className="mt-7 font-display text-2xl font-bold tracking-tight text-white">{t.tagline}</p>
             <p className="mt-4 max-w-sm font-sans text-sm leading-6 text-white/70">{t.copy}</p>
             <Link
-              href="/#tickets"
+              href="/tickets"
               className="mt-7 inline-flex items-center gap-2 rounded-full border border-[#FF5757] bg-[#FF5757] px-5 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-white transition-all duration-200 hover:bg-white hover:text-[#FF5757] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5757] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               {t.primaryCta}

@@ -85,7 +85,7 @@ export function Hero() {
         </p>
 
         <div className="mt-6 md:mt-10 lg:mt-14 flex flex-col sm:flex-row gap-3 md:gap-4 items-center justify-center px-4">
-          <Link href="/#tickets" className="w-full sm:w-auto">
+          <Link href="/tickets" className="w-full sm:w-auto">
             <Button
               className="bg-[#FF5757] hover:bg-white hover:text-[#FF5757] hover:border-[#FF5757] border-2 border-[#FF5757] transition-all duration-300 hover:scale-[1.03] px-6 md:px-10 py-4 md:py-7 text-sm md:text-base w-full sm:w-auto text-white font-display font-bold uppercase tracking-wider"
               onMouseEnter={() => setHovering(true)}

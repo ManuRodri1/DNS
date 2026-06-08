@@ -142,7 +142,7 @@ function SpeakersHero({ onApply, t }: { onApply: () => void; t: typeof content["
             {t.applyBtn}
             <svg className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
           </button>
-          <Link href="/#tickets" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-4 font-sans font-semibold text-white/80 text-sm transition-all duration-300 hover:border-white/50 hover:text-white">
+          <Link href="/tickets" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-4 font-sans font-semibold text-white/80 text-sm transition-all duration-300 hover:border-white/50 hover:text-white">
             {t.buyTickets}
           </Link>
         </div>
@@ -192,7 +192,7 @@ function NoSpeakersPublished({ onApply, t }: { onApply: () => void; t: typeof co
             {t.applyBtn}
             <svg className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
           </button>
-          <Link href="/#tickets" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-4 font-sans font-semibold text-white/80 text-sm transition-all duration-300 hover:border-white/50 hover:text-white">
+          <Link href="/tickets" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-4 font-sans font-semibold text-white/80 text-sm transition-all duration-300 hover:border-white/50 hover:text-white">
             {t.buyTickets}
           </Link>
         </div>

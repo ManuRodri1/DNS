@@ -79,7 +79,7 @@ export function AgendaCTA() {
 
           {/* Secondary CTA */}
           <Link
-            href="/#tickets"
+            href="/tickets"
             className="inline-flex items-center justify-center px-8 py-4 rounded-lg font-sans font-medium text-base text-[#FF5757] bg-transparent border-2 border-[#FF5757]/40 hover:border-[#FF5757] hover:bg-[#FF5757] hover:text-white transition-all duration-300 min-w-[220px]"
           >
             {t.secondary}

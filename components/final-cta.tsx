@@ -71,7 +71,7 @@ export function FinalCTA() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link
-              href="/#tickets"
+              href="/tickets"
               className="group relative inline-flex items-center justify-center rounded-full bg-[#FF5757] px-10 py-5 font-display text-lg font-bold text-white shadow-[0_0_20px_rgba(255,87,87,0.3)] transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,87,87,0.5)] hover:scale-[1.05] w-full sm:w-auto uppercase tracking-wider"
             >
               <span className="relative z-10">{t.primaryCTA}</span>

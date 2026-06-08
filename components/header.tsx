@@ -10,11 +10,16 @@ export const Header = () => {
   const pathname = usePathname()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isAboutOpen, setIsAboutOpen] = useState(false)
-  const [isWhiteHeader, setIsWhiteHeader] = useState(false)
+  const [isWhiteHeader, setIsWhiteHeader] = useState(pathname === "/tickets")
   const aboutTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const weeklyTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
+    if (pathname === "/tickets") {
+      setIsWhiteHeader(true)
+      return
+    }
+
     const whiteHeaderSections = document.querySelectorAll('[data-header-theme="white"]')
     const intersectingSections = new Set<Element>()
 
@@ -135,7 +140,7 @@ export const Header = () => {
           {[
             { label: "Speakers", href: "/speakers" },
             { label: "Agenda", href: "/agenda" },
-            { label: "Tickets", href: "/#tickets" },
+            { label: "Tickets", href: "/tickets" },
             { label: "Location", href: "/#location" },
             { label: "Sponsors & Partners", href: "/partners" },
             { label: "Contact", href: "/#contact" },

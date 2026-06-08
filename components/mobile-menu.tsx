@@ -29,7 +29,7 @@ export const MobileMenu = ({ className, isWhiteHeader = false }: MobileMenuProps
   const menuItems = [
     { name: "Speakers", href: "/speakers" },
     { name: "Agenda", href: "/agenda" },
-    { name: "Tickets", href: "/#tickets" },
+    { name: "Tickets", href: "/tickets" },
     { name: "Location", href: "#location" },
     { name: "Sponsors & Partners", href: "/partners" },
     { name: "Contact", href: "#contact" },
