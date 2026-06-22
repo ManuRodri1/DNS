@@ -4,7 +4,7 @@
 // Client-side filter + search panel. Drives the visible speaker grid via React state.
 
 import { useState, useMemo, useCallback } from "react"
-import type { Speaker } from "@/lib/airtable-speakers"
+import type { Speaker } from "@/lib/data/speakers"
 import { SpeakerCard } from "./speaker-card"
 import { TopicPill } from "./topic-pill"
 import { useLanguage } from "@/lib/language-context"
@@ -52,6 +52,8 @@ const content = {
     clearFilters: "Limpiar filtros",
   },
 }
+
+type FilterContent = (typeof content)[keyof typeof content]
 
 interface SpeakersFilterProps {
   speakers: Speaker[]
@@ -248,7 +250,7 @@ export function SpeakersFilter({ speakers }: SpeakersFilterProps) {
 }
 
 // ─── No-results state ─────────────────────────────────────────────────────────
-function NoResults({ onClear, hasFilters, t }: { onClear: () => void; hasFilters: boolean; t: typeof content["en"] }) {
+function NoResults({ onClear, hasFilters, t }: { onClear: () => void; hasFilters: boolean; t: FilterContent }) {
   return (
     <div className="flex flex-col items-center justify-center py-24 px-8 text-center">
       <div className="w-20 h-20 rounded-full border border-[#FF5757]/20 bg-[#FF5757]/5 flex items-center justify-center mb-6">

@@ -5,7 +5,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import type { Speaker } from "@/lib/airtable-speakers"
+import type { Speaker } from "@/lib/data/speakers"
 import { TopicPill } from "./topic-pill"
 import { SocialLinks } from "./social-links"
 import { CompanyLogos } from "./company-logos"
@@ -17,18 +17,18 @@ interface SpeakerCardProps {
 export function SpeakerCard({ speaker }: SpeakerCardProps) {
   // Headshot first → Poster Image as fallback → no image
   const image = speaker.headshot || speaker.posterImage || null
+  const profileHref = `/speakers/${speaker.slug}`
   const visibleTopics = speaker.topics.slice(0, 2)
   const hasMoreTopics = speaker.topics.length > 2
 
   const hasLogos = !!(speaker.companyLogoPrimary || speaker.companyLogoSecondary)
 
   return (
-    <Link
-      href={`/speakers/${speaker.slug}`}
+    <article
       className="group relative flex flex-col bg-[#0d0d0d] border border-white/8 rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#FF5757]/40 hover:shadow-[0_0_40px_rgba(255,87,87,0.08)] hover:-translate-y-1"
     >
       {/* Image */}
-      <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#111]">
+      <Link href={profileHref} className="relative block w-full aspect-[4/5] overflow-hidden bg-[#111]">
         {image ? (
           <Image
             src={image}
@@ -59,18 +59,20 @@ export function SpeakerCard({ speaker }: SpeakerCardProps) {
             <span className="text-white text-[10px] font-bold uppercase tracking-wider font-sans">Featured</span>
           </div>
         )}
-      </div>
+      </Link>
 
       {/* Content */}
       <div className="flex flex-col flex-1 p-5 gap-3">
         {/* Name + title */}
         <div>
-          <h3
-            className="text-white font-bold text-lg leading-tight tracking-tight group-hover:text-[#FF5757] transition-colors duration-200"
-            style={{ fontFamily: "var(--font-display), 'League Spartan', sans-serif" }}
-          >
-            {speaker.fullName}
-          </h3>
+          <Link href={profileHref} className="block">
+            <h3
+              className="text-white font-bold text-lg leading-tight tracking-tight group-hover:text-[#FF5757] transition-colors duration-200"
+              style={{ fontFamily: "var(--font-display), 'League Spartan', sans-serif" }}
+            >
+              {speaker.fullName}
+            </h3>
+          </Link>
           {(speaker.jobTitle || speaker.company) && (
             <p className="text-white/50 text-sm font-sans mt-1 leading-snug">
               {speaker.jobTitle}
@@ -124,14 +126,17 @@ export function SpeakerCard({ speaker }: SpeakerCardProps) {
             website={speaker.website}
             size="sm"
           />
-          <span className="text-[#FF5757] text-xs font-semibold font-sans flex items-center gap-1 group-hover:gap-2 transition-all duration-200 uppercase tracking-wider">
+          <Link
+            href={profileHref}
+            className="text-[#FF5757] text-xs font-semibold font-sans flex items-center gap-1 group-hover:gap-2 transition-all duration-200 uppercase tracking-wider"
+          >
             View
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
-          </span>
+          </Link>
         </div>
       </div>
-    </Link>
+    </article>
   )
 }

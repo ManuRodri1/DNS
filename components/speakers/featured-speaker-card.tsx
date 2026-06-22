@@ -5,7 +5,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import type { Speaker } from "@/lib/airtable-speakers"
+import type { Speaker } from "@/lib/data/speakers"
 import { TopicPill } from "./topic-pill"
 import { CompanyLogos } from "./company-logos"
 

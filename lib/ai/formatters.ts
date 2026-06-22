@@ -1,4 +1,4 @@
-import { Speaker } from "@/lib/airtable-speakers";
+import { Speaker } from "@/lib/data/speakers";
 import { Partner } from "@/lib/data/partners";
 import { Influencer } from "@/lib/data/influencers";
 

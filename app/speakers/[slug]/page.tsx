@@ -3,8 +3,8 @@
 
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
-import { getSpeakers, getSpeakerBySlug, getSpeakerSlugs } from "@/lib/airtable-speakers"
-import type { Speaker } from "@/lib/airtable-speakers"
+import { getSpeakers, getSpeakerBySlug, getSpeakerSlugs } from "@/lib/data/speakers"
+import type { Speaker } from "@/lib/data/speakers"
 import { SpeakerProfileClient } from "@/components/speakers/speaker-profile-client"
 
 // ISR — revalidate every 5 minutes

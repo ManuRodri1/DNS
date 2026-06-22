@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next"
-import { getSpeakerSlugs } from "@/lib/airtable-speakers"
+import { getSpeakerSlugs } from "@/lib/data/speakers"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.digitalnomadsummit.co"

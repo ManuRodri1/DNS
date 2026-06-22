@@ -6,7 +6,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import type { Speaker } from "@/lib/airtable-speakers"
+import type { Speaker } from "@/lib/data/speakers"
 import { TopicPill } from "./topic-pill"
 import { SocialLinks } from "./social-links"
 import { SpeakerCard } from "./speaker-card"

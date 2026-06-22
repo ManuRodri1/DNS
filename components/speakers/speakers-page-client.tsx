@@ -4,7 +4,7 @@
 // Client shell for the /speakers page — manages modal state, animations, and i18n
 
 import { useEffect, useRef, useState } from "react"
-import type { Speaker } from "@/lib/airtable-speakers"
+import type { Speaker } from "@/lib/data/speakers"
 import { FeaturedSpeakerCard } from "./featured-speaker-card"
 import { SpeakersFilter } from "./speakers-filter"
 import { SponsorModal } from "@/components/sponsor-modal"

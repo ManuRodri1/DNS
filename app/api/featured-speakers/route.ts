@@ -1,16 +1,15 @@
 // app/api/featured-speakers/route.ts
-// Returns up to 3 featured+published speakers from the speaker-specific Airtable workspace.
+// Returns featured+published speakers from Supabase.
 // Used by the HomepageSpeakers client component.
 
-import { getSpeakers } from "@/lib/airtable-speakers"
+import { getFeaturedSpeakers } from "@/lib/data/speakers"
 import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    const all = await getSpeakers()
+    const featured = await getFeaturedSpeakers()
 
-    // Return all published speakers, already sorted by Display Order from getSpeakers()
-    const speakers = all.map((s) => ({
+    const speakers = featured.map((s) => ({
       id: s.id,
       fullName: s.fullName,
       slug: s.slug,

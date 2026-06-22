@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { getSpeakers } from "@/lib/airtable-speakers";
+import { getSpeakers } from "@/lib/data/speakers";
 import { getPartners } from "@/lib/data/partners";
 import { getInfluencers } from "@/lib/data/influencers";
 import { STATIC_DNS_CONTEXT } from "./static-dns-context";
@@ -115,7 +115,7 @@ Desc: ${STATIC_DNS_CONTEXT.diter_2026.description}
 Academic/Institutional Partners: ${STATIC_DNS_CONTEXT.diter_2026.partners.join(", ")}
 Note: DITER is not a normal partner logo. It is an intellectual framework and strategic assessment. Supporting organizations are represented through Intellectual Sponsors, Technical Alignment, and Institutional Ecosystem.
 
---- DYNAMIC DIRECTORY (LIVE FROM AIRTABLE/SUPABASE) ---
+--- DYNAMIC DIRECTORY (LIVE FROM SUPABASE) ---
 SPEAKERS:
 ${formatSpeakersForAI(speakers)}
 
