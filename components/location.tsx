@@ -2,6 +2,8 @@
 
 import { useLanguage } from "@/lib/language-context"
 import { useEffect, useRef, useState } from "react"
+import { ArrowRight } from "lucide-react"
+import { OfficialHotelSection } from "@/components/official-hotel-section"
 
 export function Location() {
   const { language } = useLanguage()
@@ -33,6 +35,8 @@ export function Location() {
         "A premier waterfront destination on the Malecón, perfectly situated to host the most significant gathering of digital nomads and innovators in the region.",
       badge: "Santo Domingo · Dominican Republic",
       clickToOpen: "Click to open in Google Maps",
+      reserve: "Reserve Accommodations",
+      planStay: "Plan Your Stay",
     },
     es: {
       sectionTitle: "Sede",
@@ -41,6 +45,8 @@ export function Location() {
         "Un destino frente al mar de primer nivel en el Malecón, perfectamente ubicado para albergar el encuentro más significativo de nómadas digitales e innovadores en la región.",
       badge: "Santo Domingo · República Dominicana",
       clickToOpen: "Haz clic para abrir en Google Maps",
+      reserve: "Reservar Alojamiento",
+      planStay: "Planifica tu Estadia",
     },
   }
 
@@ -48,6 +54,7 @@ export function Location() {
 
   const googleMapsLink =
     "https://www.google.com/maps/place/Catalonia+Santo+Domingo/@18.458063,-69.909817,17z/data=!3m1!4b1!4m6!3m5!1s0x8eaf89f2b2e0e0e5:0x7a0f0f0f0f0f0f0f!8m2!3d18.458063!4d-69.909817!16s%2Fg%2F11c1qy5qy5"
+  const bookingLink = "https://www.cataloniahotels.com/en/pages/digital-nomad-summit-2026"
 
   return (
     <section
@@ -113,6 +120,23 @@ export function Location() {
                   <p className="text-white/90 text-base md:text-lg lg:text-xl leading-relaxed font-[family-name:var(--font-body)] drop-shadow-md">
                     {t.description}
                   </p>
+                  <div className="mt-8 flex flex-wrap justify-center gap-3">
+                    <a
+                      href={bookingLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5757] px-6 py-3 font-sans text-sm font-bold text-white transition-all duration-200 hover:bg-white hover:text-[#FF5757]"
+                    >
+                      {t.reserve}
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </a>
+                    <a
+                      href="#official-hotel"
+                      className="inline-flex items-center justify-center rounded-full border border-white/25 bg-white/10 px-6 py-3 font-sans text-sm font-bold text-white backdrop-blur-sm transition-all duration-200 hover:border-[#FF5757] hover:text-[#FF5757]"
+                    >
+                      {t.planStay}
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -123,8 +147,33 @@ export function Location() {
               <p className="text-white/80 text-base leading-relaxed font-[family-name:var(--font-body)]">
                 {t.description}
               </p>
+              <div className="mt-6 grid gap-3">
+                <a
+                  href={bookingLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5757] px-6 py-3 font-sans text-sm font-bold text-white transition-all duration-200 hover:bg-white hover:text-[#FF5757]"
+                >
+                  {t.reserve}
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </a>
+                <a
+                  href="#official-hotel"
+                  className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3 font-sans text-sm font-bold text-white transition-all duration-200 hover:border-[#FF5757] hover:text-[#FF5757]"
+                >
+                  {t.planStay}
+                </a>
+              </div>
             </div>
           </div>
+        </div>
+
+        <div
+          className={`mb-16 transition-all duration-1000 delay-500 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
+          <OfficialHotelSection />
         </div>
 
         <div

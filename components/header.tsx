@@ -1,18 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { useState, useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
 import { LanguageSwitcher } from "./language-switcher"
 import { MobileMenu } from "./mobile-menu"
 
 export const Header = () => {
   const pathname = usePathname()
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isAboutOpen, setIsAboutOpen] = useState(false)
   const [isWhiteHeader, setIsWhiteHeader] = useState(pathname === "/tickets")
   const aboutTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const weeklyTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (pathname === "/tickets") {
@@ -32,12 +30,12 @@ export const Header = () => {
             intersectingSections.delete(entry.target)
           }
         })
-        
+
         setIsWhiteHeader(intersectingSections.size > 0)
       },
       {
-        threshold: 0, // Trigger as soon as any part of the section enters the margin
-        rootMargin: "-120px 0px 0px 0px", // Increased offset to account for pt-12 (48px) + header height
+        threshold: 0,
+        rootMargin: "-120px 0px 0px 0px",
       },
     )
 
@@ -47,37 +45,32 @@ export const Header = () => {
   }, [pathname])
 
   return (
-    <div className="fixed z-50 pt-6 md:pt-10 lg:pt-12 top-0 left-0 w-full transition-all duration-500">
+    <div className="fixed left-0 top-0 z-50 w-full pt-6 transition-all duration-500 md:pt-10 lg:pt-12">
       <header
-        className={`flex items-center justify-between container mx-auto px-4 md:px-6 transition-all duration-500 ${
-          isWhiteHeader ? "bg-white/95 backdrop-blur-md shadow-md rounded-full py-2.5 px-6 max-w-[95%] md:max-w-[90%] xl:max-w-6xl mt-2" : "py-4"
+        className={`container mx-auto flex items-center justify-between px-4 transition-all duration-500 md:px-6 ${
+          isWhiteHeader ? "mt-2 max-w-[95%] rounded-full bg-white/95 px-6 py-2.5 shadow-md backdrop-blur-md md:max-w-[90%] xl:max-w-6xl" : "py-4"
         }`}
       >
-        {/* Logo Section */}
-        <div className="flex-shrink-0 z-10">
-          <Link href="/" className="relative block" onClick={() => setIsDropdownOpen(false)}>
-            {/* Default logo for dark backgrounds */}
+        <div className="z-10 flex-shrink-0">
+          <Link href="/" className="relative block">
             <img
               src="/logo digital nomad summit - Editado.png"
               alt="Digital Nomad Summit"
-              className={`w-[100px] sm:w-[110px] md:w-[120px] h-auto transition-opacity duration-500 ${
-                isWhiteHeader ? "opacity-0 absolute inset-0" : "opacity-100"
+              className={`h-auto w-[100px] transition-opacity duration-500 sm:w-[110px] md:w-[120px] ${
+                isWhiteHeader ? "absolute inset-0 opacity-0" : "opacity-100"
               }`}
             />
-            {/* White logo for light backgrounds (scrolled/white state) */}
             <img
               src="/images/dns-logo-white.jpg"
               alt="Digital Nomad Summit"
-              className={`w-[100px] sm:w-[110px] md:w-[120px] h-auto transition-opacity duration-500 ${
-                isWhiteHeader ? "opacity-100" : "opacity-0 absolute inset-0"
+              className={`h-auto w-[100px] transition-opacity duration-500 sm:w-[110px] md:w-[120px] ${
+                isWhiteHeader ? "opacity-100" : "absolute inset-0 opacity-0"
               }`}
             />
           </Link>
         </div>
 
-        {/* Navigation Section - Centered using flexbox layout */}
-        <nav className="hidden xl:flex items-center justify-center gap-x-6 lg:gap-x-8">
-          {/* About dropdown */}
+        <nav className="hidden items-center justify-center gap-x-6 xl:flex">
           <div
             className="relative"
             onMouseEnter={() => {
@@ -92,7 +85,7 @@ export const Header = () => {
           >
             <button
               onClick={() => setIsAboutOpen(!isAboutOpen)}
-              className={`text-[13px] font-semibold font-sans hover:text-[#FF5757] duration-150 transition-colors ease-out whitespace-nowrap relative group flex items-center gap-1 ${
+              className={`group relative flex items-center gap-1 whitespace-nowrap font-sans text-[13px] font-semibold transition-colors duration-150 ease-out hover:text-[#FF5757] ${
                 isWhiteHeader ? "text-black" : "text-white"
               }`}
               aria-expanded={isAboutOpen}
@@ -101,7 +94,7 @@ export const Header = () => {
             >
               About
               <svg
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${isAboutOpen ? "rotate-180" : ""}`}
+                className={`h-3.5 w-3.5 transition-transform duration-200 ${isAboutOpen ? "rotate-180" : ""}`}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -109,30 +102,31 @@ export const Header = () => {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
-              <span className="absolute bottom-[-4px] left-0 w-0 h-[2px] bg-[#FF5757] transition-all duration-300 ease-out group-hover:w-full" />
+              <span className="absolute bottom-[-4px] left-0 h-[2px] w-0 bg-[#FF5757] transition-all duration-300 ease-out group-hover:w-full" />
             </button>
+
             {isAboutOpen && (
               <div
-                className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-48 bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl py-3 animate-in fade-in slide-in-from-top-2 duration-200 z-[60]"
+                className="absolute left-1/2 top-full z-[60] mt-3 w-48 -translate-x-1/2 animate-in rounded-xl border border-white/10 bg-black/95 py-3 shadow-2xl backdrop-blur-md duration-200 fade-in slide-in-from-top-2"
                 onMouseEnter={() => {
                   if (aboutTimeoutRef.current) clearTimeout(aboutTimeoutRef.current)
                   setIsAboutOpen(true)
                 }}
               >
-                <Link
-                  href="/#about"
-                  className="block px-5 py-2.5 text-sm text-white/80 hover:bg-[#FF5757]/10 hover:text-[#FF5757] transition-colors duration-150 font-sans"
-                  onClick={() => setIsAboutOpen(false)}
-                >
-                  About DNS
-                </Link>
-                <Link
-                  href="/team"
-                  className="block px-5 py-2.5 text-sm text-white/80 hover:bg-[#FF5757]/10 hover:text-[#FF5757] transition-colors duration-150 font-sans"
-                  onClick={() => setIsAboutOpen(false)}
-                >
-                  Team
-                </Link>
+                {[
+                  { label: "About DNS", href: "/#about" },
+                  { label: "Team", href: "/team" },
+                  { label: "Press Room", href: "/press" },
+                ].map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="block px-5 py-2.5 font-sans text-sm text-white/80 transition-colors duration-150 hover:bg-[#FF5757]/10 hover:text-[#FF5757]"
+                    onClick={() => setIsAboutOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
               </div>
             )}
           </div>
@@ -147,7 +141,7 @@ export const Header = () => {
             { label: "Successment", href: "https://www.successment.co/", external: true },
           ].map((item) => (
             <Link
-              className={`text-[13px] font-semibold font-sans hover:text-[#FF5757] duration-150 transition-colors ease-out whitespace-nowrap relative group ${
+              className={`group relative whitespace-nowrap font-sans text-[13px] font-semibold transition-colors duration-150 ease-out hover:text-[#FF5757] ${
                 isWhiteHeader ? "text-black" : "text-white"
               }`}
               href={item.href}
@@ -155,78 +149,12 @@ export const Header = () => {
               {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
             >
               {item.label}
-              <span className="absolute bottom-[-4px] left-0 w-0 h-[2px] bg-[#FF5757] transition-all duration-300 ease-out group-hover:w-full" />
+              <span className="absolute bottom-[-4px] left-0 h-[2px] w-0 bg-[#FF5757] transition-all duration-300 ease-out group-hover:w-full" />
             </Link>
           ))}
-
-          {/* Digital Nomad Weekly dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={() => {
-              if (weeklyTimeoutRef.current) clearTimeout(weeklyTimeoutRef.current)
-              setIsDropdownOpen(true)
-            }}
-            onMouseLeave={() => {
-              weeklyTimeoutRef.current = setTimeout(() => {
-                setIsDropdownOpen(false)
-              }, 150)
-            }}
-          >
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className={`text-[13px] font-semibold font-sans hover:text-[#FF5757] duration-150 transition-colors ease-out whitespace-nowrap relative group flex items-center gap-1 ${
-                isWhiteHeader ? "text-black" : "text-white"
-              }`}
-              aria-expanded={isDropdownOpen}
-              aria-haspopup="true"
-              suppressHydrationWarning
-            >
-              Digital Nomad Weekly
-              <svg
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-              <span className="absolute bottom-[-4px] left-0 w-0 h-[2px] bg-[#FF5757] transition-all duration-300 ease-out group-hover:w-full" />
-            </button>
-
-            {isDropdownOpen && (
-              <div
-                className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-60 bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl py-3 animate-in fade-in slide-in-from-top-2 duration-200 z-[60]"
-                onMouseEnter={() => {
-                  if (weeklyTimeoutRef.current) clearTimeout(weeklyTimeoutRef.current)
-                  setIsDropdownOpen(true)
-                }}
-              >
-                <Link
-                  href="https://dominicantoday.com/dr/digital-nomad/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block px-5 py-2.5 text-sm text-white/80 hover:bg-[#FF5757]/10 hover:text-[#FF5757] transition-colors duration-150 font-sans"
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  Dominican Today
-                </Link>
-                <Link
-                  href="https://eldinero.com.do/author/jonathanjmentor/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block px-5 py-2.5 text-sm text-white/80 hover:bg-[#FF5757]/10 hover:text-[#FF5757] transition-colors duration-150 font-sans"
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  Periódico elDinero
-                </Link>
-              </div>
-            )}
-          </div>
         </nav>
 
-        {/* Right Section: Language Switcher & Mobile Menu Toggle */}
-        <div className="flex items-center gap-4 z-10">
+        <div className="z-10 flex items-center gap-4">
           <LanguageSwitcher className="hidden xl:flex" />
           <MobileMenu isWhiteHeader={isWhiteHeader} />
         </div>

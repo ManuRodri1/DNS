@@ -24,6 +24,7 @@ const content = {
         { label: "About DNS", href: "/#about" },
         { label: "Tickets", href: "/tickets" },
         { label: "Location", href: "/#location" },
+        { label: "Press Room", href: "/press" },
         { label: "Partners", href: "/partners" },
       ],
     },
@@ -32,7 +33,7 @@ const content = {
       links: [
         { label: "Successment", href: "https://www.successment.co/", external: true },
         { label: "ZARI Mobility", href: "https://www.zariautoclub.com/", external: true },
-        { label: "Digital Nomad Weekly", href: "https://dominicantoday.com/dr/digital-nomad/", external: true },
+        { label: "Press Room", href: "/press" },
       ],
     },
     newsletter: {
@@ -69,6 +70,7 @@ const content = {
         { label: "Sobre DNS", href: "/#about" },
         { label: "Boletas", href: "/tickets" },
         { label: "Ubicación", href: "/#location" },
+        { label: "Sala de Prensa", href: "/press" },
         { label: "Aliados", href: "/partners" },
       ],
     },
@@ -77,7 +79,7 @@ const content = {
       links: [
         { label: "Successment", href: "https://www.successment.co/", external: true },
         { label: "ZARI Mobility", href: "https://www.zariautoclub.com/", external: true },
-        { label: "Digital Nomad Weekly", href: "https://dominicantoday.com/dr/digital-nomad/", external: true },
+        { label: "Sala de Prensa", href: "/press" },
       ],
     },
     newsletter: {

@@ -11,6 +11,7 @@ import { AttendeeSegments } from "@/components/attendee-segments"
 import { Tickets } from "@/components/tickets"
 import { SignatureExperiences } from "@/components/signature-experiences"
 import { TrustedNetwork } from "@/components/trusted-network"
+import { HomepagePressStrip } from "@/components/homepage-press-strip"
 import { SponsorCTA } from "@/components/sponsor-cta"
 import { Location } from "@/components/location"
 import { Contact } from "@/components/contact"
@@ -28,6 +29,7 @@ export default function Home() {
       {/* 5 — NEW: Featured Speakers section */}<HomepageSpeakers />
       {/* 6 — NEW: Apply as Speaker CTA (opens speaker modal) */}<SpeakerCTA />
       {/* 11 — MOVED: Trusted Network follows speakers flow */}<TrustedNetwork />
+      <HomepagePressStrip />
       {/* 7 */}<InfluencerCollective />
       {/* 8 */}<AttendeeSegments />
       {/* 9 */}<Tickets />
