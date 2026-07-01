@@ -185,11 +185,12 @@ h3 {
 }
 
 #webgl {
-  top: 0;
-  left: 0;
-  position: fixed;
-  height: 100svh;
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+  height: 100%;
   width: 100%;
+  pointer-events: none;
 }
 
 #webgl canvas {

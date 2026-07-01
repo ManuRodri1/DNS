@@ -3,7 +3,6 @@
 // components/speakers/speaker-profile-client.tsx
 // Full speaker profile page — client component for state management
 
-import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import type { Speaker } from "@/lib/data/speakers"
@@ -11,7 +10,6 @@ import { TopicPill } from "./topic-pill"
 import { SocialLinks } from "./social-links"
 import { SpeakerCard } from "./speaker-card"
 import { CompanyLogos } from "./company-logos"
-import { SponsorModal } from "@/components/sponsor-modal"
 import { Footer } from "@/components/footer"
 import { useLanguage } from "@/lib/language-context"
 
@@ -36,11 +34,6 @@ const content = {
     viewAll: "View All",
     viewAllSpeakers: "View All Speakers",
     backToSpeakers: "Back to Speakers",
-    callForSpeakers: "Call for Speakers",
-    shareVoice: "Want to share your voice?",
-    ctaBody:
-      "We\u2019re looking for builders, operators, leaders, and thinkers shaping the future of work, mobility, innovation, and global opportunity.",
-    applyBtn: "Apply to be a Speaker",
   },
   es: {
     session: "Sesi\u00f3n",
@@ -61,11 +54,6 @@ const content = {
     viewAll: "Ver Todos",
     viewAllSpeakers: "Ver Todos los Speakers",
     backToSpeakers: "Volver a Speakers",
-    callForSpeakers: "Convocatoria de Speakers",
-    shareVoice: "\u00bfQuieres compartir tu voz?",
-    ctaBody:
-      "Buscamos constructores, operadores, l\u00edderes y pensadores que est\u00e9n dando forma al futuro del trabajo, la movilidad, la innovaci\u00f3n y la oportunidad global.",
-    applyBtn: "Postularse como Speaker",
   },
 }
 
@@ -129,7 +117,6 @@ export function SpeakerProfileClient({
   speaker: Speaker
   related: Speaker[]
 }) {
-  const [modalOpen, setModalOpen] = useState(false)
   const { language } = useLanguage()
   const t = content[language]
   // Headshot first → Poster Image as fallback → no image
@@ -396,34 +383,7 @@ export function SpeakerProfileClient({
       )}
 
       {/* ── Apply CTA ─────────────────────────────────────────────────────────── */}
-      <section className="relative bg-[#080808] overflow-hidden py-20 px-6" aria-label="Apply to speak">
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#FF5757]" />
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-[#FF5757] text-[11px] font-bold uppercase tracking-[0.25em] font-sans mb-4">{t.callForSpeakers}</p>
-          <h2 className="text-white font-bold mb-5" style={{ fontFamily: "var(--font-display), sans-serif", fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-            {t.shareVoice}
-          </h2>
-          <p className="text-white/50 font-sans text-base leading-relaxed mb-8 max-w-xl mx-auto">{t.ctaBody}</p>
-          <button
-            id="speaker-profile-apply-cta"
-            onClick={() => setModalOpen(true)}
-            className="group inline-flex items-center gap-2.5 rounded-full bg-[#FF5757] px-8 py-4 font-sans font-bold text-white text-sm transition-all duration-300 hover:shadow-[0_0_32px_rgba(255,87,87,0.45)] hover:scale-[1.03]"
-          >
-            {t.applyBtn}
-            <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </button>
-        </div>
-      </section>
-
       <Footer />
-
-      <SponsorModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        variant="speaker"
-      />
     </main>
   )
 }

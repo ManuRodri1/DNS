@@ -28,7 +28,7 @@ const content = {
     noResultsBody: (hasFilters: boolean) =>
       hasFilters
         ? "Try adjusting your filters or search terms to find more speakers."
-        : "We're finalizing our speaker lineup. Check back soon or apply to be a speaker.",
+        : "We're finalizing our speaker lineup. Check back soon for announcements.",
     clearFilters: "Clear filters",
   },
   es: {
@@ -48,7 +48,7 @@ const content = {
     noResultsBody: (hasFilters: boolean) =>
       hasFilters
         ? "Intenta ajustar tus filtros o términos de búsqueda para encontrar más speakers."
-        : "Estamos finalizando nuestro lineup. Vuelve pronto o postúlate como speaker.",
+        : "Estamos finalizando nuestro lineup. Vuelve pronto para nuevos anuncios.",
     clearFilters: "Limpiar filtros",
   },
 }
