@@ -46,7 +46,6 @@ const content = {
       success: "You're subscribed. Watch your inbox for DNS updates.",
       error: "Something went wrong. Please try again.",
     },
-    rights: "© 2026 Digital Nomad Summit. All rights reserved.",
     presentedBy: "Presented by Successment.",
     contact: "Contact",
     designedBy: "Designed by ING. JMDR",
@@ -92,7 +91,6 @@ const content = {
       success: "Listo. Recibirás novedades de DNS en tu correo.",
       error: "Algo salió mal. Inténtalo nuevamente.",
     },
-    rights: "© 2026 Digital Nomad Summit. Todos los derechos reservados.",
     presentedBy: "Presentado por Successment.",
     contact: "Contacto",
     designedBy: "Designed by ING. JMDR",
@@ -184,9 +182,9 @@ export function Footer() {
         </div>
 
         <div className="mt-14 border-t border-white/10 pt-6 md:mt-16">
-          <div className="flex flex-col gap-5 text-sm text-white/52 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-5 text-sm text-white/52 md:flex-row md:items-start md:justify-between">
             <div className="space-y-1 font-sans">
-              <p>{t.rights}</p>
+              <p>&copy; 2026 Digital Nomad Summit Santo Domingo. All rights reserved.</p>
               <p>{t.presentedBy}</p>
             </div>
 
@@ -204,6 +202,16 @@ export function Footer() {
               </a>
             </div>
           </div>
+          <p className="mt-7 max-w-4xl text-center font-sans text-xs leading-6 text-white/42 md:text-left md:text-[13px]">
+            Digital Nomad Summit reserves the right to update these{" "}
+            <Link
+              href="/terms-and-conditions"
+              className="text-white/70 underline decoration-[#FF5757]/70 underline-offset-4 transition-colors duration-200 hover:text-[#FF5757] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5757] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            >
+              Terms & Conditions and Refund Policy
+            </Link>{" "}
+            at any time. The most current version will always be available on our official website.
+          </p>
         </div>
       </div>
     </footer>

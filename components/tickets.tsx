@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useLanguage } from "@/lib/language-context"
 import { Pill } from "@/components/pill"
 
@@ -159,6 +160,16 @@ export function Tickets() {
             </div>
           ))}
         </div>
+        <p className="mx-auto mt-8 max-w-2xl text-center font-sans text-xs leading-6 text-black/55 md:text-sm">
+          By purchasing a ticket, you acknowledge that you have read and agree to the{" "}
+          <Link
+            href="/terms-and-conditions"
+            className="font-medium text-[#FF5757] underline decoration-[#FF5757]/45 underline-offset-4 transition-colors duration-200 hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5757] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+          >
+            Terms & Conditions and Refund Policy
+          </Link>
+          .
+        </p>
       </div>
     </section>
   )
