@@ -1,14 +1,14 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Team | Digital Nomad Summit Santo Domingo",
+  title: "Team | Digital Nomad Summit Santo Domingo 2027",
   description:
     "Meet the team behind the Digital Nomad Summit Santo Domingo and the people shaping the US–Caribbean innovation corridor.",
   alternates: {
     canonical: "https://www.digitalnomadsummit.co/team",
   },
   openGraph: {
-    title: "Team | Digital Nomad Summit Santo Domingo",
+    title: "Team | Digital Nomad Summit Santo Domingo 2027",
     description:
       "Meet the team behind the Digital Nomad Summit Santo Domingo and the people shaping the US–Caribbean innovation corridor.",
     url: "https://www.digitalnomadsummit.co/team",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Team | Digital Nomad Summit Santo Domingo",
+    title: "Team | Digital Nomad Summit Santo Domingo 2027",
     description:
       "Meet the team behind the Digital Nomad Summit Santo Domingo and the people shaping the US–Caribbean innovation corridor.",
     images: ["/og-image.jpg"],

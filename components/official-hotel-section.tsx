@@ -1,55 +1,52 @@
 "use client"
 
-import { ArrowRight, BadgeCheck, Building2, Dumbbell, MapPin, UsersRound, Waves } from "lucide-react"
+import { ExternalLink, BadgeCheck, Building2, Dumbbell, MapPin, UsersRound, Waves } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
-
-const bookingLink = "https://www.cataloniahotels.com/en/pages/digital-nomad-summit-2026"
+import { EVENT_DATE_EN, EVENT_DATE_ES, VENUE_ADDRESS, VENUE_NAME, VENUE_TOUR_URL } from "@/lib/event-config"
 
 const content = {
   en: {
-    eyebrow: "Official Summit Hotel",
-    headline: "Your DNS Home Base at Hotel Catalonia Santo Domingo",
+    eyebrow: "Official Summit Venue",
+    headline: VENUE_NAME,
     body: [
-      "Enhance your Digital Nomad Summit experience by staying at Hotel Catalonia Santo Domingo, the official host hotel for DNS 2026 and the central gathering place for speakers, sponsors, founders, investors, ecosystem leaders, and attendees from around the world.",
-      "Perfectly situated along Santo Domingo's iconic Malecon waterfront, Hotel Catalonia offers modern accommodations, premium amenities, Caribbean Sea views, and convenient access to the city's business, cultural, and entertainment districts.",
-      "Throughout the summit, the hotel will serve as the hub for keynote sessions, networking opportunities, executive meetings, and community gatherings.",
-      "As an official DNS attendee, you will have access to exclusive event rates through our reserved room block. We encourage guests to secure accommodations early, as availability is limited and rooms will be allocated on a first-come, first-served basis.",
+      `Digital Nomad Summit Santo Domingo will take place ${EVENT_DATE_EN} at ${VENUE_NAME}.`,
+      "The official venue brings speakers, founders, investors, sponsors, institutions, creators, and attendees together along Santo Domingo's iconic Malecon.",
+      VENUE_ADDRESS,
     ],
-    ctaTitle: "Reserve Your Accommodations",
-    ctaCopy: "Secure your room today and stay at the center of the DNS experience.",
-    button: "Reserve Accommodations",
-    note: "Special negotiated rates available for DNS attendees.",
-    highlightsTitle: "Hotel Highlights",
+    ctaTitle: "Explore the Venue",
+    ctaCopy: "Take the official virtual tour.",
+    button: "Tour the Hotel",
+    note: "An official accommodation reservation link has not yet been announced.",
+    highlightsTitle: "Venue Details",
     highlights: [
-      "Official host hotel of Digital Nomad Summit Santo Domingo 2026",
-      "Special negotiated rates for DNS attendees",
-      "Oceanfront location on the Santo Domingo Malecon",
-      "Onsite restaurants, fitness center, pool, and business amenities",
-      "Convenient access to summit programming, networking, and VIP experiences",
-      "Room block available for the summit week",
+      "Official venue of Digital Nomad Summit Santo Domingo 2027",
+      EVENT_DATE_EN,
+      "Location on the Santo Domingo Malecon",
+      VENUE_ADDRESS,
+      "Virtual hotel tour available",
+      "Location available in Google Maps",
     ],
   },
   es: {
-    eyebrow: "Hotel Oficial del Summit",
-    headline: "Tu base DNS en Hotel Catalonia Santo Domingo",
+    eyebrow: "Sede Oficial del Summit",
+    headline: VENUE_NAME,
     body: [
-      "Mejora tu experiencia en Digital Nomad Summit hospedandote en Hotel Catalonia Santo Domingo, el hotel anfitrion oficial de DNS 2026 y el punto central de encuentro para speakers, sponsors, founders, inversionistas, lideres del ecosistema y asistentes de todo el mundo.",
-      "Ubicado estrategicamente frente al iconico Malecon de Santo Domingo, Hotel Catalonia ofrece alojamiento moderno, amenidades premium, vistas al Mar Caribe y acceso conveniente a las zonas de negocios, cultura y entretenimiento de la ciudad.",
-      "Durante el summit, el hotel funcionara como el hub principal para sesiones clave, oportunidades de networking, reuniones ejecutivas y encuentros de comunidad.",
-      "Como asistente oficial de DNS, tendras acceso a tarifas especiales a traves del bloque de habitaciones reservado para el evento. Recomendamos asegurar tu alojamiento con anticipacion, ya que la disponibilidad es limitada y las habitaciones seran asignadas por orden de reserva.",
+      `Digital Nomad Summit Santo Domingo se celebrará ${EVENT_DATE_ES} en ${VENUE_NAME}.`,
+      "La sede oficial reunirá a speakers, fundadores, inversionistas, patrocinadores, instituciones, creadores y asistentes junto al icónico Malecón de Santo Domingo.",
+      VENUE_ADDRESS,
     ],
-    ctaTitle: "Reserva tu alojamiento",
-    ctaCopy: "Asegura tu habitacion hoy y hospedate en el centro de la experiencia DNS.",
-    button: "Reservar alojamiento",
-    note: "Tarifas especiales disponibles para asistentes de DNS.",
-    highlightsTitle: "Beneficios del Hotel",
+    ctaTitle: "Explora la sede",
+    ctaCopy: "Visita el recorrido virtual oficial.",
+    button: "Recorrer el hotel",
+    note: "Aún no se ha anunciado un enlace oficial de reservación.",
+    highlightsTitle: "Detalles de la sede",
     highlights: [
-      "Hotel anfitrion oficial de Digital Nomad Summit Santo Domingo 2026",
-      "Tarifas especiales para asistentes de DNS",
-      "Ubicacion frente al mar en el Malecon de Santo Domingo",
-      "Restaurantes, gimnasio, piscina y amenidades de negocios",
-      "Acceso conveniente a programacion, networking y experiencias VIP",
-      "Bloque de habitaciones disponible durante la semana del summit",
+      "Sede oficial de Digital Nomad Summit Santo Domingo 2027",
+      EVENT_DATE_ES,
+      "Ubicación en el Malecón de Santo Domingo",
+      VENUE_ADDRESS,
+      "Recorrido virtual disponible",
+      "Ubicación disponible en Google Maps",
     ],
   },
 }
@@ -78,13 +75,13 @@ export function OfficialHotelSection() {
             <h4 className="font-display text-xl font-bold text-white">{t.ctaTitle}</h4>
             <p className="mt-2 font-sans text-sm leading-6 text-white/60">{t.ctaCopy}</p>
             <a
-              href={bookingLink}
+              href={VENUE_TOUR_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#FF5757] px-6 py-3 font-sans text-sm font-bold text-white transition-all duration-200 hover:bg-white hover:text-[#FF5757] sm:w-auto"
             >
               {t.button}
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
             </a>
             <p className="mt-4 font-sans text-xs font-semibold uppercase tracking-[0.14em] text-white/45">{t.note}</p>
           </div>

@@ -8,7 +8,7 @@ const content = {
   en: {
     tagline: "Work. Live. Scale.",
     copy:
-      "Digital Nomad Summit Santo Domingo 2026 brings founders, investors, policymakers, brands, and global innovators together to build from the Caribbean.",
+      "Digital Nomad Summit Santo Domingo 2027 brings founders, investors, policymakers, brands, and global innovators together to build from the Caribbean.",
     primaryCta: "Get Tickets",
     getInvolved: {
       heading: "Get Involved",
@@ -39,7 +39,7 @@ const content = {
     newsletter: {
       heading: "Subscribe to DNS Updates",
       description:
-        "Get speaker announcements, partner updates, ticket releases, and strategic opportunities around DNS 2026.",
+        "Get speaker announcements, partner updates, ticket releases, and strategic opportunities around DNS 2027.",
       placeholder: "Enter your email",
       button: "Subscribe",
       sending: "Subscribing...",
@@ -53,7 +53,7 @@ const content = {
   es: {
     tagline: "Trabaja. Vive. Escala.",
     copy:
-      "Digital Nomad Summit Santo Domingo 2026 reúne a fundadores, inversionistas, líderes públicos, marcas e innovadores globales para construir desde el Caribe.",
+      "Digital Nomad Summit Santo Domingo 2027 reúne a fundadores, inversionistas, líderes públicos, marcas e innovadores globales para construir desde el Caribe.",
     primaryCta: "Comprar boletas",
     getInvolved: {
       heading: "Participa",
@@ -84,7 +84,7 @@ const content = {
     newsletter: {
       heading: "Suscríbete a novedades de DNS",
       description:
-        "Recibe anuncios de speakers, actualizaciones de aliados, lanzamientos de boletas y oportunidades estratégicas alrededor de DNS 2026.",
+        "Recibe anuncios de speakers, actualizaciones de aliados, lanzamientos de boletas y oportunidades estratégicas alrededor de DNS 2027.",
       placeholder: "Ingresa tu email",
       button: "Suscribirme",
       sending: "Suscribiendo...",
@@ -134,6 +134,7 @@ function FooterColumn({ heading, links }: { heading: string; links: FooterLink[]
 export function Footer() {
   const { language } = useLanguage()
   const t = content[language]
+  const currentYear = new Date().getFullYear()
 
   return (
     <footer className="relative overflow-hidden bg-black text-white">
@@ -184,7 +185,7 @@ export function Footer() {
         <div className="mt-14 border-t border-white/10 pt-6 md:mt-16">
           <div className="flex flex-col gap-5 text-sm text-white/52 md:flex-row md:items-start md:justify-between">
             <div className="space-y-1 font-sans">
-              <p>&copy; 2026 Digital Nomad Summit Santo Domingo. All rights reserved.</p>
+              <p>&copy; {currentYear} Digital Nomad Summit Santo Domingo. All rights reserved.</p>
               <p>{t.presentedBy}</p>
             </div>
 

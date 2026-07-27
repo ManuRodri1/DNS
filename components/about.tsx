@@ -18,7 +18,7 @@ const content = {
         </p>
       </>
     ),
-    videoBadge: "Santo Domingo · August 6–7, 2026",
+    videoBadge: "Santo Domingo · April 8–9, 2027",
     videoText: "A Strategic Gateway for Business & Innovation",
   },
   es: {
@@ -35,7 +35,7 @@ const content = {
         </p>
       </>
     ),
-    videoBadge: "Santo Domingo · 6 y 7 de agosto de 2026",
+    videoBadge: "Santo Domingo · 8 y 9 de abril de 2027",
     videoText: "Una puerta estratégica para negocios e innovación",
   },
 }

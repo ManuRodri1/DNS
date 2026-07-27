@@ -191,12 +191,16 @@ export default function TermsAndConditionsPage() {
                 Terms & Conditions and Refund Policy
               </h1>
               <p className="mt-5 font-sans text-sm font-medium uppercase tracking-[0.18em] text-white/50">
-                Last updated: July 2026
+                Last updated: July 27, 2026
               </p>
               <p className="mt-8 max-w-3xl font-sans text-base leading-8 text-white/72 md:text-lg">
-                By registering for and attending Digital Nomad Summit Santo Domingo ("DNS"), you acknowledge that you
+                By registering for and attending Digital Nomad Summit Santo Domingo (&quot;DNS&quot;), you acknowledge that you
                 have read, understood, and agree to the following Terms & Conditions.
               </p>
+              <div className="mt-6 max-w-3xl rounded-2xl border border-[#FF5757]/30 bg-[#FF5757]/10 p-5 font-sans text-sm leading-7 text-white/85 md:text-base">
+                Digital Nomad Summit Santo Domingo has been rescheduled to April 8–9, 2027, at Crowne Plaza Santo
+                Domingo. Existing General Admission and VIP registrations remain valid for the new dates.
+              </div>
             </div>
 
             <nav className="mt-8 rounded-lg border border-white/10 bg-white/[0.03] p-5" aria-label="Policy sections">
@@ -249,10 +253,10 @@ export default function TermsAndConditionsPage() {
                     Digital Nomad Summit Santo Domingo
                     <br />
                     <a
-                      href="mailto:info@digitalnomadsummit.do"
+                      href="mailto:digitalnomadsummit@successment.co"
                       className="font-medium text-[#FF5757] underline decoration-[#FF5757]/45 underline-offset-4 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5757] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                     >
-                      info@digitalnomadsummit.do
+                      digitalnomadsummit@successment.co
                     </a>
                   </p>
                 </div>

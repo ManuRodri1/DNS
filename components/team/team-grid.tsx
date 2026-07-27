@@ -112,7 +112,7 @@ const teamMembers: TeamMember[] = [
 const translations = {
   en: {
     title: "Team",
-    subtitle: "Meet the team behind Digital Nomad Summit Santo Domingo 2026.",
+    subtitle: "Meet the team behind Digital Nomad Summit Santo Domingo 2027.",
     email: "Email",
     readMore: "View profile",
     readLess: "Show less",
@@ -120,7 +120,7 @@ const translations = {
   },
   es: {
     title: "Equipo",
-    subtitle: "Conoce al equipo detrás de Digital Nomad Summit Santo Domingo 2026.",
+    subtitle: "Conoce al equipo detrás de Digital Nomad Summit Santo Domingo 2027.",
     email: "Correo",
     readMore: "Ver perfil",
     readLess: "Ver menos",

@@ -13,7 +13,7 @@ const content = {
     eyebrow: "PRESS CONTACT",
     headline: "Media inquiries",
     body:
-      "For interviews, institutional coverage, press credentials, or requests related to Digital Nomad Summit Santo Domingo 2026, contact the DNS team.",
+      "For interviews, institutional coverage, press credentials, or requests related to Digital Nomad Summit Santo Domingo 2027, contact the DNS team.",
     name: "Name",
     outlet: "Media Outlet",
     email: "Email",
@@ -34,7 +34,7 @@ const content = {
     eyebrow: "CONTACTO DE PRENSA",
     headline: "Solicitudes de medios",
     body:
-      "Para entrevistas, cobertura institucional, credenciales de prensa o solicitudes relacionadas con Digital Nomad Summit Santo Domingo 2026, contacta al equipo DNS.",
+      "Para entrevistas, cobertura institucional, credenciales de prensa o solicitudes relacionadas con Digital Nomad Summit Santo Domingo 2027, contacta al equipo DNS.",
     name: "Nombre",
     outlet: "Medio",
     email: "Email",
@@ -94,11 +94,11 @@ export function PressContactBlock({ language }: PressContactBlockProps) {
           <h2 className="mt-4 font-display text-4xl font-bold text-white md:text-5xl">{t.headline}</h2>
           <p className="mt-6 max-w-xl font-sans text-lg leading-8 text-white/70">{t.body}</p>
           <a
-            href="mailto:digitalnomadsummit@gmail.com"
+            href="mailto:digitalnomadsummit@successment.co"
             className="mt-8 inline-flex items-center gap-3 font-sans text-sm font-bold text-white transition-colors hover:text-[#FF5757]"
           >
             <Mail className="h-5 w-5 text-[#FF5757]" aria-hidden="true" />
-            digitalnomadsummit@gmail.com
+            digitalnomadsummit@successment.co
           </a>
         </div>
 

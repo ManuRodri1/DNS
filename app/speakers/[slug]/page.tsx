@@ -24,14 +24,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const speaker = await getSpeakerBySlug(slug)
-  if (!speaker) return { title: "Speaker | Digital Nomad Summit 2026" }
+  if (!speaker) return { title: "Speaker | Digital Nomad Summit 2027" }
 
   const title =
-    speaker.seoTitle || `${speaker.fullName} — Speaker at Digital Nomad Summit 2026`
+    speaker.seoTitle || `${speaker.fullName} — Speaker at Digital Nomad Summit 2027`
   const description =
     speaker.seoDescription ||
     speaker.shortBio ||
-    `${speaker.fullName} is speaking at Digital Nomad Summit Santo Domingo 2026.`
+    `${speaker.fullName} is speaking at Digital Nomad Summit Santo Domingo 2027.`
 
   // Prefer headshot for social previews; Poster Image as fallback
   const socialImage = speaker.headshot || speaker.posterImage || null
@@ -45,7 +45,7 @@ export async function generateMetadata({
       description,
       url: `https://www.digitalnomadsummit.co/speakers/${slug}`,
       images: socialImage
-        ? [{ url: socialImage, alt: `${speaker.fullName} — DNS 2026` }]
+        ? [{ url: socialImage, alt: `${speaker.fullName} — DNS 2027` }]
         : [{ url: "/og-image.jpg", width: 1200, height: 630, alt: title }],
     },
     twitter: {

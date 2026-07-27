@@ -1,211 +1,130 @@
 "use client"
 
-import { useLanguage } from "@/lib/language-context"
 import { useEffect, useRef, useState } from "react"
-import { ArrowRight } from "lucide-react"
-import { OfficialHotelSection } from "@/components/official-hotel-section"
+import { ExternalLink, MapPin } from "lucide-react"
+import { useLanguage } from "@/lib/language-context"
+import {
+  EVENT_DATE_EN,
+  EVENT_DATE_ES,
+  VENUE_ADDRESS,
+  VENUE_MAP_URL,
+  VENUE_NAME,
+  VENUE_TOUR_URL,
+  VENUE_VIDEO_URL,
+} from "@/lib/event-config"
+
+const content = {
+  en: {
+    sectionTitle: "Venue",
+    eyebrow: "OFFICIAL SUMMIT VENUE",
+    date: EVENT_DATE_EN,
+    description:
+      "Crowne Plaza Santo Domingo will serve as the official venue for Digital Nomad Summit Santo Domingo 2027, bringing speakers, founders, investors, sponsors, institutions, creators, and attendees together along the city’s iconic Malecón.",
+    badge: "Santo Domingo · Dominican Republic",
+    tour: "Tour the Hotel",
+    map: "View in Google Maps",
+    newTab: "opens in a new tab",
+    videoLabel: "Crowne Plaza Santo Domingo, official venue for Digital Nomad Summit 2027",
+  },
+  es: {
+    sectionTitle: "Sede",
+    eyebrow: "SEDE OFICIAL DEL SUMMIT",
+    date: EVENT_DATE_ES,
+    description:
+      "Crowne Plaza Santo Domingo será la sede oficial de Digital Nomad Summit Santo Domingo 2027, reuniendo a speakers, fundadores, inversionistas, patrocinadores, instituciones, creadores y asistentes junto al icónico Malecón de la ciudad.",
+    badge: "Santo Domingo · República Dominicana",
+    tour: "Recorrer el hotel",
+    map: "Ver en Google Maps",
+    newTab: "abre en una pestaña nueva",
+    videoLabel: "Crowne Plaza Santo Domingo, sede oficial de Digital Nomad Summit 2027",
+  },
+}
 
 export function Location() {
   const { language } = useLanguage()
   const [isVisible, setIsVisible] = useState(false)
+  const [shouldPlayVideo, setShouldPlayVideo] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
+  const t = content[language]
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+    setShouldPlayVideo(!reducedMotion.matches)
+  }, [])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-        }
-      },
+      ([entry]) => entry.isIntersecting && setIsVisible(true),
       { threshold: 0.1 },
     )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
+    if (sectionRef.current) observer.observe(sectionRef.current)
     return () => observer.disconnect()
   }, [])
-
-  const content = {
-    en: {
-      sectionTitle: "Venue",
-      title: "Catalonia Santo Domingo",
-      description:
-        "A premier waterfront destination on the Malecón, perfectly situated to host the most significant gathering of digital nomads and innovators in the region.",
-      badge: "Santo Domingo · Dominican Republic",
-      clickToOpen: "Click to open in Google Maps",
-      reserve: "Reserve Accommodations",
-      planStay: "Plan Your Stay",
-    },
-    es: {
-      sectionTitle: "Sede",
-      title: "Catalonia Santo Domingo",
-      description:
-        "Un destino frente al mar de primer nivel en el Malecón, perfectamente ubicado para albergar el encuentro más significativo de nómadas digitales e innovadores en la región.",
-      badge: "Santo Domingo · República Dominicana",
-      clickToOpen: "Haz clic para abrir en Google Maps",
-      reserve: "Reservar Alojamiento",
-      planStay: "Planifica tu Estadia",
-    },
-  }
-
-  const t = content[language]
-
-  const googleMapsLink =
-    "https://www.google.com/maps/place/Catalonia+Santo+Domingo/@18.458063,-69.909817,17z/data=!3m1!4b1!4m6!3m5!1s0x8eaf89f2b2e0e0e5:0x7a0f0f0f0f0f0f0f!8m2!3d18.458063!4d-69.909817!16s%2Fg%2F11c1qy5qy5"
-  const bookingLink = "https://www.cataloniahotels.com/en/pages/digital-nomad-summit-2026"
 
   return (
     <section
       id="location"
       ref={sectionRef}
-      className={`relative w-full bg-black py-24 md:py-32 transition-opacity duration-1000 ${
+      className={`relative w-full bg-black py-24 transition-opacity duration-1000 md:py-32 ${
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
-      <div className="container mx-auto px-4 md:px-6 max-w-6xl">
-        <div
-          className={`text-center mb-16 transition-all duration-1000 delay-100 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-3 font-[family-name:var(--font-heading)]">
-            {t.sectionTitle}
-          </h2>
-          <div className="flex justify-center">
-            <div className="h-[3px] w-16 bg-[#FF5757] rounded-full" />
-          </div>
+      <div className="container mx-auto max-w-6xl px-4 md:px-6">
+        <div className="mb-16 text-center">
+          <h2 className="font-display text-4xl font-bold text-white md:text-5xl">{t.sectionTitle}</h2>
+          <div className="mt-3 flex justify-center"><div className="h-[3px] w-16 rounded-full bg-[#FF5757]" /></div>
         </div>
 
-        <div
-          className={`relative mb-16 transition-all duration-1000 delay-300 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <div className="relative rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.08)]">
-            {/* YouTube video background container */}
-            <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
-              <iframe
-                src="https://www.youtube.com/embed/6IhHxdmlS-s?autoplay=1&mute=1&loop=1&controls=0&modestbranding=1&rel=0&start=53&playlist=6IhHxdmlS-s&showinfo=0&fs=0&disablekb=1&iv_load_policy=3"
-                title="Catalonia Santo Domingo Hotel Background Video"
-                allow="autoplay; encrypted-media"
-                loading="lazy"
-                aria-hidden="true"
-                className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-                style={{
-                  border: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
+        <div className="overflow-hidden rounded-3xl border border-white/10 shadow-[0_0_40px_rgba(255,255,255,0.08)]">
+          <div className="relative aspect-video min-h-[360px] md:min-h-0">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_60%_30%,#343434,#080808_70%)]" aria-hidden="true" />
+            <video
+              autoPlay={shouldPlayVideo}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-label={t.videoLabel}
+              className="absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
+            >
+              <source src={VENUE_VIDEO_URL} type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/45" aria-hidden="true" />
 
-              {/* Dark overlay for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-black/40" />
-
-              {/* Badge overlay */}
-              <div className="absolute top-6 left-6 z-10">
-                <div className="px-4 py-2 rounded-full bg-black/90 backdrop-blur-sm border border-white/10">
-                  <p className="text-white text-sm font-medium tracking-wide">{t.badge}</p>
-                </div>
-              </div>
-
-              {/* Desktop text overlay */}
-              <div className="hidden md:block absolute bottom-0 left-0 right-0 z-10 p-8 md:p-12">
-                <div className="max-w-[850px] mx-auto text-center">
-                  <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6 font-[family-name:var(--font-heading)] drop-shadow-lg">
-                    {t.title}
-                  </h3>
-                  <p className="text-white/90 text-base md:text-lg lg:text-xl leading-relaxed font-[family-name:var(--font-body)] drop-shadow-md">
-                    {t.description}
-                  </p>
-                  <div className="mt-8 flex flex-wrap justify-center gap-3">
-                    <a
-                      href={bookingLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5757] px-6 py-3 font-sans text-sm font-bold text-white transition-all duration-200 hover:bg-white hover:text-[#FF5757]"
-                    >
-                      {t.reserve}
-                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                    </a>
-                    <a
-                      href="#official-hotel"
-                      className="inline-flex items-center justify-center rounded-full border border-white/25 bg-white/10 px-6 py-3 font-sans text-sm font-bold text-white backdrop-blur-sm transition-all duration-200 hover:border-[#FF5757] hover:text-[#FF5757]"
-                    >
-                      {t.planStay}
-                    </a>
-                  </div>
-                </div>
-              </div>
+            <div className="absolute left-4 top-4 z-10 rounded-full border border-white/10 bg-black/85 px-4 py-2 backdrop-blur-sm md:left-6 md:top-6">
+              <p className="font-sans text-xs font-medium tracking-wide text-white md:text-sm">{t.badge}</p>
             </div>
 
-            {/* Mobile text below video */}
-            <div className="mt-6 px-2 text-center md:hidden">
-              <h3 className="text-3xl font-bold text-white mb-4 font-[family-name:var(--font-heading)]">{t.title}</h3>
-              <p className="text-white/80 text-base leading-relaxed font-[family-name:var(--font-body)]">
+            <div className="absolute inset-x-0 bottom-0 z-10 p-5 text-center md:p-12">
+              <p className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-[#FF5757]">{t.eyebrow}</p>
+              <h3 className="mt-3 font-display text-3xl font-bold text-white drop-shadow-lg md:text-5xl">{VENUE_NAME}</h3>
+              <p className="mt-2 font-sans text-sm font-semibold uppercase tracking-[0.14em] text-white/75">{t.date}</p>
+              <p className="mx-auto mt-4 hidden max-w-3xl font-sans text-base leading-7 text-white/85 sm:block md:text-lg">
                 {t.description}
               </p>
-              <div className="mt-6 grid gap-3">
+              <p className="mx-auto mt-3 max-w-2xl font-sans text-xs leading-5 text-white/70 md:text-sm">{VENUE_ADDRESS}</p>
+              <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row md:mt-7">
                 <a
-                  href={bookingLink}
+                  href={VENUE_TOUR_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5757] px-6 py-3 font-sans text-sm font-bold text-white transition-all duration-200 hover:bg-white hover:text-[#FF5757]"
+                  aria-label={`${t.tour} — ${VENUE_NAME} (${t.newTab})`}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-[#FF5757] bg-[#FF5757] px-6 py-3 font-sans text-sm font-bold text-white transition hover:bg-white hover:text-[#FF5757] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
-                  {t.reserve}
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  {t.tour}<ExternalLink className="h-4 w-4" aria-hidden="true" />
                 </a>
                 <a
-                  href="#official-hotel"
-                  className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3 font-sans text-sm font-bold text-white transition-all duration-200 hover:border-[#FF5757] hover:text-[#FF5757]"
+                  href={VENUE_MAP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${t.map} — ${VENUE_NAME} (${t.newTab})`}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 bg-black/30 px-6 py-3 font-sans text-sm font-bold text-white backdrop-blur-sm transition hover:border-[#FF5757] hover:text-[#FF5757] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5757]"
                 >
-                  {t.planStay}
+                  {t.map}<MapPin className="h-4 w-4" aria-hidden="true" />
                 </a>
               </div>
             </div>
           </div>
-        </div>
-
-        <div
-          className={`mb-16 transition-all duration-1000 delay-500 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <OfficialHotelSection />
-        </div>
-
-        <div
-          className={`transition-all duration-1000 delay-600 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <a
-            href={googleMapsLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.05)] max-w-[900px] mx-auto hover:border-[#FF5757]/40 transition-all duration-300 cursor-pointer group relative"
-            title={t.clickToOpen}
-          >
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 z-10 flex items-center justify-center pointer-events-none">
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[#FF5757] text-white px-6 py-3 rounded-full font-[family-name:var(--font-heading)] font-semibold shadow-lg">
-                {t.clickToOpen}
-              </div>
-            </div>
-
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3784.4982738951747!2d-69.91200668509795!3d18.45806398746707!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eaf89f163e485b1%3A0x956c9a937d42bb93!2sCatalonia%20Santo%20Domingo!5e0!3m2!1sen!2sdo!4v1635000000000!5m2!1sen!2sdo&markers=color:red%7Clabel:C%7C18.458063,-69.909817"
-              width="100%"
-              height="400"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Catalonia Santo Domingo Hotel Location - Digital Nomad Summit 2026 Venue"
-              className="w-full h-[260px] md:h-[400px] pointer-events-none"
-            />
-          </a>
         </div>
       </div>
     </section>

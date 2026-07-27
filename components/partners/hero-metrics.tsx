@@ -41,7 +41,7 @@ export function HeroMetrics() {
   const metrics = [
     { value: 300, suffix: "+", label: "Leaders", sublabel: "Founders · Investors · Policymakers" },
     { value: 8, suffix: "", label: "Strategic Sectors", sublabel: "Innovation · Tourism · Fintech · More" },
-    { value: 2, suffix: " Days", label: "Intensive Summit", sublabel: "August 6–7, 2026" },
+    { value: 2, suffix: " Days", label: "Intensive Summit", sublabel: "April 8–9, 2027" },
   ]
 
   return (

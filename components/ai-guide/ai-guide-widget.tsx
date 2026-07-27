@@ -117,7 +117,7 @@ export function AIGuideWidget() {
         ...prev,
         { 
           role: "assistant", 
-          content: "I'm having trouble connecting right now. Please try again later or contact digitalnomadsummit@gmail.com." 
+          content: "I'm having trouble connecting right now. Please try again later or contact digitalnomadsummit@successment.co." 
         },
       ])
     } finally {

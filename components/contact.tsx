@@ -70,7 +70,7 @@ export function Contact() {
             <div className="w-full max-w-[280px]">
               <img
                 src="/images/promo-20image.jpg"
-                alt="Digital Nomad Summit Santo Domingo 2026 - Work Live Scale Conference"
+                alt="Digital Nomad Summit Santo Domingo 2027 - Work Live Scale Conference"
                 width={280}
                 height={280}
                 loading="lazy"
@@ -82,7 +82,7 @@ export function Contact() {
             <div className="w-full">
               <p className="font-['Inter'] text-sm uppercase tracking-wider text-gray-500 mb-3">{t.emailLabel}</p>
               <a
-                href="mailto:digitalnomadsummit@gmail.com"
+                href="mailto:digitalnomadsummit@successment.co"
                 className="font-['Inter'] text-base md:text-lg text-black hover:text-[#FF5757] transition-colors duration-200 inline-flex items-center gap-3 group"
               >
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,7 +93,7 @@ export function Contact() {
                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                <span className="group-hover:underline break-all">digitalnomadsummit@gmail.com</span>
+                <span className="group-hover:underline break-all">digitalnomadsummit@successment.co</span>
               </a>
             </div>
 

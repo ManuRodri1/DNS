@@ -22,13 +22,13 @@ const content = {
       title: "Partner With the Digital Nomad Summit",
       support: "Position your brand at the center of Caribbean opportunity.",
       sub: "Connect your brand with founders, investors, policymakers, institutions, ecosystem builders, and global operators shaping the future of work, mobility, tourism, real estate, innovation, and emerging-market growth.",
-      event: "Santo Domingo · August 6–7, 2026 · Hotel Catalonia Santo Domingo",
+      event: "Santo Domingo · April 8–9, 2027 · Crowne Plaza Santo Domingo",
       primaryCta: "Start Partnership Inquiry",
       secondaryCta: "Explore the Network",
     },
     curated: {
       title: "A Curated Room for High-Value Conversations",
-      desc: "DNS 2026 is not a mass-market conference. It is a highly curated assembly of decision-makers. We cap attendance to ensure high signal-to-noise ratio and meaningful access for our partners.",
+      desc: "DNS 2027 is not a mass-market conference. It is a highly curated assembly of decision-makers. We cap attendance to ensure high signal-to-noise ratio and meaningful access for our partners.",
       audiences: [
         "Founders & Tech Entrepreneurs",
         "Angel Investors & VCs",
@@ -115,13 +115,13 @@ const content = {
       title: "Asóciate con el Digital Nomad Summit",
       support: "Posiciona tu marca en el centro de la oportunidad del Caribe.",
       sub: "Conecta tu marca con fundadores, inversores, líderes públicos, instituciones y operadores globales que dan forma al futuro del trabajo, movilidad, turismo, innovación y mercados emergentes.",
-      event: "Santo Domingo · 6–7 de Agosto, 2026 · Hotel Catalonia Santo Domingo",
+      event: "Santo Domingo · 8–9 de abril de 2027 · Crowne Plaza Santo Domingo",
       primaryCta: "Iniciar Solicitud de Alianza",
       secondaryCta: "Explorar la Red",
     },
     curated: {
       title: "Un Espacio Curado para Conversaciones de Alto Valor",
-      desc: "DNS 2026 no es una conferencia masiva. Es una asamblea altamente curada de tomadores de decisiones. Limitamos la asistencia para asegurar una alta relación señal-ruido y acceso significativo para nuestros aliados.",
+      desc: "DNS 2027 no es una conferencia masiva. Es una asamblea altamente curada de tomadores de decisiones. Limitamos la asistencia para asegurar una alta relación señal-ruido y acceso significativo para nuestros aliados.",
       audiences: [
         "Fundadores y Emprendedores Tech",
         "Inversores Ángeles y VCs",

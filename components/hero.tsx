@@ -6,6 +6,7 @@ import { Pill } from "./pill"
 import { Button } from "./ui/button"
 import { useState } from "react"
 import { useLanguage } from "@/lib/language-context"
+import { EVENT_DATE_EN, EVENT_DATE_ES } from "@/lib/event-config"
 
 const translations = {
   en: {
@@ -16,7 +17,7 @@ const translations = {
     ),
     dates: (
       <>
-        Santo Domingo <span className="text-[#FF5757]">·</span> August 6–7, 2026
+        Santo Domingo <span className="text-[#FF5757]">·</span> {EVENT_DATE_EN}
       </>
     ),
     headline: (
@@ -38,7 +39,7 @@ const translations = {
     ),
     dates: (
       <>
-        Santo Domingo <span className="text-[#FF5757]">·</span> 6–7 de Agosto, 2026
+        Santo Domingo <span className="text-[#FF5757]">·</span> {EVENT_DATE_ES}
       </>
     ),
     headline: (

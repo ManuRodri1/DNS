@@ -8,15 +8,15 @@ const content = {
   en: {
     backToHome: "Back to Home",
     title: "Full Agenda",
-    subtitle: "Digital Nomad Summit Santo Domingo 2026",
-    meta: "August 6–7, 2026 · Santo Domingo, Dominican Republic",
+    subtitle: "Digital Nomad Summit Santo Domingo 2027",
+    meta: "April 8–9, 2027 · Santo Domingo, Dominican Republic",
     theme: "Theme: The Japan of the Caribbean",
   },
   es: {
     backToHome: "Volver al Inicio",
     title: "Agenda Completa",
-    subtitle: "Digital Nomad Summit Santo Domingo 2026",
-    meta: "6–7 de agosto de 2026 · Santo Domingo, República Dominicana",
+    subtitle: "Digital Nomad Summit Santo Domingo 2027",
+    meta: "8–9 de abril de 2027 · Santo Domingo, República Dominicana",
     theme: "Tema: El Japón del Caribe",
   },
 }

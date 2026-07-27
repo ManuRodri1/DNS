@@ -26,7 +26,7 @@ const content: Record<"en" | "es", { day1: DayData; day2: DayData }> = {
     day1: {
       dayLabel: "DAY 1",
       dayTitle: "Market Momentum & Global Positioning",
-      dayTheme: "August 6, 2026",
+      dayTheme: "Thursday · April 8, 2027",
       blocks: [
         {
           period: "Morning",
@@ -64,7 +64,7 @@ const content: Record<"en" | "es", { day1: DayData; day2: DayData }> = {
     day2: {
       dayLabel: "DAY 2",
       dayTitle: "Activation, Talent & The Future",
-      dayTheme: "August 7, 2026",
+      dayTheme: "Friday · April 9, 2027",
       blocks: [
         {
           period: "Morning",
@@ -100,7 +100,7 @@ const content: Record<"en" | "es", { day1: DayData; day2: DayData }> = {
     day1: {
       dayLabel: "DÍA 1",
       dayTitle: "Impulso del Mercado y Posicionamiento Global",
-      dayTheme: "6 de agosto de 2026",
+      dayTheme: "Jueves · 8 de abril de 2027",
       blocks: [
         {
           period: "Mañana",
@@ -138,7 +138,7 @@ const content: Record<"en" | "es", { day1: DayData; day2: DayData }> = {
     day2: {
       dayLabel: "DÍA 2",
       dayTitle: "Activación, Talento y el Futuro",
-      dayTheme: "7 de agosto de 2026",
+      dayTheme: "Viernes · 9 de abril de 2027",
       blocks: [
         {
           period: "Mañana",
@@ -311,7 +311,7 @@ export function AgendaContent() {
           className={`mb-14 transition-all duration-700 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
         >
           <p className="font-sans text-white/40 uppercase text-xs tracking-[0.25em] mb-3">
-            DIGITAL NOMAD SUMMIT SANTO DOMINGO 2026
+            DIGITAL NOMAD SUMMIT SANTO DOMINGO 2027
           </p>
           <div className="h-[1px] w-full bg-white/8" />
         </div>

@@ -13,7 +13,7 @@ const content = {
     eyebrow: "DNS PRESS ROOM",
     headline: "Press Coverage and Institutional Presence for Digital Nomad Summit",
     subheadline:
-      "Explore the press coverage and publications positioning Digital Nomad Summit Santo Domingo 2026 as a key platform for innovation, investment, global talent, and Dominican ecosystem growth.",
+      "Explore the press coverage and publications positioning Digital Nomad Summit Santo Domingo 2027 as a key platform for innovation, investment, global talent, and Dominican ecosystem growth.",
     support:
       "A resource for journalists, sponsors, institutions, and partners following the growth of DNS across the Dominican Republic, LATAM, and international markets.",
     primary: "View Media Coverage",
@@ -21,7 +21,7 @@ const content = {
     spotlightBadge: "Media Coverage",
     readCoverage: "Read Coverage",
     fallback:
-      "Institutional coverage of DNS 2026 across national and international media.",
+      "Institutional coverage of DNS 2027 across national and international media.",
     themesTitle: "Coverage themes:",
     themes: ["Innovation", "Investment", "Global Talent", "DR Ecosystem"],
     micro:
@@ -32,7 +32,7 @@ const content = {
     eyebrow: "SALA DE PRENSA DNS",
     headline: "Cobertura, medios y presencia institucional de Digital Nomad Summit",
     subheadline:
-      "Explora la cobertura de prensa y publicaciones que posicionan a Digital Nomad Summit Santo Domingo 2026 como una plataforma clave para innovacion, inversion, talento global y crecimiento del ecosistema dominicano.",
+      "Explora la cobertura de prensa y publicaciones que posicionan a Digital Nomad Summit Santo Domingo 2027 como una plataforma clave para innovacion, inversion, talento global y crecimiento del ecosistema dominicano.",
     support:
       "Un recurso para periodistas, sponsors, instituciones y aliados que siguen el crecimiento de DNS en Republica Dominicana, LATAM y mercados internacionales.",
     primary: "Ver Cobertura de Medios",
@@ -40,7 +40,7 @@ const content = {
     spotlightBadge: "Cobertura de Medios",
     readCoverage: "Leer Cobertura",
     fallback:
-      "Cobertura institucional de DNS 2026 en medios nacionales e internacionales.",
+      "Cobertura institucional de DNS 2027 en medios nacionales e internacionales.",
     themesTitle: "Temas de cobertura:",
     themes: ["Innovacion", "Inversion", "Talento Global", "Ecosistema RD"],
     micro:

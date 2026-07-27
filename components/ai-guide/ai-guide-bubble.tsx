@@ -14,7 +14,7 @@ export function AIGuideBubble({ onOpen, isChatOpen }: AIGuideBubbleProps) {
   const [isDismissed, setIsDismissed] = useState(false)
 
   const messages = [
-    { en: "I can help you with DNS 2026.", es: "¿En qué puedo ayudarte con DNS 2026?" },
+    { en: "I can help you with DNS 2027.", es: "¿En qué puedo ayudarte con DNS 2027?" },
     { en: "Ask me about tickets or speakers.", es: "Pregúntame sobre tickets o speakers." },
     { en: "Need help planning your visit?", es: "¿Necesitas ayuda con tu visita?" },
   ]

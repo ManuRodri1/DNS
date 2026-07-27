@@ -68,7 +68,7 @@ export async function buildDNSContext() {
   const mediaPartners = partners.filter(p => p.section === "media_partners");
 
   return `
---- OFFICIAL DNS 2026 OVERVIEW ---
+--- OFFICIAL DNS 2027 OVERVIEW ---
 Event: ${STATIC_DNS_CONTEXT.event_name} (${STATIC_DNS_CONTEXT.acronym})
 Tagline: ${STATIC_DNS_CONTEXT.tagline}
 Hero: ${STATIC_DNS_CONTEXT.hero_phrase}
@@ -78,6 +78,16 @@ Website: ${STATIC_DNS_CONTEXT.website}
 Description: ${STATIC_DNS_CONTEXT.short_description}
 Positioning (EN): ${STATIC_DNS_CONTEXT.core_positioning.english}
 Positioning (ES): ${STATIC_DNS_CONTEXT.core_positioning.spanish}
+
+--- RESCHEDULING FAQ (APPROVED ANSWERS) ---
+EN — When: ${STATIC_DNS_CONTEXT.rescheduling_faq.english.when}
+EN — Where: ${STATIC_DNS_CONTEXT.rescheduling_faq.english.where}
+EN — Existing tickets: ${STATIC_DNS_CONTEXT.rescheduling_faq.english.existing_tickets}
+EN — Transfers: ${STATIC_DNS_CONTEXT.rescheduling_faq.english.transfers}
+ES — Cuándo: ${STATIC_DNS_CONTEXT.rescheduling_faq.spanish.when}
+ES — Dónde: ${STATIC_DNS_CONTEXT.rescheduling_faq.spanish.where}
+ES — Boletos existentes: ${STATIC_DNS_CONTEXT.rescheduling_faq.spanish.existing_tickets}
+ES — Transferencias: ${STATIC_DNS_CONTEXT.rescheduling_faq.spanish.transfers}
 
 --- PRESENTED BY ---
 Org: ${STATIC_DNS_CONTEXT.organizer_info.presented_by}

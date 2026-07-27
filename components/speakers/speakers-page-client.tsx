@@ -9,18 +9,18 @@ import Link from "next/link"
 
 const content = {
   en: {
-    eventLabel: "Digital Nomad Summit 2026",
+    eventLabel: "Digital Nomad Summit 2027",
     heroHeadline1: "Meet the Voices",
     heroHeadline2: "Shaping the Future",
     heroSubheadline:
-      "Founders, executives, policymakers, investors, and innovators joining Digital Nomad Summit Santo Domingo - August 6-7, 2026.",
+      "Founders, executives, policymakers, investors, and innovators joining Digital Nomad Summit Santo Domingo - April 8-9, 2027.",
     buyTickets: "Buy Tickets",
     allLabel: "Full Lineup",
     allHeadline: "All Speakers",
     emptyLabel: "Lineup in progress",
     emptyHeadline: "Speakers Dropping Soon",
     emptyBody:
-      "We're curating an exceptional lineup of founders, executives, investors, and innovators for DNS Santo Domingo 2026. Follow our channels for announcements.",
+      "We're curating an exceptional lineup of founders, executives, investors, and innovators for DNS Santo Domingo 2027. Follow our channels for announcements.",
     moreSpeakers: "More Speakers",
     exploreMore: "Explore More",
     viewAll: "View All",
@@ -34,18 +34,18 @@ const content = {
     viewFullLineup: "View Full Lineup",
   },
   es: {
-    eventLabel: "Digital Nomad Summit 2026",
+    eventLabel: "Digital Nomad Summit 2027",
     heroHeadline1: "Conoce las Voces",
     heroHeadline2: "Que Dan Forma al Futuro",
     heroSubheadline:
-      "Fundadores, ejecutivos, legisladores, inversores e innovadores que se unen al Digital Nomad Summit Santo Domingo - 6-7 de agosto de 2026.",
+      "Fundadores, ejecutivos, legisladores, inversores e innovadores que se unen al Digital Nomad Summit Santo Domingo - 8-9 de abril de 2027.",
     buyTickets: "Comprar Entradas",
     allLabel: "Lineup Completo",
     allHeadline: "Todos los Speakers",
     emptyLabel: "Lineup en progreso",
     emptyHeadline: "Speakers Proximamente",
     emptyBody:
-      "Estamos curando un lineup excepcional de fundadores, ejecutivos, inversores e innovadores para DNS Santo Domingo 2026. Sigue nuestros canales para anuncios.",
+      "Estamos curando un lineup excepcional de fundadores, ejecutivos, inversores e innovadores para DNS Santo Domingo 2027. Sigue nuestros canales para anuncios.",
     moreSpeakers: "Mas Speakers",
     exploreMore: "Explorar Mas",
     viewAll: "Ver Todos",

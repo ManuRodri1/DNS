@@ -5,6 +5,13 @@ import "./globals.css"
 import { Header } from "@/components/header"
 import { LanguageProvider } from "@/lib/language-context"
 import { AIGuideWidget } from "@/components/ai-guide/ai-guide-widget"
+import { EventUpdateModal } from "@/components/event-update-modal"
+import {
+  EVENT_DISPLAY_NAME,
+  EVENT_END_DATE,
+  EVENT_START_DATE,
+  VENUE_NAME,
+} from "@/lib/event-config"
 import Script from "next/script"
 
 const sora = Sora({
@@ -23,13 +30,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   // 1. PAGE TITLE & META DESCRIPTION
-  title: "Digital Nomad Summit Santo Domingo 2026 | Remote Work • Innovation • Tourism 3.0",
+  title: "Digital Nomad Summit Santo Domingo 2027 | Innovation, Investment & Global Mobility",
   description:
-    "A global summit in Santo Domingo accelerating innovation, remote work, tourism 3.0, real estate, and emerging-market entrepreneurship. August 6–7, 2026 at Catalonia Santo Domingo.",
+    "Join founders, investors, policymakers, brands, and global innovators April 8–9, 2027 at Crowne Plaza Santo Domingo.",
   keywords: [
     "Digital Nomad Summit",
     "Dominican Republic summit",
-    "Santo Domingo conference 2026",
+    "Santo Domingo conference 2027",
     "remote work Caribbean",
     "tourism 3.0",
     "startup summit DR",
@@ -52,9 +59,9 @@ export const metadata: Metadata = {
 
   // 2. OPEN GRAPH (FACEBOOK / LINKEDIN)
   openGraph: {
-    title: "Digital Nomad Summit Santo Domingo 2026",
+    title: EVENT_DISPLAY_NAME,
     description:
-      "A global summit bringing together founders, investors, policymakers, and innovators shaping the future of remote work, tourism 3.0, and emerging markets.",
+      "Innovation, investment, and global mobility meet April 8–9, 2027 at Crowne Plaza Santo Domingo.",
     type: "website",
     url: "https://www.digitalnomadsummit.co/",
     images: [
@@ -62,7 +69,7 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Digital Nomad Summit Santo Domingo 2026",
+        alt: EVENT_DISPLAY_NAME,
       },
     ],
     locale: "en_US",
@@ -72,8 +79,8 @@ export const metadata: Metadata = {
   // 3. TWITTER / X CARD
   twitter: {
     card: "summary_large_image",
-    title: "Digital Nomad Summit Santo Domingo 2026",
-    description: "Two days of innovation, remote work, tourism 3.0, and entrepreneurship in Santo Domingo.",
+    title: EVENT_DISPLAY_NAME,
+    description: "Two days of innovation, investment, global mobility, and entrepreneurship in Santo Domingo.",
     images: ["/og-image.jpg"],
   },
 
@@ -142,26 +149,19 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Event",
-              name: "Digital Nomad Summit Santo Domingo 2026",
-              startDate: "2026-08-06T09:00:00-04:00",
-              endDate: "2026-08-07T18:00:00-04:00",
+              name: EVENT_DISPLAY_NAME,
+              startDate: EVENT_START_DATE,
+              endDate: EVENT_END_DATE,
               eventStatus: "https://schema.org/EventScheduled",
               eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
               location: {
                 "@type": "Place",
-                name: "Catalonia Santo Domingo",
+                name: VENUE_NAME,
                 address: {
                   "@type": "PostalAddress",
-                  streetAddress: "George Washington Avenue, Malecón",
+                  streetAddress: "Av. George Washington 218",
                   addressLocality: "Santo Domingo",
-                  addressRegion: "Distrito Nacional",
-                  postalCode: "10205",
                   addressCountry: "DO",
-                },
-                geo: {
-                  "@type": "GeoCoordinates",
-                  latitude: 18.458063395804366,
-                  longitude: -69.90981728465985,
                 },
               },
               image: ["https://www.digitalnomadsummit.co/og-image.jpg"],
@@ -191,6 +191,7 @@ export default function RootLayout({
           <Header />
           {children}
           <AIGuideWidget />
+          <EventUpdateModal />
         </LanguageProvider>
         {/* Klaviyo Onsite Script */}
         <Script

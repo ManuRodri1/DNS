@@ -45,32 +45,42 @@ export const Header = () => {
   }, [pathname])
 
   return (
-    <div className="fixed left-0 top-0 z-50 w-full pt-6 transition-all duration-500 md:pt-10 lg:pt-12">
+    <div
+      className={`fixed left-0 top-0 z-50 w-full transition-all duration-500 ${
+        isWhiteHeader ? "pt-2 md:pt-3" : "pt-6 md:pt-10 lg:pt-12"
+      }`}
+    >
       <header
         className={`container mx-auto flex items-center justify-between px-4 transition-all duration-500 md:px-6 ${
-          isWhiteHeader ? "mt-2 max-w-[95%] rounded-full bg-white/95 px-6 py-2.5 shadow-md backdrop-blur-md md:max-w-[90%] xl:max-w-6xl" : "py-4"
+          isWhiteHeader
+            ? "max-w-[96%] rounded-full border border-black/[0.06] bg-white/95 px-4 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,0.12)] backdrop-blur-md md:max-w-[94%] md:px-5 xl:max-w-7xl"
+            : "py-4"
         }`}
       >
         <div className="z-10 flex-shrink-0">
-          <Link href="/" className="relative block">
+          <Link href="/" className="relative block" aria-label="Digital Nomad Summit home">
             <img
               src="/logo digital nomad summit - Editado.png"
               alt="Digital Nomad Summit"
-              className={`h-auto w-[100px] transition-opacity duration-500 sm:w-[110px] md:w-[120px] ${
+              className={`h-auto transition-all duration-500 ${
+                isWhiteHeader ? "w-[68px] sm:w-[72px] md:w-[76px]" : "w-[100px] sm:w-[110px] md:w-[120px]"
+              } ${
                 isWhiteHeader ? "absolute inset-0 opacity-0" : "opacity-100"
               }`}
             />
             <img
               src="/images/dns-logo-white.jpg"
               alt="Digital Nomad Summit"
-              className={`h-auto w-[100px] transition-opacity duration-500 sm:w-[110px] md:w-[120px] ${
+              className={`h-auto transition-all duration-500 ${
+                isWhiteHeader ? "w-[68px] sm:w-[72px] md:w-[76px]" : "w-[100px] sm:w-[110px] md:w-[120px]"
+              } ${
                 isWhiteHeader ? "opacity-100" : "absolute inset-0 opacity-0"
               }`}
             />
           </Link>
         </div>
 
-        <nav className="hidden items-center justify-center gap-x-6 xl:flex">
+        <nav className={`hidden items-center justify-center xl:flex ${isWhiteHeader ? "gap-x-5" : "gap-x-6"}`}>
           <div
             className="relative"
             onMouseEnter={() => {
@@ -85,7 +95,9 @@ export const Header = () => {
           >
             <button
               onClick={() => setIsAboutOpen(!isAboutOpen)}
-              className={`group relative flex items-center gap-1 whitespace-nowrap font-sans text-[13px] font-semibold transition-colors duration-150 ease-out hover:text-[#FF5757] ${
+              className={`group relative flex items-center gap-1 whitespace-nowrap font-sans font-semibold transition-colors duration-150 ease-out hover:text-[#FF5757] ${
+                isWhiteHeader ? "text-[12px]" : "text-[13px]"
+              } ${
                 isWhiteHeader ? "text-black" : "text-white"
               }`}
               aria-expanded={isAboutOpen}
@@ -141,7 +153,9 @@ export const Header = () => {
             { label: "Successment", href: "https://www.successment.co/", external: true },
           ].map((item) => (
             <Link
-              className={`group relative whitespace-nowrap font-sans text-[13px] font-semibold transition-colors duration-150 ease-out hover:text-[#FF5757] ${
+              className={`group relative whitespace-nowrap font-sans font-semibold transition-colors duration-150 ease-out hover:text-[#FF5757] ${
+                isWhiteHeader ? "text-[12px]" : "text-[13px]"
+              } ${
                 isWhiteHeader ? "text-black" : "text-white"
               }`}
               href={item.href}
@@ -154,7 +168,7 @@ export const Header = () => {
           ))}
         </nav>
 
-        <div className="z-10 flex items-center gap-4">
+        <div className={`z-10 flex items-center ${isWhiteHeader ? "gap-3" : "gap-4"}`}>
           <LanguageSwitcher className="hidden xl:flex" />
           <MobileMenu isWhiteHeader={isWhiteHeader} />
         </div>

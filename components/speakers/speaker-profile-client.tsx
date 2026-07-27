@@ -26,8 +26,8 @@ const content = {
     location: "Location",
     topics: "Topics",
     theEvent: "The Event",
-    eventDate: "August 6–7, 2026",
-    eventVenue: "Catalonia Santo Domingo",
+    eventDate: "April 8–9, 2027",
+    eventVenue: "Crowne Plaza Santo Domingo",
     getTicket: "Get your ticket",
     exploreMore: "Explore More",
     moreSpeakers: "More Speakers",
@@ -46,8 +46,8 @@ const content = {
     location: "Ubicaci\u00f3n",
     topics: "Temas",
     theEvent: "El Evento",
-    eventDate: "6–7 de agosto de 2026",
-    eventVenue: "Catalonia Santo Domingo",
+    eventDate: "8–9 de abril de 2027",
+    eventVenue: "Crowne Plaza Santo Domingo",
     getTicket: "Consigue tu entrada",
     exploreMore: "Explorar M\u00e1s",
     moreSpeakers: "M\u00e1s Speakers",
@@ -160,7 +160,7 @@ export function SpeakerProfileClient({
                 {image ? (
                   <Image
                     src={image}
-                    alt={`${speaker.fullName} — Digital Nomad Summit 2026`}
+                    alt={`${speaker.fullName} — Digital Nomad Summit 2027`}
                     fill
                     className="object-cover object-top"
                     sizes="(max-width: 1024px) 100vw, 50vw"
@@ -173,7 +173,7 @@ export function SpeakerProfileClient({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
-                    <span className="text-white/20 text-xs font-sans uppercase tracking-widest">DNS 2026</span>
+                    <span className="text-white/20 text-xs font-sans uppercase tracking-widest">DNS 2027</span>
                   </div>
                 )}
                 <div className="absolute bottom-0 left-0 right-0 h-1/4 bg-gradient-to-t from-black/80 to-transparent" />
@@ -337,7 +337,7 @@ export function SpeakerProfileClient({
 
               <div className="rounded-2xl border border-[#FF5757]/15 bg-[#FF5757]/5 p-6">
                 <p className="text-[#FF5757] text-[10px] font-bold uppercase tracking-[0.25em] font-sans mb-3">{t.theEvent}</p>
-                <p className="text-white font-bold font-sans text-base mb-1">DNS Santo Domingo 2026</p>
+                <p className="text-white font-bold font-sans text-base mb-1">DNS Santo Domingo 2027</p>
                 <p className="text-white/50 text-sm font-sans mb-1">{t.eventDate}</p>
                 <p className="text-white/40 text-sm font-sans mb-4">{t.eventVenue}</p>
                 <Link href="/tickets" className="inline-flex items-center gap-2 text-[#FF5757] text-sm font-bold font-sans hover:gap-3 transition-all duration-200">

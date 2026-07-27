@@ -26,7 +26,7 @@ const content = {
     allSpeakers: "All Speakers",
     viewProfile: "View Profile",
     exploreAll: "Explore All Speakers",
-    attribution: "DNS Santo Domingo \u00b7 August 2026",
+    attribution: "DNS Santo Domingo \u00b7 April 2027",
     comingSoon: "Speaker announcements coming soon.",
   },
   es: {
@@ -37,7 +37,7 @@ const content = {
     allSpeakers: "Todos los Speakers",
     viewProfile: "Ver Perfil",
     exploreAll: "Ver Todos los Speakers",
-    attribution: "DNS Santo Domingo \u00b7 Agosto 2026",
+    attribution: "DNS Santo Domingo \u00b7 Abril 2027",
     comingSoon: "Anuncios de speakers pr\u00f3ximamente.",
   },
 }
@@ -63,7 +63,7 @@ function SpeakerPlaceholder() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
       </div>
-      <span className="text-white/15 text-[10px] font-sans uppercase tracking-widest">DNS 2026</span>
+      <span className="text-white/15 text-[10px] font-sans uppercase tracking-widest">DNS 2027</span>
     </div>
   )
 }
@@ -86,7 +86,7 @@ function SpeakerCard({ speaker, viewProfileLabel }: { speaker: HomepageSpeaker; 
         {image ? (
           <Image
             src={image}
-            alt={`${speaker.fullName} — Digital Nomad Summit 2026`}
+            alt={`${speaker.fullName} — Digital Nomad Summit 2027`}
             fill
             className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.04]"
             sizes="(max-width: 640px) 280px, (max-width: 1024px) 33vw, 25vw"

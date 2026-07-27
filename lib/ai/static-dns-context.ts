@@ -1,16 +1,16 @@
 export const STATIC_DNS_CONTEXT = {
-  event_name: "Digital Nomad Summit Santo Domingo 2026",
-  acronym: "DNS 2026",
+  event_name: "Digital Nomad Summit Santo Domingo 2027",
+  acronym: "DNS 2027",
   tagline: "Work | Live | Scale",
   hero_phrase: "Where global innovation, talent, and capital converge.",
-  date: "August 6–7, 2026",
+  date: "April 8–9, 2027",
   location: "Santo Domingo, Dominican Republic",
-  venue: "Hotel Catalonia Santo Domingo",
-  address: "Av. George Washington 500, Santo Domingo 10104, Dominican Republic",
+  venue: "Crowne Plaza Santo Domingo",
+  address: "Av. George Washington 218, Santo Domingo, Dominican Republic",
   website: "www.digitalnomadsummit.co",
   expected_attendance: "200–300 leaders",
 
-  short_description: "Digital Nomad Summit Santo Domingo 2026 is a transnational, business-first platform focused on innovation, capital, and exportable talent in emerging markets. It converges the Dominican Republic’s biggest power levers — startups, real estate, and tourism — into a global nomad ecosystem.",
+  short_description: "Digital Nomad Summit Santo Domingo 2027 is a transnational, business-first platform focused on innovation, capital, and exportable talent in emerging markets. It converges the Dominican Republic’s biggest power levers — startups, real estate, and tourism — into a global nomad ecosystem.",
   
   core_positioning: {
     english: "Welcome to the 'Japan of the Caribbean,' where underrepresented talent meets international capital, and nomads don’t just visit — they scale.",
@@ -137,7 +137,7 @@ export const STATIC_DNS_CONTEXT = {
   },
 
   contact: {
-    email: "digitalnomadsummit@gmail.com",
+    email: "digitalnomadsummit@successment.co",
     ceo_email: "jonathan@successment.co",
     instagram: "@thedigitalnomadsummit",
     book_meeting_url: "www.digitalnomadsummit.co"
@@ -146,7 +146,7 @@ export const STATIC_DNS_CONTEXT = {
   logistics: {
     airport: "Las Américas International Airport (SDQ) is the primary gateway, located 25-30 minutes from the venue.",
     transportation: "Uber is widely available and safe. Private hotel shuttles or authorized airport taxis are also recommended.",
-    weather: "Hot and tropical. August is summer (28°C-32°C). Lightweight business casual clothing is recommended.",
+    weather: "Santo Domingo has a warm tropical climate. Check the local forecast before traveling and plan lightweight business attire.",
     currency: "Dominican Peso (DOP), but USD is widely accepted in hotels and tourist areas."
   },
 
@@ -179,7 +179,7 @@ export const STATIC_DNS_CONTEXT = {
   ],
   agenda: {
     day_1: {
-      date: "August 6, 2026",
+      date: "April 8, 2027",
       theme: "Market Momentum & Global Positioning",
       morning: ["VIP & Speaker Breakfast (Invite Only)", "Opening Ceremony & Vision Keynote", "Flagship Panels: Innovation, AI, Mobility, Tourism 3.0"],
       midday: ["Keynote", "Branded Networking & Sponsor Activations", "Ecosystem Breakouts (Capital, Policy, Tech)"],
@@ -187,12 +187,26 @@ export const STATIC_DNS_CONTEXT = {
       evening: ["VIP Dinner on the Malecón", "Signature DNS Experience"]
     },
     day_2: {
-      date: "August 7, 2026",
+      date: "April 9, 2027",
       theme: "Activation, Talent & The Future",
       morning: ["Coffee Circles & Executive Roundtables", "Keynote: The Japan of the Caribbean (TBD)"],
       midday: ["University & Workforce Spotlights", "Sponsor-Led Activations & Pitch Moments / Competition", "ZARI Mobility Reveal"],
       afternoon: ['"The Corridor" Sessions (U.S. ↔ DR)', "Curated Cultural & Economic Excursion", "Influencer Panel"],
       evening: ["VIP Closing Reception (Invite Only, TBD)"]
+    }
+  },
+  rescheduling_faq: {
+    english: {
+      when: "Digital Nomad Summit Santo Domingo will take place April 8–9, 2027.",
+      where: "The summit will be held at Crowne Plaza Santo Domingo, Av. George Washington 218, Santo Domingo, Dominican Republic.",
+      existing_tickets: "Existing General Admission and VIP registrations will automatically remain valid for the new event dates in accordance with the Terms & Conditions.",
+      transfers: "Contact digitalnomadsummit@successment.co."
+    },
+    spanish: {
+      when: "Digital Nomad Summit Santo Domingo se celebrará los días 8 y 9 de abril de 2027.",
+      where: "El summit se celebrará en Crowne Plaza Santo Domingo, Av. George Washington 218, Santo Domingo, República Dominicana.",
+      existing_tickets: "Las inscripciones existentes de Admisión General y VIP continuarán siendo válidas automáticamente para las nuevas fechas, de conformidad con los Términos y Condiciones.",
+      transfers: "Contacta a digitalnomadsummit@successment.co."
     }
   }
 };
