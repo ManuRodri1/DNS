@@ -16,7 +16,6 @@ import { Location } from "@/components/location"
 import { Contact } from "@/components/contact"
 import { FinalCTA } from "@/components/final-cta"
 import { Footer } from "@/components/footer"
-import { Leva } from "leva"
 
 export default function Home() {
   return (
@@ -37,7 +36,6 @@ export default function Home() {
       <Contact />
       <FinalCTA />
       <Footer />
-      <Leva hidden />
     </>
   )
 }

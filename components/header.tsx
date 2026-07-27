@@ -47,14 +47,14 @@ export const Header = () => {
   return (
     <div
       className={`fixed left-0 top-0 z-50 w-full transition-all duration-500 ${
-        isWhiteHeader ? "pt-2 md:pt-3" : "pt-6 md:pt-10 lg:pt-12"
+        isWhiteHeader ? "pt-2 md:pt-3" : "pt-5 md:pt-7 lg:pt-8"
       }`}
     >
       <header
         className={`container mx-auto flex items-center justify-between px-4 transition-all duration-500 md:px-6 ${
           isWhiteHeader
             ? "max-w-[96%] rounded-full border border-black/[0.06] bg-white/95 px-4 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,0.12)] backdrop-blur-md md:max-w-[94%] md:px-5 xl:max-w-7xl"
-            : "py-4"
+            : "py-3"
         }`}
       >
         <div className="z-10 flex-shrink-0">
@@ -63,7 +63,7 @@ export const Header = () => {
               src="/logo digital nomad summit - Editado.png"
               alt="Digital Nomad Summit"
               className={`h-auto transition-all duration-500 ${
-                isWhiteHeader ? "w-[68px] sm:w-[72px] md:w-[76px]" : "w-[100px] sm:w-[110px] md:w-[120px]"
+                isWhiteHeader ? "w-[68px] sm:w-[72px] md:w-[76px]" : "w-[108px] sm:w-[120px] md:w-[132px]"
               } ${
                 isWhiteHeader ? "absolute inset-0 opacity-0" : "opacity-100"
               }`}
@@ -72,7 +72,7 @@ export const Header = () => {
               src="/images/dns-logo-white.jpg"
               alt="Digital Nomad Summit"
               className={`h-auto transition-all duration-500 ${
-                isWhiteHeader ? "w-[68px] sm:w-[72px] md:w-[76px]" : "w-[100px] sm:w-[110px] md:w-[120px]"
+                isWhiteHeader ? "w-[68px] sm:w-[72px] md:w-[76px]" : "w-[108px] sm:w-[120px] md:w-[132px]"
               } ${
                 isWhiteHeader ? "opacity-100" : "absolute inset-0 opacity-0"
               }`}
