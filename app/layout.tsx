@@ -185,6 +185,8 @@ export default function RootLayout({
         />
         {/* 8. Preload hero image */}
         <link rel="preload" href="/images/promo-20image.jpg" as="image" />
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="//res.cloudinary.com" />
       </head>
       <body className={`${sora.variable} ${inter.variable} antialiased`} suppressHydrationWarning>
         <LanguageProvider>

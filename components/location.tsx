@@ -9,6 +9,7 @@ import {
   VENUE_ADDRESS,
   VENUE_MAP_URL,
   VENUE_NAME,
+  VENUE_VIDEO_POSTER_URL,
   VENUE_TOUR_URL,
   VENUE_VIDEO_URL,
 } from "@/lib/event-config"
@@ -43,28 +44,31 @@ const content = {
 export function Location() {
   const { language } = useLanguage()
   const [isVisible, setIsVisible] = useState(false)
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
   const [shouldPlayVideo, setShouldPlayVideo] = useState(false)
   const [isVideoMuted, setIsVideoMuted] = useState(true)
+  const [isVideoReady, setIsVideoReady] = useState(false)
+  const [hasVideoError, setHasVideoError] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const t = content[language]
-
-  useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
-    setShouldPlayVideo(!reducedMotion.matches)
-  }, [])
 
   const handleSoundToggle = async () => {
     const video = videoRef.current
     if (!video) return
 
     if (isVideoMuted) {
+      video.volume = 1
       video.muted = false
+      video.defaultMuted = false
+      video.removeAttribute("muted")
+      setIsVideoMuted(false)
       try {
         await video.play()
-        setIsVideoMuted(false)
       } catch {
         video.muted = true
+        video.defaultMuted = true
+        setIsVideoMuted(true)
       }
       return
     }
@@ -81,6 +85,29 @@ export function Location() {
     if (sectionRef.current) observer.observe(sectionRef.current)
     return () => observer.disconnect()
   }, [])
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const videoObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        setShouldLoadVideo(true)
+        setShouldPlayVideo(!reducedMotion.matches)
+        videoObserver.disconnect()
+      },
+      { rootMargin: "400px 0px", threshold: 0 },
+    )
+
+    videoObserver.observe(section)
+    return () => videoObserver.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (shouldLoadVideo) videoRef.current?.load()
+  }, [shouldLoadVideo])
 
   return (
     <section
@@ -105,11 +132,24 @@ export function Location() {
               muted={isVideoMuted}
               loop
               playsInline
-              preload="metadata"
+              preload="none"
+              poster={VENUE_VIDEO_POSTER_URL}
               aria-label={t.videoLabel}
+              onCanPlay={() => {
+                setIsVideoReady(true)
+                setHasVideoError(false)
+              }}
+              onError={() => {
+                setHasVideoError(true)
+                setIsVideoReady(false)
+              }}
+              onVolumeChange={(event) => {
+                const video = event.currentTarget
+                setIsVideoMuted(video.muted || video.volume === 0)
+              }}
               className="absolute inset-0 h-full w-full bg-black object-contain"
             >
-              <source src={VENUE_VIDEO_URL} type="video/mp4" />
+              {shouldLoadVideo && <source src={VENUE_VIDEO_URL} type="video/mp4" />}
             </video>
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/40 md:from-black/95 md:via-black/55 md:to-black/45" aria-hidden="true" />
 
@@ -120,9 +160,10 @@ export function Location() {
             <button
               type="button"
               onClick={handleSoundToggle}
+              disabled={!isVideoReady || hasVideoError}
               aria-label={isVideoMuted ? t.listen : t.mute}
               aria-pressed={!isVideoMuted}
-              className="absolute bottom-4 right-4 z-20 inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 bg-black/80 px-3 font-sans text-xs font-bold text-white backdrop-blur-sm transition-colors duration-200 hover:border-[#FF5757] hover:text-[#FF5757] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5757] sm:px-4 md:bottom-auto md:right-6 md:top-6"
+              className="absolute bottom-4 right-4 z-20 inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 bg-black/80 px-3 font-sans text-xs font-bold text-white backdrop-blur-sm transition-colors duration-200 hover:border-[#FF5757] hover:text-[#FF5757] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5757] disabled:cursor-wait disabled:opacity-50 sm:px-4 md:bottom-auto md:right-6 md:top-6"
               suppressHydrationWarning
             >
               {isVideoMuted ? <Volume2 className="h-4 w-4" aria-hidden="true" /> : <VolumeX className="h-4 w-4" aria-hidden="true" />}
