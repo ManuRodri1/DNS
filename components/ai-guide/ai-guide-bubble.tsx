@@ -53,7 +53,7 @@ export function AIGuideBubble({ onOpen, isChatOpen }: AIGuideBubbleProps) {
   return (
     <div 
       className={cn(
-        "fixed bottom-24 right-6 z-[45] max-w-[240px] animate-in fade-in slide-in-from-bottom-4 duration-500 pointer-events-none",
+        "fixed bottom-24 right-6 z-[45] hidden max-w-[240px] animate-in fade-in slide-in-from-bottom-4 duration-500 pointer-events-none sm:block",
         "motion-reduce:animate-none"
       )}
     >
