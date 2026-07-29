@@ -88,18 +88,18 @@ export const STATIC_DNS_CONTEXT = {
   tickets: [
     {
       name: "General Admission",
-      price: "USD $149",
+      access: "2027 Summit Access",
       description: "The standard pass for attendees seeking the full Digital Nomad Summit experience.",
       includes: ["Full Summit Access", "Keynotes and Panels", "Networking Sessions", "Access to the Expo Area"]
     },
     {
       name: "VIP Ticket",
-      price: "USD $399",
+      access: "Premium 2027 Summit Access",
       description: "Designed for leaders, founders, investors, and global operators seeking the premium DNS experience.",
       includes: [
         "Full Summit Access",
         "VIP Breakfast",
-        "Dinner on the Malecón",
+        "VIP Networking Opportunities",
         "Swag Bag",
         "Priority Seating",
         "VIP Registration"

@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { ArrowRight, Check, Mail } from "lucide-react"
+import { FORMSPREE_ENDPOINT, submitPublicForm } from "@/lib/form-config"
 
 type PressContactBlockProps = {
   language: "en" | "es"
@@ -61,26 +62,20 @@ export function PressContactBlock({ language }: PressContactBlockProps) {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (status === "loading") return
     setStatus("loading")
 
     const form = event.currentTarget
-    const formData = new FormData(form)
 
     try {
-      const response = await fetch(form.action, {
-        method: "POST",
-        body: formData,
-        headers: {
-          Accept: "application/json",
-        },
+      await submitPublicForm(form, {
+        sourceForm: "media_inquiry",
+        sourcePage: "press",
+        preferredLanguage: language,
+        submissionType: "media_inquiry",
       })
-
-      if (response.ok) {
-        setStatus("success")
-        form.reset()
-      } else {
-        setStatus("error")
-      }
+      form.reset()
+      setStatus("success")
     } catch {
       setStatus("error")
     }
@@ -121,16 +116,25 @@ export function PressContactBlock({ language }: PressContactBlockProps) {
           ) : (
             <>
               {status === "error" && (
-                <div className="mb-5 rounded-xl border border-[#FF5757]/25 bg-[#FF5757]/10 p-4 font-sans text-sm font-semibold text-white">
+                <div className="mb-5 rounded-xl border border-[#FF5757]/25 bg-[#FF5757]/10 p-4 font-sans text-sm font-semibold text-white" role="alert" aria-live="assertive">
                   {t.error}
                 </div>
               )}
 
               {/* TODO: Replace with dedicated press email when available. */}
-              <form action="https://formspree.io/f/xwpdaprd" method="POST" onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
+              <form action={FORMSPREE_ENDPOINT} method="POST" onSubmit={handleSubmit} className="relative grid gap-4 sm:grid-cols-2">
                 <input type="hidden" name="form_type" value="press_inquiry" />
                 <input type="hidden" name="pagina_origen" value="press" />
                 <input type="hidden" name="idioma_actual" value={language} />
+                <input type="hidden" name="source_form" value="media_inquiry" />
+                <input type="hidden" name="source_page" value="press" />
+                <input type="hidden" name="preferred_language" value={language} />
+                <input type="hidden" name="submission_type" value="media_inquiry" />
+                <input type="hidden" name="submitted_at" value="" />
+                <div className="absolute -left-[10000px]" aria-hidden="true">
+                  <label htmlFor="press-company-website">Company website</label>
+                  <input id="press-company-website" name="_gotcha" tabIndex={-1} autoComplete="off" />
+                </div>
 
                 <label className="block">
                   <span className="mb-2 block font-sans text-xs font-bold uppercase tracking-[0.14em] text-white/50">{t.name}</span>

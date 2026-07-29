@@ -167,14 +167,6 @@ export default function RootLayout({
               image: ["https://www.digitalnomadsummit.co/og-image.jpg"],
               description:
                 "A global summit uniting leaders shaping the future of remote work, tourism 3.0, innovation, and emerging markets in the Caribbean.",
-              offers: {
-                "@type": "AggregateOffer",
-                lowPrice: "149",
-                highPrice: "399",
-                priceCurrency: "USD",
-                url: "https://www.digitalnomadsummit.co/tickets",
-                availability: "https://schema.org/InStock",
-              },
               organizer: {
                 "@type": "Organization",
                 name: "Digital Nomad Summit",

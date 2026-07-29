@@ -4,10 +4,12 @@ import type React from "react"
 
 import { useLanguage } from "@/lib/language-context"
 import { useState } from "react"
+import { FORMSPREE_ENDPOINT, submitPublicForm } from "@/lib/form-config"
 
 export function Contact() {
   const { language } = useLanguage()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
 
   const content = {
     en: {
@@ -24,6 +26,8 @@ export function Contact() {
       messagePlaceholder: "Founder, Investor, Nomad...",
       submitButton: "Subscribe",
       submittingButton: "Subscribing...",
+      success: "Thanks — you're on the DNS Insider List.",
+      error: "We couldn't submit your details. Please try again.",
     },
     es: {
       label: "Mantente actualizado",
@@ -39,14 +43,33 @@ export function Contact() {
       messagePlaceholder: "Fundador, Inversionista, Nómada...",
       submitButton: "Suscribirme",
       submittingButton: "Suscribiendo...",
+      success: "Gracias — ya formas parte de la lista DNS Insider.",
+      error: "No pudimos enviar tus datos. Inténtalo de nuevo.",
     },
   }
 
   const t = content[language]
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (isSubmitting) return
     setIsSubmitting(true)
-    setTimeout(() => setIsSubmitting(false), 2000)
+    setStatus("idle")
+    const form = e.currentTarget
+    try {
+      await submitPublicForm(form, {
+        sourceForm: "newsletter",
+        sourcePage: "home_contact",
+        preferredLanguage: language,
+        submissionType: "newsletter_subscription",
+      })
+      form.reset()
+      setStatus("success")
+    } catch {
+      setStatus("error")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -122,11 +145,20 @@ export function Contact() {
           <div className="animate-fade-up delay-200">
             <div className="bg-[#F7F7F7] border border-[#E0E0E0] rounded-2xl shadow-md p-6 md:p-8">
               <form
-                action="https://formspree.io/f/xwpdaprd"
+                action={FORMSPREE_ENDPOINT}
                 method="POST"
                 onSubmit={handleSubmit}
                 className="space-y-6"
               >
+                <input type="hidden" name="source_form" value="newsletter" />
+                <input type="hidden" name="source_page" value="home_contact" />
+                <input type="hidden" name="preferred_language" value={language} />
+                <input type="hidden" name="submission_type" value="newsletter_subscription" />
+                <input type="hidden" name="submitted_at" value="" />
+                <div className="absolute -left-[10000px]" aria-hidden="true">
+                  <label htmlFor="contact-company-website">Company website</label>
+                  <input id="contact-company-website" name="_gotcha" tabIndex={-1} autoComplete="off" />
+                </div>
                 {/* Full Name */}
                 <div>
                   <label htmlFor="name" className="block font-['Inter'] text-sm font-medium text-black mb-2">
@@ -165,12 +197,18 @@ export function Contact() {
                   <textarea
                     id="message"
                     name="message"
-                    required
                     rows={5}
                     placeholder={t.messagePlaceholder}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5757] focus:border-[#FF5757] transition-all font-['Inter'] text-black placeholder:text-gray-400 resize-none bg-white"
                   />
                 </div>
+                <p
+                  className={`min-h-6 text-sm font-medium ${status === "error" ? "text-red-700" : "text-green-700"}`}
+                  role={status === "error" ? "alert" : "status"}
+                  aria-live="polite"
+                >
+                  {status === "success" ? t.success : status === "error" ? t.error : ""}
+                </p>
 
                 {/* Submit Button */}
                 <div>

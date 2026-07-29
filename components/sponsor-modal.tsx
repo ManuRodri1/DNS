@@ -3,6 +3,7 @@
 import { useLanguage } from "@/lib/language-context"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
+import { FORMSPREE_ENDPOINT, submitPublicForm } from "@/lib/form-config"
 
 // ─── Speaker application content ───────────────────────────────────────────
 const speakerContent = {
@@ -243,21 +244,18 @@ export function SpeakerForm({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (status === "loading") return
     setStatus("loading")
     const form = e.currentTarget
-    const formData = new FormData(form)
     try {
-      const response = await fetch(form.action, {
-        method: "POST",
-        body: formData,
-        headers: { Accept: "application/json" },
+      await submitPublicForm(form, {
+        sourceForm: "speaker_application",
+        sourcePage: "speaker_modal",
+        preferredLanguage: language,
+        submissionType: "speaker_application",
       })
-      if (response.ok) {
-        setStatus("success")
-        form.reset()
-      } else {
-        setStatus("error")
-      }
+      form.reset()
+      setStatus("success")
     } catch {
       setStatus("error")
     }
@@ -292,11 +290,20 @@ export function SpeakerForm({
       <p className="text-gray-600 text-[15px] leading-relaxed mb-8 max-w-3xl">{t.intro}</p>
 
       {status === "error" && (
-        <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm font-medium">{t.errorMsg}</div>
+        <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm font-medium" role="alert" aria-live="assertive">{t.errorMsg}</div>
       )}
 
-      <form action="https://formspree.io/f/xwpdaprd" method="POST" onSubmit={handleSubmit} className="space-y-6">
+      <form action={FORMSPREE_ENDPOINT} method="POST" onSubmit={handleSubmit} className="space-y-6">
         <input type="hidden" name="form_type" value="speaker_application" />
+        <input type="hidden" name="source_form" value="speaker_application" />
+        <input type="hidden" name="source_page" value="speaker_modal" />
+        <input type="hidden" name="preferred_language" value={language} />
+        <input type="hidden" name="submission_type" value="speaker_application" />
+        <input type="hidden" name="submitted_at" value="" />
+        <div className="absolute -left-[10000px]" aria-hidden="true">
+          <label htmlFor="speaker-company-website">Company website</label>
+          <input id="speaker-company-website" name="_gotcha" tabIndex={-1} autoComplete="off" />
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -399,26 +406,20 @@ export function SponsorForm({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (status === "loading") return
     setStatus("loading")
     const form = e.currentTarget
-    const formData = new FormData(form)
 
     try {
-      const response = await fetch(form.action, {
-        method: "POST",
-        body: formData,
-        headers: {
-          Accept: "application/json",
-        },
+      await submitPublicForm(form, {
+        sourceForm: "sponsor_inquiry",
+        sourcePage: "sponsor_modal",
+        preferredLanguage: language,
+        submissionType: "sponsor_inquiry",
       })
-
-      if (response.ok) {
-        setStatus("success")
-        form.reset()
-      } else {
-        setStatus("error")
-      }
-    } catch (error) {
+      form.reset()
+      setStatus("success")
+    } catch {
       setStatus("error")
     }
   }
@@ -461,12 +462,21 @@ export function SponsorForm({
       <p className="text-gray-600 text-[15px] leading-relaxed mb-8 max-w-3xl">{t.intro}</p>
 
       {status === "error" && (
-        <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm font-medium">
+        <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm font-medium" role="alert" aria-live="assertive">
           {t.errorMsg}
         </div>
       )}
 
-      <form action="https://formspree.io/f/xwpdaprd" method="POST" onSubmit={handleSubmit} className="space-y-12">
+      <form action={FORMSPREE_ENDPOINT} method="POST" onSubmit={handleSubmit} className="space-y-12">
+        <input type="hidden" name="source_form" value="sponsor_inquiry" />
+        <input type="hidden" name="source_page" value="sponsor_modal" />
+        <input type="hidden" name="preferred_language" value={language} />
+        <input type="hidden" name="submission_type" value="sponsor_inquiry" />
+        <input type="hidden" name="submitted_at" value="" />
+        <div className="absolute -left-[10000px]" aria-hidden="true">
+          <label htmlFor="sponsor-company-website">Company website</label>
+          <input id="sponsor-company-website" name="_gotcha" tabIndex={-1} autoComplete="off" />
+        </div>
         {/* --- SECTION 1: BASIC INFORMATION --- */}
         <section>
           <h3 className="font-display text-xl font-bold text-gray-900 border-b border-gray-100 pb-3 mb-6">

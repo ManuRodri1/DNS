@@ -1,0 +1,13 @@
+{
+  "date": "2026-07-29",
+  "framework": "Next.js 15 App Router with Tailwind CSS 4",
+  "fonts": ["Sora", "Inter"],
+  "palette": {
+    "background": "#000000",
+    "foreground": "#ffffff",
+    "primary": "#ff5757"
+  },
+  "motion": "motion-cut; CSS transitions and existing tw-animate utilities only",
+  "spacing": "Tailwind utility scale",
+  "preserve": ["font stack", "black/white/coral palette", "existing spacing language"]
+}
