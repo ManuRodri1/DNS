@@ -1,0 +1,330 @@
+/* Hallmark · genre: modern-minimal · tone: institutional · macrostructure: Stat-Led · theme: existing DNS black/coral/warm-paper · nav: shared DNS dynamic overlay variant · footer: shared DNS
+ * anchor: DNS coral · type: existing DNS Sora/Inter · structure: award-led hero followed by an editorial competition sequence
+ * preserve approved content, image, routes and integrations; responsive art direction + intentional reveal motion · critique: P4 H5 E4 S5 R4 V5
+ */
+.dinamica-page {
+  --din-paper: oklch(96% 0.012 63);
+  --din-paper-raised: oklch(99% 0.005 65);
+  --din-ink: oklch(16% 0.009 35);
+  --din-ink-soft: oklch(38% 0.008 35);
+  --din-ink-softer: oklch(42% 0.008 35);
+  --din-muted: oklch(53% 0.012 65);
+  --din-rule: oklch(84% 0.012 65);
+  --din-partner-paper: oklch(93% 0.016 65);
+  --din-success: oklch(82% 0.08 150);
+  --din-error: oklch(71% 0.14 20);
+  --din-foreground: oklch(96% 0.005 65);
+  --din-white-035: oklch(97% 0.005 65 / 3.5%);
+  --din-white-06: oklch(97% 0.005 65 / 6%);
+  --din-white-08: oklch(97% 0.005 65 / 8%);
+  --din-white-16: oklch(97% 0.005 65 / 16%);
+  --din-white-20: oklch(97% 0.005 65 / 20%);
+  --din-white-30: oklch(97% 0.005 65 / 30%);
+  --din-white-34: oklch(97% 0.005 65 / 34%);
+  --din-white-35: oklch(97% 0.005 65 / 35%);
+  --din-white-45: oklch(97% 0.005 65 / 45%);
+  --din-white-52: oklch(97% 0.005 65 / 52%);
+  --din-white-55: oklch(97% 0.005 65 / 55%);
+  --din-white-56: oklch(97% 0.005 65 / 56%);
+  --din-white-58: oklch(97% 0.005 65 / 58%);
+  --din-white-62: oklch(97% 0.005 65 / 62%);
+  --din-white-64: oklch(97% 0.005 65 / 64%);
+  --din-white-65: oklch(97% 0.005 65 / 65%);
+  --din-white-66: oklch(97% 0.005 65 / 66%);
+  --din-white-72: oklch(97% 0.005 65 / 72%);
+  --din-white-73: oklch(97% 0.005 65 / 73%);
+  --din-white-75: oklch(97% 0.005 65 / 75%);
+  --din-white-80: oklch(97% 0.005 65 / 80%);
+  --din-white-82: oklch(97% 0.005 65 / 82%);
+  --din-white-84: oklch(97% 0.005 65 / 84%);
+  --din-black-08: oklch(16% 0.009 35 / 8%);
+  --din-black-10: oklch(16% 0.009 35 / 10%);
+  --din-black-20: oklch(16% 0.009 35 / 20%);
+  --din-black-68: oklch(16% 0.009 35 / 68%);
+  --din-black-72: oklch(16% 0.009 35 / 72%);
+  --din-black-82: oklch(16% 0.009 35 / 82%);
+  --din-black-54: oklch(16% 0.009 35 / 54%);
+  --din-black-28: oklch(16% 0.009 35 / 28%);
+  --din-black-96: oklch(16% 0.009 35 / 96%);
+  --din-black-98: oklch(16% 0.009 35 / 98%);
+  --din-accent: var(--primary);
+  --din-dark: oklch(16% 0.009 35);
+  --din-photo-wash: linear-gradient(90deg, var(--din-dark) 0%, var(--din-black-96) 18%, var(--din-black-72) 43%, var(--din-black-28) 73%, var(--din-black-28) 100%), linear-gradient(0deg, var(--din-black-54), transparent 48%);
+  color: var(--din-foreground);
+  background: var(--din-dark);
+}
+
+.dinamica-page *,
+.dinamica-page *::before,
+.dinamica-page *::after { box-sizing: border-box; }
+
+.dinamica-has-reveal .dinamica-reveal:not(.dinamica-hero-reveal) {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 520ms cubic-bezier(.2,.7,.2,1), transform 520ms cubic-bezier(.2,.7,.2,1);
+}
+.dinamica-has-reveal .dinamica-reveal.is-visible:not(.dinamica-hero-reveal) { opacity: 1; transform: none; }
+.dinamica-has-reveal .dinamica-steps li:nth-child(2),
+.dinamica-has-reveal .dinamica-criteria .dinamica-criterion:nth-child(2) { transition-delay: 70ms; }
+.dinamica-has-reveal .dinamica-steps li:nth-child(3),
+.dinamica-has-reveal .dinamica-criteria .dinamica-criterion:nth-child(3) { transition-delay: 140ms; }
+.dinamica-has-reveal .dinamica-steps li:nth-child(4),
+.dinamica-has-reveal .dinamica-criteria .dinamica-criterion:nth-child(4) { transition-delay: 210ms; }
+.dinamica-has-reveal .dinamica-steps li:nth-child(5),
+.dinamica-has-reveal .dinamica-criteria .dinamica-criterion:nth-child(5) { transition-delay: 280ms; }
+.dinamica-has-reveal .dinamica-criteria .dinamica-criterion:nth-child(6) { transition-delay: 350ms; }
+
+.dinamica-page h1,
+.dinamica-page h2,
+.dinamica-page h3,
+.dinamica-page p { margin-top: 0; }
+
+.dinamica-page h1,
+.dinamica-page h2,
+.dinamica-page h3 { font-style: normal; overflow-wrap: anywhere; }
+
+.dinamica-hero {
+  position: relative;
+  display: flex;
+  min-height: 100svh;
+  align-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 124px max(5vw, calc((100vw - 1320px) / 2)) 52px;
+  background: var(--din-dark);
+}
+
+.dinamica-hero-photo { z-index: -2; object-fit: cover; object-position: 56% 52%; }
+.dinamica-hero-photo-laptop,
+.dinamica-hero-photo-mobile { display: none; }
+.dinamica-hero-wash { position: absolute; z-index: -1; inset: 0; background: var(--din-photo-wash); }
+.dinamica-hero-content { position: relative; width: min(720px, 62%); }
+.dinamica-hero-reveal { opacity: 0; transform: translateY(14px); animation: dinamica-hero-rise 600ms cubic-bezier(.2,.7,.2,1) forwards; }
+.dinamica-hero-reveal:nth-child(1) { animation-delay: 80ms; }
+.dinamica-hero-reveal:nth-child(2) { animation-delay: 150ms; }
+.dinamica-hero-reveal:nth-child(3) { animation-delay: 220ms; }
+.dinamica-hero-reveal:nth-child(4) { animation-delay: 290ms; }
+.dinamica-hero-reveal:nth-child(5) { animation-delay: 360ms; }
+.dinamica-hero-reveal:nth-child(6) { animation-delay: 430ms; }
+@keyframes dinamica-hero-rise { to { opacity: 1; transform: none; } }
+.dinamica-eyebrow,
+.dinamica-kicker { margin: 0 0 12px; color: var(--din-accent); font: 600 0.7rem/1.4 var(--font-sans), sans-serif; letter-spacing: 0.12em; text-transform: uppercase; }
+.dinamica-hero h1 { max-width: 700px; min-width: 0; margin-bottom: 14px; font: 700 clamp(2.5rem, 4.6vw, 4.2rem)/1.04 var(--font-display), sans-serif; letter-spacing: -0.065em; }
+.dinamica-hero h1 span { display: block; margin-top: 8px; color: var(--din-accent); font-size: clamp(4rem, 8vw, 7.5rem); letter-spacing: -0.075em; white-space: nowrap; }
+.dinamica-hero h1 .dinamica-grand-label { margin: 12px 0 0 5px; color: var(--din-foreground); font: 600 0.68rem/1.3 var(--font-sans), sans-serif; letter-spacing: 0.14em; text-transform: uppercase; }
+.dinamica-hero h1 .dinamica-grand-amount { display: block; min-width: 0; color: var(--din-accent); font: 700 clamp(4rem, 8vw, 7.5rem)/1 var(--font-display), sans-serif; letter-spacing: -0.075em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dinamica-hero-copy { max-width: 570px; margin: 0; color: var(--din-white-84); font: 400 clamp(1rem, 1.3vw, 1.17rem)/1.65 var(--font-sans), sans-serif; }
+.dinamica-prize-line { display: flex; align-items: center; gap: 25px; margin-top: 23px; }
+.dinamica-prize-line > span:not(.dinamica-prize-rule) { display: grid; gap: 1px; }
+.dinamica-prize-line b { font: 600 1.15rem/1.35 var(--font-display), sans-serif; }
+.dinamica-prize-line small { color: var(--din-white-64); font: 400 0.78rem/1.4 var(--font-sans), sans-serif; }
+.dinamica-prize-rule { width: 1px; height: 34px; background: var(--din-white-30); }
+.dinamica-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 23px; }
+.dinamica-button { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 10px; border: 1px solid transparent; border-radius: 2px; padding: 0 19px; font: 600 0.78rem/1 var(--font-sans), sans-serif; text-decoration: none; white-space: nowrap; transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms ease; }
+.dinamica-button:hover { transform: translateY(-1px); }
+.dinamica-button:active { transform: translateY(0); }
+.dinamica-button:focus-visible { outline: 2px solid var(--din-accent); outline-offset: 3px; }
+.dinamica-button-primary { background: var(--din-accent); color: var(--din-foreground); }
+.dinamica-button-primary:hover { background: var(--din-foreground); color: var(--din-ink); }
+.dinamica-button-quiet { border-color: var(--din-white-35); color: var(--din-foreground); }
+.dinamica-button-quiet:hover { border-color: var(--din-foreground); background: var(--din-white-08); }
+.dinamica-ticket-note { max-width: 520px; margin: 14px 0 0; color: var(--din-white-62); font: 400 0.72rem/1.5 var(--font-sans), sans-serif; }
+.dinamica-event-date { margin: 16px 0 0; color: var(--din-foreground); font: 500 0.8rem/1.3 var(--font-sans), sans-serif; letter-spacing: 0.02em; }
+.dinamica-hero-index { position: absolute; right: max(5vw, calc((100vw - 1320px) / 2)); bottom: 44px; color: var(--din-white-58); font: 600 0.62rem/1 var(--font-sans), sans-serif; letter-spacing: 0.19em; }
+.dinamica-hero-index span { color: var(--din-accent); }
+
+.dinamica-institutions { display: grid; grid-template-columns: minmax(220px, 0.85fr) minmax(0, 2fr); align-items: center; gap: clamp(32px, 5vw, 80px); padding: 54px max(5vw, calc((100vw - 1320px) / 2)); background: var(--din-paper-raised); color: var(--din-ink); }
+.dinamica-institution-intro { max-width: 390px; }
+.dinamica-institution-intro .dinamica-kicker { margin-bottom: 8px; }
+.dinamica-institution-intro h2 { margin-bottom: 10px; font: 600 1.2rem/1.3 var(--font-display), sans-serif; letter-spacing: -0.03em; }
+.dinamica-institution-intro > p:last-child { margin-bottom: 0; color: var(--din-muted); font: 400 0.76rem/1.55 var(--font-sans), sans-serif; }
+.dinamica-institution-logos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; gap: clamp(14px, 2vw, 32px); }
+.dinamica-logo-cell { display: flex; min-width: 0; height: 76px; align-items: center; justify-content: center; }
+.dinamica-logo-cell img { display: block; width: auto; max-width: 100%; height: auto; max-height: 62px; object-fit: contain; }
+.dinamica-logo-bcie img { max-width: 132px; max-height: 50px; }
+.dinamica-logo-gateway img { max-width: 112px; max-height: 62px; }
+.dinamica-logo-eu img { max-width: 128px; max-height: 68px; }
+.dinamica-logo-german img { max-width: 120px; max-height: 68px; }
+.dinamica-logo-kfw img { max-width: 98px; max-height: 60px; }
+
+.dinamica-section { display: grid; grid-template-columns: minmax(190px, 0.72fr) minmax(0, 1.28fr); column-gap: clamp(40px, 7vw, 112px); padding: clamp(64px, 7vw, 100px) max(6vw, calc((100vw - 1200px) / 2)); }
+.dinamica-section-heading { min-width: 0; }
+.dinamica-section-heading .dinamica-kicker { margin-bottom: 14px; font-size: 0.63rem; letter-spacing: 0.1em; }
+.dinamica-section-heading h2 { max-width: 500px; margin-bottom: 16px; font: 600 clamp(2rem, 3.5vw, 3.15rem)/1.06 var(--font-display), sans-serif; letter-spacing: -0.06em; }
+.dinamica-section-heading > p:last-child { color: var(--din-white-65); font: 400 0.96rem/1.65 var(--font-sans), sans-serif; }
+.dinamica-eligibility { grid-template-columns: minmax(230px, 0.8fr) minmax(0, 1.2fr); background: var(--din-paper); color: var(--din-ink); }
+.dinamica-eligibility .dinamica-section-heading h2 { max-width: 360px; }
+.dinamica-eligibility-copy { max-width: 680px; color: var(--din-ink-soft); font: 400 0.96rem/1.75 var(--font-sans), sans-serif; }
+.dinamica-eligibility-copy p { margin-bottom: 18px; }
+.dinamica-eligibility-copy .dinamica-lede { color: var(--din-ink); font: 500 1.22rem/1.5 var(--font-display), sans-serif; }
+.dinamica-eligibility-copy .dinamica-note { margin-top: 23px; border-left: 2px solid var(--din-accent); padding-left: 17px; color: var(--din-muted); font-size: 0.85rem; }
+.dinamica-connection-list { grid-column: 2; margin-top: 28px; border-top: 1px solid var(--din-rule); padding-top: 22px; }
+.dinamica-connection-list h3 { margin-bottom: 12px; font: 600 0.81rem/1.3 var(--font-display), sans-serif; }
+.dinamica-connection-list ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; margin: 0; padding: 0; list-style: none; }
+.dinamica-connection-list li { min-width: 0; border-inline-start: 1px solid var(--din-rule); padding-inline-start: 12px; color: var(--din-muted); font: 400 0.78rem/1.5 var(--font-sans), sans-serif; }
+
+.dinamica-process { background: var(--din-dark); }
+.dinamica-steps { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0; padding: 0; list-style: none; }
+.dinamica-steps li { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 18px; border-top: 1px solid var(--din-white-20); padding: 18px 0 19px; }
+.dinamica-steps li > span { color: var(--din-accent); font: 600 1.2rem/1.35 var(--font-display), sans-serif; font-variant-numeric: tabular-nums; }
+.dinamica-steps p { max-width: 70ch; margin: 0; color: var(--din-white-80); font: 400 0.9rem/1.6 var(--font-sans), sans-serif; }
+
+.dinamica-jury { grid-template-columns: minmax(210px, 0.8fr) minmax(0, 1.2fr); background: var(--din-paper); color: var(--din-ink); }
+.dinamica-jury .dinamica-section-heading > p:last-child { color: var(--din-muted); }
+.dinamica-criteria { align-self: center; }
+.dinamica-criterion { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; border-bottom: 1px solid var(--din-rule); padding: 18px 0; color: var(--din-ink-softer); font: 400 0.94rem/1.45 var(--font-sans), sans-serif; }
+.dinamica-criterion { transition: background-color 180ms ease, padding-inline 180ms ease; }
+.dinamica-criterion:hover { padding-inline: 10px; background: var(--din-black-08); }
+.dinamica-criterion b { flex: 0 0 3.2em; color: var(--din-ink); font: 700 1.22rem/1 var(--font-display), sans-serif; text-align: end; font-variant-numeric: tabular-nums; }
+.dinamica-criterion-total { border-bottom: 0; color: var(--din-ink); font-weight: 600; }
+
+.dinamica-application { grid-template-columns: minmax(230px, 0.72fr) minmax(0, 1.28fr); background: var(--din-dark); }
+.dinamica-application .dinamica-section-heading > p:last-child { max-width: 360px; }
+.dinamica-opening-card { max-width: 760px; border: 1px solid var(--din-white-20); border-top: 2px solid var(--din-accent); padding: clamp(25px, 4vw, 44px); background: var(--din-white-06); }
+.dinamica-opening-card h3 { margin-bottom: 12px; font: 600 clamp(1.25rem, 2vw, 1.65rem)/1.25 var(--font-display), sans-serif; }
+.dinamica-opening-card p { max-width: 520px; margin-bottom: 22px; color: var(--din-white-66); font: 400 0.88rem/1.65 var(--font-sans), sans-serif; }
+.dinamica-opening-card .dinamica-button { margin-top: 2px; }
+
+.dinamica-faq { grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr); background: var(--din-paper-raised); color: var(--din-ink); }
+.dinamica-faq-list details { border-top: 1px solid var(--din-rule); }
+.dinamica-faq-list details:last-child { border-bottom: 1px solid var(--din-rule); }
+.dinamica-faq-list summary { display: flex; min-height: 68px; align-items: center; justify-content: space-between; gap: 18px; padding: 12px 0; color: var(--din-ink); cursor: pointer; font: 500 0.94rem/1.45 var(--font-sans), sans-serif; list-style: none; }
+.dinamica-faq-list summary::-webkit-details-marker { display: none; }
+.dinamica-faq-list summary span { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; border: 1px solid var(--din-rule); border-radius: 50%; color: var(--din-accent); font: 400 1.2rem/1 var(--font-sans), sans-serif; transition: transform 180ms ease-out, border-color 180ms ease-out; }
+.dinamica-faq-list details[open] summary span { transform: rotate(45deg); border-color: var(--din-accent); }
+.dinamica-faq-list details p { max-width: 700px; margin: -2px 40px 20px 0; color: var(--din-muted); font: 400 0.85rem/1.65 var(--font-sans), sans-serif; }
+.dinamica-faq-list details p { opacity: 0; transform: translateY(-5px); transition: opacity 220ms ease, transform 220ms ease; }
+.dinamica-faq-list details[open] p { opacity: 1; transform: none; }
+.dinamica-faq-list summary:focus-visible { outline: 2px solid var(--din-accent); outline-offset: 3px; }
+
+.dinamica-partners { display: flex; align-items: center; justify-content: space-between; gap: 32px; padding: 64px max(6vw, calc((100vw - 1200px) / 2)); background: var(--din-partner-paper); color: var(--din-ink); }
+.dinamica-partners > div { max-width: 720px; }
+.dinamica-partners .dinamica-kicker { margin-bottom: 10px; }
+.dinamica-partners h2 { margin-bottom: 12px; font: 600 clamp(1.6rem, 3vw, 2.6rem)/1.1 var(--font-display), sans-serif; letter-spacing: -0.055em; }
+.dinamica-partners p:last-child { max-width: 700px; margin: 0; color: var(--din-muted); font: 400 0.9rem/1.65 var(--font-sans), sans-serif; }
+.dinamica-button-outline { flex: 0 0 auto; border-color: var(--din-ink); color: var(--din-ink); }
+.dinamica-button-outline:hover { background: var(--din-ink); color: var(--din-foreground); }
+.dinamica-close { display: grid; justify-items: center; padding: 92px 24px 84px; text-align: center; background: var(--din-dark); }
+.dinamica-close .dinamica-kicker { margin-bottom: 14px; }
+.dinamica-close h2 { margin-bottom: 25px; font: 600 clamp(2.2rem, 5vw, 4.4rem)/1.02 var(--font-display), sans-serif; letter-spacing: -0.07em; }
+.dinamica-close > p:last-child { margin: 17px 0 0; color: var(--din-white-56); font: 400 0.72rem/1.45 var(--font-sans), sans-serif; }
+
+.dinamica-form { min-width: 0; }
+.dinamica-form-progress { margin-bottom: 26px; }
+.dinamica-form-progress-track { height: 2px; background: var(--din-white-16); }
+.dinamica-form-progress-track span { display: block; height: 100%; background: var(--din-accent); }
+.dinamica-form-progress p { margin: 10px 0 0; color: var(--din-white-64); font: 400 0.75rem/1.4 var(--font-sans), sans-serif; }
+.dinamica-form-step { min-width: 0; margin: 0; border: 0; padding: 0; }
+.dinamica-form-step legend { margin-bottom: 22px; padding: 0; font: 600 1.1rem/1.3 var(--font-display), sans-serif; }
+.dinamica-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; }
+.dinamica-field { display: grid; min-width: 0; gap: 7px; color: var(--din-white-82); font: 500 0.75rem/1.4 var(--font-sans), sans-serif; }
+.dinamica-field-wide { grid-column: 1 / -1; }
+.dinamica-field input,
+.dinamica-field select,
+.dinamica-field textarea { width: 100%; min-width: 0; border: 1px solid var(--din-white-20); border-radius: 2px; padding: 11px 12px; background: var(--din-white-06); color: var(--din-foreground); font: 400 0.87rem/1.45 var(--font-sans), sans-serif; }
+.dinamica-field select option { background: var(--din-dark); color: var(--din-foreground); }
+.dinamica-field textarea { resize: vertical; }
+.dinamica-field input:focus-visible,
+.dinamica-field select:focus-visible,
+.dinamica-field textarea:focus-visible { outline: 2px solid var(--din-accent); outline-offset: 2px; }
+.dinamica-field small { justify-self: end; color: var(--din-white-52); font: 400 0.67rem/1.3 var(--font-sans), sans-serif; }
+.dinamica-check-field { display: flex; align-items: flex-start; gap: 11px; grid-column: 1 / -1; color: var(--din-white-75); font: 400 0.8rem/1.55 var(--font-sans), sans-serif; }
+.dinamica-check-field input { flex: 0 0 auto; width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--din-accent); }
+.dinamica-check-field input:focus-visible { outline: 2px solid var(--din-accent); outline-offset: 3px; }
+.dinamica-privacy-link { margin: 18px 0 0; color: var(--din-white-64); font: 400 0.75rem/1.5 var(--font-sans), sans-serif; }
+.dinamica-privacy-link a { color: var(--din-foreground); text-decoration: underline; text-underline-offset: 3px; }
+.dinamica-privacy-link a:focus-visible { outline: 2px solid var(--din-accent); outline-offset: 3px; }
+.dinamica-connection-options { display: grid; gap: 12px; margin-top: 24px; border-top: 1px solid var(--din-white-16); padding-top: 20px; }
+.dinamica-connection-options p { margin: 0 0 2px; font: 600 0.78rem/1.4 var(--font-sans), sans-serif; }
+.dinamica-connection-options label { display: flex; align-items: flex-start; gap: 10px; color: var(--din-white-73); font: 400 0.76rem/1.5 var(--font-sans), sans-serif; }
+.dinamica-connection-options input { flex: 0 0 auto; width: 16px; height: 16px; margin: 1px 0 0; accent-color: var(--din-accent); }
+.dinamica-ticket-check { display: grid; justify-items: start; gap: 10px; margin-top: 22px; border-top: 1px solid var(--din-white-16); padding-top: 19px; }
+.dinamica-ticket-check > p:first-child { margin: 0; color: var(--din-white-72); font: 400 0.78rem/1.5 var(--font-sans), sans-serif; }
+.dinamica-ticket-check .dinamica-button-outline,
+.dinamica-form-actions .dinamica-button-outline { border-color: var(--din-white-34); color: var(--din-foreground); }
+.dinamica-ticket-check .dinamica-button-outline:hover,
+.dinamica-form-actions .dinamica-button-outline:hover { background: var(--din-white-08); }
+.dinamica-ticket-check button:disabled,
+.dinamica-form-actions button:disabled { cursor: not-allowed; opacity: 0.48; }
+.dinamica-ticket-status { margin: 0; font: 500 0.76rem/1.5 var(--font-sans), sans-serif; }
+.dinamica-ticket-status.ok { color: var(--din-success); }
+.dinamica-ticket-status.error { color: var(--din-error); }
+.dinamica-form-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 28px; border-top: 1px solid var(--din-white-16); padding-top: 20px; }
+.dinamica-form-action-end { display: flex; align-items: center; justify-content: flex-end; gap: 15px; margin-left: auto; }
+.dinamica-draft-state { color: var(--din-white-55); font: 400 0.69rem/1.4 var(--font-sans), sans-serif; }
+.dinamica-form-error { margin: 14px 0 0; color: var(--din-error); font: 500 0.78rem/1.5 var(--font-sans), sans-serif; }
+.dinamica-form-privacy { margin: 18px 0 0; color: var(--din-white-45); font: 400 0.68rem/1.5 var(--font-sans), sans-serif; }
+.dinamica-spin { animation: dinamica-spin 0.9s linear infinite; }
+@keyframes dinamica-spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 900px) {
+  .dinamica-hero { min-height: 100svh; padding: 112px 6vw 48px; }
+  .dinamica-hero-photo-wide { display: none; }
+  .dinamica-hero-photo-laptop { display: block; object-position: 58% 50%; }
+  .dinamica-hero-content { width: min(670px, 82%); }
+  .dinamica-hero h1 span { font-size: clamp(3.7rem, 8.5vw, 6.6rem); }
+  .dinamica-institutions { grid-template-columns: 1fr; gap: 28px; }
+  .dinamica-institution-intro { max-width: 600px; }
+  .dinamica-section { grid-template-columns: minmax(0, 1fr); row-gap: 25px; padding-right: 6vw; padding-left: 6vw; }
+  .dinamica-section-heading h2 { max-width: 720px; }
+  .dinamica-connection-list { grid-column: auto; margin-top: 0; }
+  .dinamica-partners { align-items: flex-start; flex-direction: column; gap: 22px; }
+}
+
+@media (max-width: 680px) {
+  .dinamica-hero { min-height: 740px; min-height: max(740px, 100svh); align-items: flex-end; padding: 112px 22px 38px; }
+  .dinamica-hero-photo-laptop { display: none; }
+  .dinamica-hero-photo-mobile { display: block; object-position: 50% 38%; }
+  .dinamica-page { --din-photo-wash: linear-gradient(0deg, var(--din-dark) 0%, var(--din-black-96) 40%, var(--din-black-54) 74%, var(--din-black-28) 100%); }
+  .dinamica-hero-content { width: 100%; }
+  .dinamica-eyebrow { max-width: 330px; font-size: 0.62rem; }
+  .dinamica-hero h1 { margin-bottom: 16px; font-size: clamp(2.2rem, 10vw, 3.55rem); }
+  .dinamica-hero h1 .dinamica-grand-label { margin-top: 10px; font-size: 0.61rem; }
+  .dinamica-hero h1 .dinamica-grand-amount { margin-top: 4px; font-size: clamp(2.35rem, 12.2vw, 5rem); }
+  .dinamica-hero-copy { max-width: 500px; font-size: 0.93rem; }
+  .dinamica-prize-line { gap: 18px; margin-top: 23px; }
+  .dinamica-prize-line b { font-size: 1rem; }
+  .dinamica-prize-line small { max-width: 130px; font-size: 0.72rem; }
+  .dinamica-hero-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 9px; margin-top: 23px; }
+  .dinamica-button { width: 100%; min-height: 48px; }
+  .dinamica-ticket-note { width: calc(100% - 60px); max-width: 520px; margin-top: 18px; font-size: 0.69rem; }
+  .dinamica-event-date { margin-top: 15px; }
+  .dinamica-hero-index { display: none; }
+  .dinamica-institutions { gap: 24px; padding: 38px 22px 42px; }
+  .dinamica-institution-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
+  .dinamica-logo-cell { height: 72px; }
+  .dinamica-logo-cell:last-child { grid-column: 1 / -1; }
+  .dinamica-logo-bcie img { max-width: 130px; }
+  .dinamica-logo-eu img { max-width: 130px; }
+  .dinamica-logo-german img { max-width: 140px; }
+  .dinamica-logo-kfw img { max-width: 110px; }
+  .dinamica-section { grid-template-columns: minmax(0, 1fr); row-gap: 23px; padding: 54px 22px; }
+  .dinamica-section-heading h2 { max-width: 560px; }
+  .dinamica-connection-list { grid-column: auto; margin-top: 0; }
+  .dinamica-connection-list ul { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .dinamica-connection-list li { max-width: 420px; }
+  .dinamica-steps { grid-template-columns: minmax(0, 1fr); }
+  .dinamica-steps li { grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding-block: 16px; }
+  .dinamica-criterion { align-items: flex-start; font-size: 0.82rem; }
+  .dinamica-criterion b { font-size: 0.95rem; }
+  .dinamica-opening-card { padding: 25px 20px; }
+  .dinamica-form-grid { grid-template-columns: minmax(0, 1fr); gap: 15px; }
+  .dinamica-field-wide { grid-column: auto; }
+  .dinamica-form-actions { align-items: stretch; flex-direction: column; }
+  .dinamica-form-action-end { align-items: stretch; flex-direction: column; margin-left: 0; }
+  .dinamica-form-actions > .dinamica-button { width: 100%; }
+  .dinamica-form-action-end .dinamica-button { width: 100%; }
+  .dinamica-draft-state { text-align: center; }
+  .dinamica-faq-list summary { min-height: 64px; font-size: 0.88rem; }
+  .dinamica-faq-list details p { margin-right: 24px; }
+  .dinamica-partners { align-items: stretch; flex-direction: column; gap: 22px; padding: 50px 22px; }
+  .dinamica-close { padding: 64px 22px 56px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dinamica-page *, .dinamica-page *::before, .dinamica-page *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  .dinamica-page .dinamica-hero-reveal { opacity: 1; transform: none; animation: none; }
+  .dinamica-page .dinamica-reveal { opacity: 1 !important; transform: none !important; }
+  .dinamica-button:hover { transform: none; }
+  .dinamica-spin { animation: none; }
+}

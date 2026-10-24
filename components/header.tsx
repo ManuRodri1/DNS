@@ -10,6 +10,7 @@ export const Header = () => {
   const pathname = usePathname()
   const [isAboutOpen, setIsAboutOpen] = useState(false)
   const [isWhiteHeader, setIsWhiteHeader] = useState(pathname === "/tickets")
+  const showWhiteHeader = isWhiteHeader
   const aboutTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
@@ -46,15 +47,17 @@ export const Header = () => {
 
   return (
     <div
-      className={`fixed left-0 top-0 z-50 w-full transition-all duration-500 ${
-        isWhiteHeader ? "pt-2 md:pt-3" : "pt-5 md:pt-7 lg:pt-8"
-      }`}
+      className={
+        `fixed left-0 top-0 z-50 w-full transition-all duration-500 ${
+          showWhiteHeader ? "pt-2 md:pt-3" : "pt-5 md:pt-7 lg:pt-8"
+        }`
+      }
     >
       <header
-        className={`container mx-auto flex items-center justify-between px-4 transition-all duration-500 md:px-6 ${
-          isWhiteHeader
+        className={`container mx-auto flex items-center justify-between px-4 md:px-6 ${
+          showWhiteHeader
             ? "max-w-[96%] rounded-full border border-black/[0.06] bg-white/95 px-4 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,0.12)] backdrop-blur-md md:max-w-[94%] md:px-5 xl:max-w-7xl"
-            : "py-3"
+            : "py-3 transition-all duration-500"
         }`}
       >
         <div className="z-10 flex-shrink-0">
@@ -63,24 +66,28 @@ export const Header = () => {
               src="/logo digital nomad summit - Editado.png"
               alt="Digital Nomad Summit"
               className={`h-auto transition-all duration-500 ${
-                isWhiteHeader ? "w-[68px] sm:w-[72px] md:w-[76px]" : "w-[108px] sm:w-[120px] md:w-[132px]"
+                showWhiteHeader
+                  ? "w-[68px] sm:w-[72px] md:w-[76px]"
+                  : "w-[108px] sm:w-[120px] md:w-[132px]"
               } ${
-                isWhiteHeader ? "absolute inset-0 opacity-0" : "opacity-100"
+                showWhiteHeader ? "absolute inset-0 opacity-0" : "opacity-100"
               }`}
             />
             <img
               src="/images/dns-logo-white.jpg"
               alt="Digital Nomad Summit"
               className={`h-auto transition-all duration-500 ${
-                isWhiteHeader ? "w-[68px] sm:w-[72px] md:w-[76px]" : "w-[108px] sm:w-[120px] md:w-[132px]"
+                showWhiteHeader
+                  ? "w-[68px] sm:w-[72px] md:w-[76px]"
+                  : "w-[108px] sm:w-[120px] md:w-[132px]"
               } ${
-                isWhiteHeader ? "opacity-100" : "absolute inset-0 opacity-0"
+                showWhiteHeader ? "opacity-100" : "absolute inset-0 opacity-0"
               }`}
             />
           </Link>
         </div>
 
-        <nav className={`hidden items-center justify-center xl:flex ${isWhiteHeader ? "gap-x-5" : "gap-x-6"}`}>
+        <nav className={`hidden items-center justify-center xl:flex ${showWhiteHeader ? "gap-x-5" : "gap-x-6"}`}>
           <div
             className="relative"
             onMouseEnter={() => {
@@ -96,9 +103,9 @@ export const Header = () => {
             <button
               onClick={() => setIsAboutOpen(!isAboutOpen)}
               className={`group relative flex items-center gap-1 whitespace-nowrap font-sans font-semibold transition-colors duration-150 ease-out hover:text-[#FF5757] ${
-                isWhiteHeader ? "text-[12px]" : "text-[13px]"
+                showWhiteHeader ? "text-[12px]" : "text-[13px]"
               } ${
-                isWhiteHeader ? "text-black" : "text-white"
+                showWhiteHeader ? "text-black" : "text-white"
               }`}
               aria-expanded={isAboutOpen}
               aria-haspopup="true"
@@ -154,9 +161,9 @@ export const Header = () => {
           ].map((item) => (
             <Link
               className={`group relative whitespace-nowrap font-sans font-semibold transition-colors duration-150 ease-out hover:text-[#FF5757] ${
-                isWhiteHeader ? "text-[12px]" : "text-[13px]"
+                showWhiteHeader ? "text-[12px]" : "text-[13px]"
               } ${
-                isWhiteHeader ? "text-black" : "text-white"
+                showWhiteHeader ? "text-black" : "text-white"
               }`}
               href={item.href}
               key={item.label}
@@ -168,9 +175,9 @@ export const Header = () => {
           ))}
         </nav>
 
-        <div className={`z-10 flex items-center ${isWhiteHeader ? "gap-3" : "gap-4"}`}>
+        <div className={`z-10 flex items-center ${showWhiteHeader ? "gap-3" : "gap-4"}`}>
           <LanguageSwitcher className="hidden xl:flex" />
-          <MobileMenu isWhiteHeader={isWhiteHeader} />
+          <MobileMenu isWhiteHeader={showWhiteHeader} />
         </div>
       </header>
     </div>

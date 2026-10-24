@@ -16,6 +16,7 @@ import { Location } from "@/components/location"
 import { Contact } from "@/components/contact"
 import { FinalCTA } from "@/components/final-cta"
 import { Footer } from "@/components/footer"
+import { DinamicaIIHomepageBanner } from "@/components/dinamica-ii/homepage-banner"
 
 export default function Home() {
   return (
@@ -29,6 +30,7 @@ export default function Home() {
       <HomepagePressStrip />
       <InfluencerCollective />
       <AttendeeSegments />
+      <DinamicaIIHomepageBanner />
       <Tickets />
       <SignatureExperiences />
       <SponsorCTA />

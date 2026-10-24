@@ -1,0 +1,128 @@
+[
+  {
+    "width": 320,
+    "height": 844,
+    "metrics": {
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "headerPosition": "static",
+      "headerBackground": "rgba(0, 0, 0, 0)",
+      "heroHeight": 844,
+      "prizeRect": null,
+      "revealCount": 0
+    },
+    "consoleErrors": []
+  },
+  {
+    "width": 375,
+    "height": 844,
+    "metrics": {
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "headerPosition": "static",
+      "headerBackground": "rgba(0, 0, 0, 0)",
+      "heroHeight": 844,
+      "prizeRect": null,
+      "revealCount": 0
+    },
+    "consoleErrors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "metrics": {
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "headerPosition": "static",
+      "headerBackground": "rgba(0, 0, 0, 0)",
+      "heroHeight": 844,
+      "prizeRect": null,
+      "revealCount": 0
+    },
+    "consoleErrors": []
+  },
+  {
+    "width": 430,
+    "height": 844,
+    "metrics": {
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "headerPosition": "static",
+      "headerBackground": "rgba(0, 0, 0, 0)",
+      "heroHeight": 844,
+      "prizeRect": null,
+      "revealCount": 0
+    },
+    "consoleErrors": []
+  },
+  {
+    "width": 768,
+    "height": 844,
+    "metrics": {
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "headerPosition": "static",
+      "headerBackground": "rgba(0, 0, 0, 0)",
+      "heroHeight": 844,
+      "prizeRect": null,
+      "revealCount": 0
+    },
+    "consoleErrors": []
+  },
+  {
+    "width": 1280,
+    "height": 800,
+    "metrics": {
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "headerPosition": "static",
+      "headerBackground": "rgba(0, 0, 0, 0)",
+      "heroHeight": 800,
+      "prizeRect": null,
+      "revealCount": 0
+    },
+    "consoleErrors": []
+  },
+  {
+    "width": 1366,
+    "height": 768,
+    "metrics": {
+      "scrollWidth": 1366,
+      "clientWidth": 1366,
+      "headerPosition": "static",
+      "headerBackground": "rgba(0, 0, 0, 0)",
+      "heroHeight": 768,
+      "prizeRect": null,
+      "revealCount": 0
+    },
+    "consoleErrors": []
+  },
+  {
+    "width": 1440,
+    "height": 900,
+    "metrics": {
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "headerPosition": "static",
+      "headerBackground": "rgba(0, 0, 0, 0)",
+      "heroHeight": 900,
+      "prizeRect": null,
+      "revealCount": 0
+    },
+    "consoleErrors": []
+  },
+  {
+    "width": 1920,
+    "height": 1080,
+    "metrics": {
+      "scrollWidth": 1920,
+      "clientWidth": 1920,
+      "headerPosition": "static",
+      "headerBackground": "rgba(0, 0, 0, 0)",
+      "heroHeight": 1080,
+      "prizeRect": null,
+      "revealCount": 0
+    },
+    "consoleErrors": []
+  }
+]

@@ -1,0 +1,71 @@
+import { z } from "zod"
+
+const requiredText = (max: number) => z.string().trim().min(1).max(max)
+const optionalText = (max: number) => z.string().trim().max(max).optional().default("")
+
+export const applicationSchema = z.object({
+  founder_name: requiredText(160),
+  founder_email: z.string().trim().email().max(254),
+  founder_phone: requiredText(50),
+  founder_role: requiredText(120),
+  contact_language: z.enum(["en", "es"]),
+  founder_origin_country: requiredText(120),
+  founder_residence_country: requiredText(120),
+  founder_city: requiredText(120),
+  pitch_language: z.enum(["en", "es"]),
+  representative_ticket_email: z.string().trim().email().max(254),
+  ticket_reference: requiredText(240),
+  ticket_token: requiredText(240),
+  cofounders: optionalText(1000),
+  linkedin_url: z.union([z.string().url().max(2048), z.literal("")]).optional().default(""),
+  founder_website: z.union([z.string().url().max(2048), z.literal("")]).optional().default(""),
+  startup_legal_name: requiredText(240),
+  startup_brand_name: optionalText(240),
+  incorporation_country: requiredText(120),
+  registration_proof: requiredText(600),
+  startup_profile_url: z.string().url().max(2048),
+  founded_year: z.coerce.number().int().min(1900).max(new Date().getFullYear()),
+  stage: z.enum(["pre-seed", "seed", "post-mvp"]),
+  sector: requiredText(160),
+  operation_countries: requiredText(500),
+  headquarters_country: requiredText(120),
+  team_size: z.coerce.number().int().min(1).max(100000),
+  company_description: requiredText(300),
+  connections: z.array(z.enum(["operations_dr", "dominican_origin", "market_plan_dr"])).min(1),
+  connection_explanation: requiredText(1000),
+  connection_evidence_url: z.union([z.string().url().max(2048), z.literal("")]).optional().default(""),
+  diaspora: z.boolean().optional().default(false),
+  nomad: z.boolean().optional().default(false),
+  customer_problem: requiredText(500),
+  innovation: requiredText(500),
+  export_markets: requiredText(700),
+  demand_evidence: requiredText(500),
+  scale_milestones: requiredText(500),
+  impact_contribution: requiredText(400),
+  team_capacity: requiredText(400),
+  prize_use: requiredText(500),
+  pitch_deck_url: z.string().url().max(2048),
+  demo_url: z.union([z.string().url().max(2048), z.literal("")]).optional().default(""),
+  external_reference: z.union([z.string().url().max(2048), z.literal("")]).optional().default(""),
+  customer_count_range: requiredText(120),
+  monthly_revenue_range: optionalText(120),
+  active_export_customers: z.enum(["yes", "no"]),
+  expected_market_entry: requiredText(80),
+  accuracy_ack: z.literal("yes"),
+  judging_ack: z.literal("yes"),
+  selection_ack: z.literal("yes"),
+  winner_terms_ack: z.literal("yes"),
+  contact_ack: z.literal("yes"),
+  privacy_ack: z.literal("yes"),
+  marketing_opt_in: z.string().max(3).optional().default(""),
+  prior_funding: optionalText(500),
+  conflicts: optionalText(500),
+}).strict()
+
+export type StartupApplication = z.infer<typeof applicationSchema>
+
+export const draftPayloadSchema = z.record(
+  z.string().max(80),
+  z.union([z.string().max(3000), z.boolean(), z.array(z.string().max(80)).max(8)]),
+).refine((value) => Object.keys(value).length <= 100, "Too many fields")
+

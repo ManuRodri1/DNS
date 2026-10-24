@@ -1,0 +1,56 @@
+[
+  {
+    "date": "2026-10-24",
+    "macrostructure": "Stat-Led",
+    "theme": "existing DNS identity (preserved)",
+    "theme_axes": "DNS black / warm paper / coral; Sora display and Inter body retained",
+    "vibe": "Responsive event editorial with controlled communications promotion",
+    "enrichment": "art-directed crops of the supplied Cloudinary event photograph",
+    "brief": "Iteration 3 · dynamic header, responsive hero, motion and Home promotion",
+    "pre_emit_critique": {
+      "philosophy": 4,
+      "hierarchy": 5,
+      "execution": 4,
+      "specificity": 5,
+      "restraint": 4,
+      "variety": 5
+    },
+    "manual_review": "Audit found the prior route-specific solid header was the main regression. Restored the shared IntersectionObserver header and added white-theme markers to light DINAMICA sections. Added breakpoint-specific photo crops, short staged entry motion, scroll reveals and reduced-motion fallbacks. Home promotion is mounted after AttendeeSegments but remains gated by DINAMICA_HOME_PROMOTION_ENABLED=false by default; no production publication is enabled."
+  },
+  {
+    "date": "2026-10-24",
+    "macrostructure": "Stat-Led",
+    "theme": "existing DNS identity (preserved)",
+    "theme_axes": "DNS black / warm paper / coral; Sora display and Inter body retained",
+    "vibe": "Caribbean innovation, institutional credibility, premium event photography",
+    "enrichment": "user-supplied Cloudinary event photograph, retained",
+    "brief": "Visual polish and responsive refinement · DNS 2027 DINAMICA II",
+    "pre_emit_critique": {
+      "philosophy": 4,
+      "hierarchy": 5,
+      "execution": 4,
+      "specificity": 5,
+      "restraint": 4,
+      "variety": 4
+    },
+    "manual_review": "Initial rendered audit: route header over light hero image, bright right-side event panel, repeated section spacing, and old EU checkerboard asset identified before edits. New EU JPEG visually checked at 3840×2160; clean white background. Post-polish review: shared header is solid black and sticky on DINAMICA II while Home retains its dynamic fixed header; the page was rendered at 320, 360, 375, 390, 430, 768, 1024, 1280, 1440, and 1920 CSS px with no horizontal overflow. EN/ES toggle and FAQ keyboard expansion were checked; mobile menu controls/handlers were inspected in source but open/close interaction was not verified because the in-app viewport control did not change its fixed viewport. Application state and integrations remain unchanged. sloplint executable unavailable in this environment."
+  },
+  {
+    "date": "2026-10-24",
+    "macrostructure": "Bespoke Photo-Led Prize Masthead",
+    "theme": "custom",
+    "theme_axes": "light / geometric-sans / warm",
+    "vibe": "Caribbean innovation, premium editorial, institutional credibility",
+    "enrichment": "provided Cloudinary event photography",
+    "brief": "Digital Nomad Summit · DINAMICA II Startup Prize",
+    "pre_emit_critique": {
+      "philosophy": 4,
+      "hierarchy": 5,
+      "execution": 4,
+      "specificity": 5,
+      "restraint": 4,
+      "variety": 5
+    },
+    "manual_review": "Previous launch implementation baseline. The prior EU JPEG had a baked checkerboard and is superseded by the supplied clean white-background asset."
+  }
+]
