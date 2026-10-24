@@ -2,8 +2,11 @@ export const DINAMICA_PATH = "/dinamica-ii"
 export const DINAMICA_CANONICAL_URL = "https://www.digitalnomadsummit.co/dinamica-ii"
 export const DINAMICA_CAMPAIGN = "dinamica_ii_2027"
 
-export const DINAMICA_PUBLIC_LAUNCH = process.env.DINAMICA_PUBLIC_LAUNCH === "true"
-export const DINAMICA_HOME_PROMOTION_ENABLED = process.env.DINAMICA_HOME_PROMOTION_ENABLED === "true"
+// The public competition page and its Home announcement are enabled by default
+// so a Vercel deployment works without a dashboard-only environment toggle.
+// Set either variable to "false" when the content needs to be hidden.
+export const DINAMICA_PUBLIC_LAUNCH = process.env.DINAMICA_PUBLIC_LAUNCH !== "false"
+export const DINAMICA_HOME_PROMOTION_ENABLED = process.env.DINAMICA_HOME_PROMOTION_ENABLED !== "false"
 export const DINAMICA_APPLICATIONS_OPEN = process.env.DINAMICA_APPLICATIONS_OPEN === "true"
 export const DINAMICA_PRIVACY_APPROVED = process.env.DINAMICA_PRIVACY_APPROVED === "true"
 export const DINAMICA_DUPLICATE_POLICY_APPROVED = process.env.DINAMICA_DUPLICATE_POLICY_APPROVED === "true"
