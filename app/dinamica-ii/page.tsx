@@ -13,29 +13,93 @@ import {
 
 export const dynamic = "force-dynamic"
 
+const DINAMICA_PAGE_TITLE = "DINAMICA II Startup Competition | Digital Nomad Summit 2027"
+const DINAMICA_PAGE_DESCRIPTION =
+  "DINAMICA II is the DNS 2027 startup competition in Santo Domingo for Dominican-connected startups, with US$12,750 in prizes and up to 10 finalists."
+const DINAMICA_SOCIAL_ALT = "Digital Nomad Summit Santo Domingo 2027 event logo"
+
 export const metadata: Metadata = {
-  title: "Successment’s DINAMICA II Startup Competition | DNS 2027",
-  description:
-    "Explore the DINAMICA II Exportable Innovation Prize at Digital Nomad Summit Santo Domingo 2027. Qualified startups can compete for US$12,750 in prizes.",
+  title: DINAMICA_PAGE_TITLE,
+  description: DINAMICA_PAGE_DESCRIPTION,
+  keywords: [
+    "DINAMICA II",
+    "DINAMICA II Exportable Innovation Prize",
+    "startup competition Dominican Republic",
+    "startup competition Santo Domingo",
+    "Digital Nomad Summit 2027",
+    "Caribbean innovation prize",
+  ],
+  authors: [{ name: "Successment" }],
+  creator: "Successment",
+  publisher: "Digital Nomad Summit",
+  category: "Business",
   alternates: { canonical: DINAMICA_CANONICAL_URL },
   robots: DINAMICA_PUBLIC_LAUNCH
-    ? { index: true, follow: true }
+    ? {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+          "max-video-preview": -1,
+        },
+      }
     : { index: false, follow: false, noarchive: true },
   openGraph: {
-    title: "Successment’s DINAMICA II Startup Competition | DNS 2027",
-    description:
-      "A Dominican-connected startup competition at DNS 2027, with US$8,500 for the Grand Prize and US$4,250 for the Runner-Up.",
+    title: DINAMICA_PAGE_TITLE,
+    description: DINAMICA_PAGE_DESCRIPTION,
     type: "website",
     url: DINAMICA_CANONICAL_URL,
     siteName: "Digital Nomad Summit",
-    images: [{ url: DINAMICA_ASSETS.social, width: 1200, height: 630, alt: "A founder presenting at a Dominican technology event" }],
+    images: [
+      {
+        url: DINAMICA_ASSETS.social,
+        width: DINAMICA_ASSETS.socialWidth,
+        height: DINAMICA_ASSETS.socialHeight,
+        alt: DINAMICA_SOCIAL_ALT,
+      },
+    ],
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Successment’s DINAMICA II Startup Competition | DNS 2027",
-    description: "US$12,750 in prizes for qualified startups connected to the Dominican Republic.",
-    images: [{ url: DINAMICA_ASSETS.social, alt: "A founder presenting at a Dominican technology event" }],
+    title: DINAMICA_PAGE_TITLE,
+    description: DINAMICA_PAGE_DESCRIPTION,
+    images: [{ url: DINAMICA_ASSETS.social, alt: DINAMICA_SOCIAL_ALT }],
+  },
+}
+
+const DINAMICA_STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${DINAMICA_CANONICAL_URL}#webpage`,
+  url: DINAMICA_CANONICAL_URL,
+  name: DINAMICA_PAGE_TITLE,
+  description: DINAMICA_PAGE_DESCRIPTION,
+  inLanguage: "en-US",
+  isPartOf: {
+    "@type": "WebSite",
+    "@id": "https://www.digitalnomadsummit.co/#website",
+    url: "https://www.digitalnomadsummit.co/",
+    name: "Digital Nomad Summit",
+  },
+  about: {
+    "@type": "Thing",
+    name: "DINAMICA II Exportable Innovation Prize",
+  },
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    url: DINAMICA_ASSETS.social,
+    width: DINAMICA_ASSETS.socialWidth,
+    height: DINAMICA_ASSETS.socialHeight,
+    caption: DINAMICA_SOCIAL_ALT,
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Successment",
+    url: "https://www.successment.co",
   },
 }
 
@@ -44,6 +108,11 @@ export default function DinamicaIIPageRoute() {
 
   return (
     <>
+      <script
+        id="dinamica-ii-structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(DINAMICA_STRUCTURED_DATA) }}
+      />
       <main id="main-content">
         <DinamicaIIPage
           applicationsOpen={DINAMICA_FORM_AVAILABLE}

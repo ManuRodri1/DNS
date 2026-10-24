@@ -35,7 +35,11 @@ export const DINAMICA_ASSETS = {
   heroLaptop: "https://res.cloudinary.com/dzebed7jw/image/upload/c_crop,x_1100,y_500,w_2600,h_1900/c_limit,w_2000,q_auto:good/v1792860690/DSC06370_ulzfoh.jpg",
   heroMobile: "https://res.cloudinary.com/dzebed7jw/image/upload/c_crop,x_1450,y_500,w_1800,h_2400/c_limit,w_1400,q_auto:good/v1792860690/DSC06370_ulzfoh.jpg",
   hero: "https://res.cloudinary.com/dzebed7jw/image/upload/c_crop,x_1100,y_500,w_2600,h_1900/c_limit,w_2000,q_auto:good/v1792860690/DSC06370_ulzfoh.jpg",
-  social: "https://res.cloudinary.com/dzebed7jw/image/upload/c_crop,x_1900,y_1150,w_1200,h_630/c_limit,w_1200,q_auto:good/v1792860690/DSC06370_ulzfoh.jpg",
+  // Use the DNS event identity for link previews. The hero photo is reserved
+  // for the page itself so WhatsApp and social crawlers do not surface the QR.
+  social: "https://www.digitalnomadsummit.co/og-image.jpg",
+  socialWidth: 1024,
+  socialHeight: 1024,
   bcie: "https://res.cloudinary.com/dzebed7jw/image/upload/v1792860647/bcie-logo-white_shgdsg.png",
   globalGateway: "https://res.cloudinary.com/dzebed7jw/image/upload/v1792860647/GG_logo-BLUE_nasfpt.png",
   europeanUnion: "https://res.cloudinary.com/dzebed7jw/image/upload/v1792863821/European-Union-Logo_axqlzz.jpg",
