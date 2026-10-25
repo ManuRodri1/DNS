@@ -11,7 +11,7 @@ export const Header = () => {
   const isDinamicaRoute = pathname === "/dinamica-ii"
   const [isAboutOpen, setIsAboutOpen] = useState(false)
   const [isWhiteHeader, setIsWhiteHeader] = useState(pathname === "/tickets")
-  const showWhiteHeader = !isDinamicaRoute && isWhiteHeader
+  const showWhiteHeader = isWhiteHeader
   const aboutTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
