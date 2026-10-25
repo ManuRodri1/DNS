@@ -16,8 +16,35 @@ export const Header = () => {
 
   useEffect(() => {
     if (isDinamicaRoute) {
-      setIsWhiteHeader(false)
-      return
+      const headerElement = document.querySelector<HTMLElement>("[data-dns-header]")
+      const headerRect = headerElement?.getBoundingClientRect()
+      const probeY = headerRect ? headerRect.top + headerRect.height / 2 : 52
+      let frame = 0
+
+      const updateHeaderTheme = () => {
+        if (frame) return
+        frame = window.requestAnimationFrame(() => {
+          frame = 0
+          const whiteSectionUnderHeader = Array.from(
+            document.querySelectorAll<HTMLElement>('[data-header-theme="white"]'),
+          ).some((section) => {
+            const rect = section.getBoundingClientRect()
+            return rect.top <= probeY && rect.bottom > probeY
+          })
+
+          setIsWhiteHeader(whiteSectionUnderHeader)
+        })
+      }
+
+      updateHeaderTheme()
+      window.addEventListener("scroll", updateHeaderTheme, { passive: true })
+      window.addEventListener("resize", updateHeaderTheme)
+
+      return () => {
+        window.removeEventListener("scroll", updateHeaderTheme)
+        window.removeEventListener("resize", updateHeaderTheme)
+        if (frame) window.cancelAnimationFrame(frame)
+      }
     }
 
     if (pathname === "/tickets") {
@@ -55,16 +82,15 @@ export const Header = () => {
     <div
       className={
         `fixed left-0 top-0 z-50 w-full transition-all duration-500 ${
-          isDinamicaRoute ? "bg-black" : showWhiteHeader ? "pt-2 md:pt-3" : "pt-5 md:pt-7 lg:pt-8"
+          showWhiteHeader ? "pt-2 md:pt-3" : "pt-5 md:pt-7 lg:pt-8"
         }`
       }
     >
       <header
+        data-dns-header
         className={`container mx-auto flex items-center justify-between px-4 md:px-6 ${
-          isDinamicaRoute
-            ? "max-w-7xl bg-black py-3"
-            : showWhiteHeader
-            ? "max-w-[96%] rounded-full border border-black/[0.06] bg-white/95 px-4 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,0.12)] backdrop-blur-md md:max-w-[94%] md:px-5 xl:max-w-7xl"
+          showWhiteHeader
+            ? "max-w-[96%] rounded-full border border-black/[0.06] bg-white/95 px-4 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,0.12)] backdrop-blur-md transition-all duration-300 md:max-w-[94%] md:px-5 xl:max-w-7xl"
             : "py-3 transition-all duration-500"
         }`}
       >
