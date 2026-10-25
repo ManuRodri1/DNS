@@ -2,7 +2,6 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect } from "react"
 import { ArrowDown, ArrowRight, ExternalLink } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
 import { DINAMICA_ASSETS, DINAMICA_TICKETS } from "@/lib/dinamica-ii/config"
@@ -180,19 +179,6 @@ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applica
   const { language } = useLanguage()
   const t = copy[language]
 
-  useEffect(() => {
-    const root = document.querySelector<HTMLElement>(".dinamica-page")
-    if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
-    const targets = root.querySelectorAll<HTMLElement>(".dinamica-reveal")
-    root.classList.add("dinamica-has-reveal")
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add("is-visible")),
-      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
-    )
-    targets.forEach((target) => observer.observe(target))
-    return () => observer.disconnect()
-  }, [])
-
   return (
     <div className="dinamica-page">
       <section className="dinamica-hero" aria-labelledby="dinamica-title">
@@ -245,7 +231,7 @@ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applica
         <div className="dinamica-hero-index" aria-hidden="true">DINAMICA <span>II</span></div>
       </section>
 
-      <section className="dinamica-institutions dinamica-reveal" data-header-theme="white" aria-labelledby="institution-title">
+      <section className="dinamica-institutions" data-header-theme="white" aria-labelledby="institution-title">
         <div className="dinamica-institution-intro">
           <p className="dinamica-kicker">{t.initiative}</p>
           <h2 id="institution-title">{t.institutionalTitle}</h2>
@@ -253,14 +239,14 @@ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applica
         </div>
         <div className="dinamica-institution-logos" aria-label={language === "en" ? "DINAMICA II institutional partners" : "Instituciones aliadas de DINAMICA II"}>
           {institutions.map((institution) => (
-            <div className={`dinamica-logo-cell dinamica-reveal ${institution.className}`} key={institution.name}>
+            <div className={`dinamica-logo-cell ${institution.className}`} key={institution.name}>
               <Image src={institution.src} alt={institution.name} width={institution.width} height={institution.height} sizes="(max-width: 680px) 42vw, 18vw" />
             </div>
           ))}
         </div>
       </section>
 
-      <section className="dinamica-eligibility dinamica-section dinamica-reveal" data-header-theme="white" id="eligibility" aria-labelledby="eligibility-title">
+      <section className="dinamica-eligibility dinamica-section" data-header-theme="white" id="eligibility" aria-labelledby="eligibility-title">
         <div className="dinamica-section-heading">
           <p className="dinamica-kicker">{t.whoLabel}</p>
           <h2 id="eligibility-title">{t.whoTitle}</h2>
@@ -276,29 +262,29 @@ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applica
         </aside>
       </section>
 
-      <section className="dinamica-process dinamica-section dinamica-reveal" aria-labelledby="process-title">
+      <section className="dinamica-process dinamica-section" aria-labelledby="process-title">
         <div className="dinamica-section-heading">
           <p className="dinamica-kicker">{t.processLabel}</p>
           <h2 id="process-title">{t.processTitle}</h2>
         </div>
         <ol className="dinamica-steps">
-          {t.steps.map((step, index) => <li className="dinamica-reveal" key={step}><span>0{index + 1}</span><p>{step}</p></li>)}
+          {t.steps.map((step, index) => <li key={step}><span>0{index + 1}</span><p>{step}</p></li>)}
         </ol>
       </section>
 
-      <section className="dinamica-jury dinamica-section dinamica-reveal" data-header-theme="white" aria-labelledby="jury-title">
+      <section className="dinamica-jury dinamica-section" data-header-theme="white" aria-labelledby="jury-title">
         <div className="dinamica-section-heading">
           <p className="dinamica-kicker">{t.juryLabel}</p>
           <h2 id="jury-title">{t.juryTitle}</h2>
           <p>{t.juryIntro}</p>
         </div>
         <div className="dinamica-criteria">
-          {t.criteria.map(([label, weight]) => <div className="dinamica-criterion dinamica-reveal" key={label}><span>{label}</span><b>{weight}</b></div>)}
-          <div className="dinamica-criterion dinamica-criterion-total dinamica-reveal"><span>{t.total}</span><b>100%</b></div>
+          {t.criteria.map(([label, weight]) => <div className="dinamica-criterion" key={label}><span>{label}</span><b>{weight}</b></div>)}
+          <div className="dinamica-criterion dinamica-criterion-total"><span>{t.total}</span><b>100%</b></div>
         </div>
       </section>
 
-      <section className="dinamica-application dinamica-section dinamica-reveal" id="application" aria-labelledby="application-title">
+      <section className="dinamica-application dinamica-section" id="application" aria-labelledby="application-title">
         <div className="dinamica-section-heading">
           <p className="dinamica-kicker">{t.applyLabel}</p>
           <h2 id="application-title">{t.applyTitle}</h2>
@@ -315,7 +301,7 @@ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applica
         />
       </section>
 
-      <section className="dinamica-faq dinamica-section dinamica-reveal" data-header-theme="white" aria-labelledby="faq-title">
+      <section className="dinamica-faq dinamica-section" data-header-theme="white" aria-labelledby="faq-title">
         <div className="dinamica-section-heading">
           <p className="dinamica-kicker">{t.faqLabel}</p>
           <h2 id="faq-title">{t.faqTitle}</h2>
@@ -325,7 +311,7 @@ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applica
         </div>
       </section>
 
-      <section className="dinamica-partners dinamica-reveal" data-header-theme="white" aria-labelledby="partners-title">
+      <section className="dinamica-partners" data-header-theme="white" aria-labelledby="partners-title">
         <div>
           <p className="dinamica-kicker">{t.partnerLabel}</p>
           <h2 id="partners-title">{language === "en" ? "Create opportunity at DNS 2027." : "Crea oportunidades en DNS 2027."}</h2>

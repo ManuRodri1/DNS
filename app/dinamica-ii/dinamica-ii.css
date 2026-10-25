@@ -1,6 +1,6 @@
-/* Hallmark · genre: modern-minimal · tone: institutional · macrostructure: Stat-Led · theme: existing DNS black/coral/warm-paper · nav: shared DNS dynamic overlay variant · footer: shared DNS
+/* Hallmark · genre: modern-minimal · tone: institutional · macrostructure: Stat-Led · theme: existing DNS black/coral/warm-paper · nav: shared DNS solid-dark route variant · footer: shared DNS
  * anchor: DNS coral · type: existing DNS Sora/Inter · structure: award-led hero followed by an editorial competition sequence
- * preserve approved content, image, routes and integrations; responsive art direction + intentional reveal motion · critique: P4 H5 E4 S5 R4 V5
+ * preserve approved content, image, routes and integrations; all page content remains visible without observer-driven reveal state · critique: P4 H5 E4 S5 R4 V5
  */
 .dinamica-page {
   --din-paper: oklch(96% 0.012 63);
@@ -57,22 +57,6 @@
 .dinamica-page *,
 .dinamica-page *::before,
 .dinamica-page *::after { box-sizing: border-box; }
-
-.dinamica-has-reveal .dinamica-reveal:not(.dinamica-hero-reveal) {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 520ms cubic-bezier(.2,.7,.2,1), transform 520ms cubic-bezier(.2,.7,.2,1);
-}
-.dinamica-has-reveal .dinamica-reveal.is-visible:not(.dinamica-hero-reveal) { opacity: 1; transform: none; }
-.dinamica-has-reveal .dinamica-steps li:nth-child(2),
-.dinamica-has-reveal .dinamica-criteria .dinamica-criterion:nth-child(2) { transition-delay: 70ms; }
-.dinamica-has-reveal .dinamica-steps li:nth-child(3),
-.dinamica-has-reveal .dinamica-criteria .dinamica-criterion:nth-child(3) { transition-delay: 140ms; }
-.dinamica-has-reveal .dinamica-steps li:nth-child(4),
-.dinamica-has-reveal .dinamica-criteria .dinamica-criterion:nth-child(4) { transition-delay: 210ms; }
-.dinamica-has-reveal .dinamica-steps li:nth-child(5),
-.dinamica-has-reveal .dinamica-criteria .dinamica-criterion:nth-child(5) { transition-delay: 280ms; }
-.dinamica-has-reveal .dinamica-criteria .dinamica-criterion:nth-child(6) { transition-delay: 350ms; }
 
 .dinamica-page h1,
 .dinamica-page h2,
@@ -324,7 +308,6 @@
 @media (prefers-reduced-motion: reduce) {
   .dinamica-page *, .dinamica-page *::before, .dinamica-page *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
   .dinamica-page .dinamica-hero-reveal { opacity: 1; transform: none; animation: none; }
-  .dinamica-page .dinamica-reveal { opacity: 1 !important; transform: none !important; }
   .dinamica-button:hover { transform: none; }
   .dinamica-spin { animation: none; }
 }

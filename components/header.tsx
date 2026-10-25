@@ -8,12 +8,18 @@ import { MobileMenu } from "./mobile-menu"
 
 export const Header = () => {
   const pathname = usePathname()
+  const isDinamicaRoute = pathname === "/dinamica-ii"
   const [isAboutOpen, setIsAboutOpen] = useState(false)
   const [isWhiteHeader, setIsWhiteHeader] = useState(pathname === "/tickets")
-  const showWhiteHeader = isWhiteHeader
+  const showWhiteHeader = !isDinamicaRoute && isWhiteHeader
   const aboutTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
+    if (isDinamicaRoute) {
+      setIsWhiteHeader(false)
+      return
+    }
+
     if (pathname === "/tickets") {
       setIsWhiteHeader(true)
       return
@@ -43,19 +49,21 @@ export const Header = () => {
     whiteHeaderSections.forEach((section) => observer.observe(section))
 
     return () => observer.disconnect()
-  }, [pathname])
+  }, [isDinamicaRoute, pathname])
 
   return (
     <div
       className={
         `fixed left-0 top-0 z-50 w-full transition-all duration-500 ${
-          showWhiteHeader ? "pt-2 md:pt-3" : "pt-5 md:pt-7 lg:pt-8"
+          isDinamicaRoute ? "bg-black" : showWhiteHeader ? "pt-2 md:pt-3" : "pt-5 md:pt-7 lg:pt-8"
         }`
       }
     >
       <header
         className={`container mx-auto flex items-center justify-between px-4 md:px-6 ${
-          showWhiteHeader
+          isDinamicaRoute
+            ? "max-w-7xl bg-black py-3"
+            : showWhiteHeader
             ? "max-w-[96%] rounded-full border border-black/[0.06] bg-white/95 px-4 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,0.12)] backdrop-blur-md md:max-w-[94%] md:px-5 xl:max-w-7xl"
             : "py-3 transition-all duration-500"
         }`}
