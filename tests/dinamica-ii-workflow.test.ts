@@ -78,15 +78,13 @@ test("the public schema rejects legacy tokens and server review fields", () => {
   assert.equal(applicationSchema.safeParse({ ...application, status: "verified" }).success, false)
 })
 
-test("the Formspree browser helper sends one complete multipart request to the dedicated ID", async () => {
+test("the Formspree browser helper sends one complete request to the existing DNS endpoint", async () => {
   const oldFetch = globalThis.fetch
-  const oldFormId = process.env.NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID
   let requestUrl = ""
   let body: FormData | undefined
   let headers: HeadersInit | undefined
   let fetchCount = 0
   try {
-    process.env.NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID = "dedicatedTest42"
     globalThis.fetch = async (input, init) => {
       fetchCount += 1
       requestUrl = String(input)
@@ -98,9 +96,15 @@ test("the Formspree browser helper sends one complete multipart request to the d
     await sendDinamicaApplicationToFormspree(applicationSchema.parse(application), "en")
 
     assert.equal(fetchCount, 1)
-    assert.equal(requestUrl, "https://formspree.io/f/dedicatedTest42")
+    assert.equal(requestUrl, "https://formspree.io/f/mvzeyakd")
     assert.equal((headers as Record<string, string>).Accept, "application/json")
     assert.ok(body instanceof FormData)
+    assert.equal(body?.get("form_identifier"), "DINAMICA_II_2027")
+    assert.equal(body?.get("founder_name"), "QA Founder")
+    assert.equal(body?.get("founder_email"), "qa@example.invalid")
+    assert.equal(body?.get("ticket_purchase_category"), "purchased_dns_2027")
+    assert.equal(body?.get("representative_ticket_email"), "qa@example.invalid")
+    assert.equal(body?.get("startup_legal_name"), "QA Startup SRL")
     assert.equal(body?.get("customer_problem"), "Problem")
     assert.equal(body?.get("innovation"), "Innovation")
     assert.equal(body?.get("export_markets"), "Markets")
@@ -109,23 +113,23 @@ test("the Formspree browser helper sends one complete multipart request to the d
     assert.equal(body?.get("impact_contribution"), "Impact")
     assert.equal(body?.get("team_capacity"), "Team")
     assert.equal(body?.get("prize_use"), "Prize use")
+    assert.equal(body?.get("pitch_deck_url"), "https://example.invalid/deck.pdf")
+    assert.equal(body?.get("accuracy_ack"), "yes")
+    assert.equal(body?.get("privacy_ack"), "yes")
+    assert.ok(Number.isFinite(Date.parse(String(body?.get("submitted_at")))))
     assert.match(String(body?.get("_subject")), /DINAMICA II.*QA Startup SRL/)
     assert.equal(body?.get("source_page"), "/dinamica-ii")
     assert.equal(body?.get("marketing_opt_in"), "")
     assert.equal(body?.has("pitch_deck"), false)
   } finally {
     globalThis.fetch = oldFetch
-    if (oldFormId === undefined) delete process.env.NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID
-    else process.env.NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID = oldFormId
   }
 })
 
 test("the browser helper surfaces Formspree 429 without retrying", async () => {
   const oldFetch = globalThis.fetch
-  const oldFormId = process.env.NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID
   let fetchCount = 0
   try {
-    process.env.NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID = "dedicatedTest42"
     globalThis.fetch = async () => {
       fetchCount += 1
       return new Response("{}", { status: 429 })
@@ -134,7 +138,5 @@ test("the browser helper surfaces Formspree 429 without retrying", async () => {
     assert.equal(fetchCount, 1)
   } finally {
     globalThis.fetch = oldFetch
-    if (oldFormId === undefined) delete process.env.NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID
-    else process.env.NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID = oldFormId
   }
 })

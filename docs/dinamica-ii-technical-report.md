@@ -5,9 +5,9 @@ Implementation update · 28 October 2026
 ## Current public form
 
 - The applicant flow remains four steps, now titled **About You & Your Ticket**, **About Your Startup**, **Tell Us About Your Idea**, and **Review & Submit** (with Spanish equivalents).
-- The form posts once, directly from React to a dedicated Formspree ID in `NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID`. It uses no Next.js submission API, Supabase drafts, ticket verification, operator tokens, or attachments.
-- The ID is not configured in this repo. The previous hardcoded contact-form candidate has been removed from DINAMICA II configuration. `lib/form-config.ts` remains unchanged for unrelated public forms.
-- The page, competition announcement, and complete form are visible in Production and local/protected preview while submission is disabled. Production submission remains gated on the dedicated Formspree form and recipient, privacy notice and approval, duplicate-policy approval, application window, coordinated launch flags, and Jonathan's launch authorization. The Home promotion and search indexing retain the coordinated launch gate.
+- The form posts once, directly from React to the existing DNS endpoint exported by `lib/form-config.ts`. Other forms continue using that endpoint through their current helper.
+- DINAMICA II submission requires the explicit production open flag, confirmed endpoint ownership/recipient, approved privacy notice URL, and successful schema validation. Preview submissions are disabled.
+- The page, competition announcement, and complete form are visible in Production and local/protected preview while submission is disabled. The Home promotion and search indexing retain their separate launch controls.
 - A received confirmation is shown only after a successful Formspree response. No fake confirmation ID or claim of an automatic applicant email is generated. HTTP 429, provider errors, and network failures leave the answers in the active React session.
 - Public submit, draft, draft retrieval, and notification-resend API routes now return HTTP 410. Existing migrations, data, and protected operator functionality are retained; no database operation was run.
 - The following sections are the **historical record of the prior Supabase-backed workflow**. They are retained to document existing files and data, but they are superseded for public form behavior by this update.

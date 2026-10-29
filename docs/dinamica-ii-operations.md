@@ -5,17 +5,17 @@
 This section is the source of truth for the public `/dinamica-ii` application. The later Supabase and operator notes document retained legacy infrastructure only.
 
 1. Applicants complete four steps in the browser. Required ticket details and the eight published jury answers are included in one submission; optional metrics and supporting details do not block it.
-2. The React form validates the complete payload and posts it directly to the dedicated Formspree form ID. No Next.js API, Supabase draft, ticket verification request, operator token, or file upload is used by the public flow.
+2. The React form validates the complete payload and posts it once to the existing DNS Formspree endpoint. No Next.js API, Supabase draft, ticket verification request, operator token, or file upload is used by the public flow.
 3. The site displays **Application Received / Solicitud recibida** only after Formspree returns a successful response. It creates no confirmation number and does not claim that an automatic email was sent to the participant.
 4. Successment verifies ticket payment and startup eligibility manually, then sends any official confirmation through the approved process. A ticket or received application does not guarantee finalist selection.
 
-The dedicated form is configured with `NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID`; this is intentionally blank until DNS supplies the approved ID for **DNS — DINAMICA II Applications**. Do not use the contact form ID in `lib/form-config.ts`. The organizer and recipient are configured in the Formspree account, not in source code.
+DINAMICA II temporarily reuses `FORMSPREE_ENDPOINT` from `lib/form-config.ts` (`https://formspree.io/f/mvzeyakd`). This does not change how any other form submits. Before opening applications, the Formspree owner must confirm that this form accepts DINAMICA II submissions and that its configured recipient is the institutional mailbox. A successful HTTP response does not verify the recipient.
 
 ### Staging and release controls
 
-Use a Vercel Preview deployment protected by Deployment Protection to review the full form without an endpoint. Submission remains off until the dedicated Formspree form, institutional recipient, approved privacy notice, duplicate policy, manual-review procedure, and launch authorization are confirmed. For an authorized preview send, configure the dedicated form ID and set `DINAMICA_FORMSPREE_ENABLED`, `DINAMICA_APPLICATIONS_OPEN`, `DINAMICA_PREVIEW_ENABLED`, `DINAMICA_PREVIEW_FORM_ENABLED`, `DINAMICA_PREVIEW_SUBMISSIONS_ENABLED`, privacy approval, duplicate-policy approval, and the approved privacy URL. Use fictitious data and submit only to the authorized test form.
+Use a Vercel Preview deployment protected by Deployment Protection to review the full form. Preview submissions are always disabled. Production submission remains off until the endpoint owner and institutional recipient are confirmed, the approved privacy notice is published, and applications are explicitly opened. Do not send a test to the shared endpoint until its owner authorizes the test and recipient.
 
-The competition page and announcement are visible in Production for review, even while applications are closed. The Home promotion and search indexing remain gated. Enabling actual submission requires the coordinated public launch and Home-promotion flags, `DINAMICA_APPLICATIONS_OPEN=true`, `DINAMICA_FORMSPREE_ENABLED=true`, the dedicated public Formspree form ID, the approved privacy notice, privacy approval, duplicate-policy approval, and the joint landing/form launch authorization. Preview flags stay off in Production.
+The competition page and announcement are visible in Production for review, even while applications are closed. The Home promotion and search indexing remain gated. The sending control is `DINAMICA_APPLICATIONS_OPEN=true`; it only works in Production when `DINAMICA_FORMSPREE_ENDPOINT_CONFIRMED=true`, `DINAMICA_PRIVACY_APPROVED=true`, and `DINAMICA_PRIVACY_NOTICE_URL` is a valid HTTPS URL. Set the endpoint confirmation only after the owner confirms the shared endpoint and institutional recipient. Keep `DINAMICA_APPLICATIONS_OPEN=false` until privacy and opening approvals are received. The form schema validates every application before sending. Preview submissions are not enabled.
 
 When the form ID or any approval is absent, the form remains viewable in Production and local/protected preview, but the final submit action is disabled. Local form values remain only in React memory for the active page session; they are not saved to browser storage or a database.
 
@@ -37,7 +37,7 @@ Idempotency prevents a double click or same-session retry from creating another 
 
 ### Legacy server-side Formspree notifications — disabled
 
-The prior server-side notification workflow depended on Supabase persistence and is no longer part of the public application. Do not configure or reuse its former endpoint. `/api/dinamica-ii/submit` and `/operator/resend-notification` return HTTP 410. The current React form sends the complete application directly to the dedicated `NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID` only after all release gates pass.
+The prior server-side notification workflow depended on Supabase persistence and is no longer part of the public application. `/api/dinamica-ii/submit` and `/operator/resend-notification` return HTTP 410. The current React form sends the complete application directly to the existing DNS endpoint only after the production release gates pass.
 
 ### Retained protected operator API reference
 

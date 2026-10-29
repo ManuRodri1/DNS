@@ -1,3 +1,4 @@
+import { FORMSPREE_ENDPOINT } from "@/lib/form-config"
 import type { StartupApplication } from "@/lib/dinamica-ii/application-schema"
 
 export type ApplicationLanguage = "en" | "es"
@@ -12,12 +13,8 @@ export class FormspreeSubmissionError extends Error {
   }
 }
 
-const FORM_ID_PATTERN = /^[a-zA-Z0-9]+$/
-
 export function getDinamicaFormspreeEndpoint() {
-  const formId = process.env.NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID?.trim() || ""
-  if (!FORM_ID_PATTERN.test(formId)) return ""
-  return `https://formspree.io/f/${formId}`
+  return FORMSPREE_ENDPOINT
 }
 
 export async function sendDinamicaApplicationToFormspree(
@@ -33,10 +30,11 @@ export async function sendDinamicaApplicationToFormspree(
     else formData.set(key, String(value ?? ""))
   }
 
+  formData.set("form_identifier", "DINAMICA_II_2027")
   formData.set("_subject", `DINAMICA II — New Application — ${application.startup_legal_name}`)
   formData.set("_replyto", application.founder_email)
   formData.set("application_language", language)
-  formData.set("source", "DNS — DINAMICA II Applications")
+  formData.set("source", "DNS — DINAMICA II")
   formData.set("source_page", typeof window === "undefined" ? "/dinamica-ii" : window.location.pathname)
   formData.set("submitted_at", new Date().toISOString())
 
