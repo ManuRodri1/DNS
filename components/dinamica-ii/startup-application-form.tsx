@@ -10,7 +10,6 @@ type Props = {
   language: Language
   formVisible: boolean
   submissionEnabled: boolean
-  privacyNoticeUrl: string
   openingSoon: string
   openingNote: string
   ticketUrl: string
@@ -63,7 +62,7 @@ function errorText(code: string, language: Language) {
   return (language === "en" ? en : es)[code] || (language === "en" ? en.formspree_rejected : es.formspree_rejected)
 }
 
-export function StartupApplicationForm({ language, formVisible, submissionEnabled, privacyNoticeUrl, openingSoon, openingNote, ticketUrl }: Props) {
+export function StartupApplicationForm({ language, formVisible, submissionEnabled, openingSoon, openingNote, ticketUrl }: Props) {
   const [step, setStep] = useState(0)
   const [values, setValues] = useState<Record<string, string>>({ contact_language: language, pitch_language: language, ticket_email_same_as_application: "no", ticket_reference_unknown: "no" })
   const [selectedConnections, setSelectedConnections] = useState<Connection[]>([])
@@ -516,13 +515,10 @@ export function StartupApplicationForm({ language, formVisible, submissionEnable
             {checkbox("selection_ack", label("I understand that a ticket or application does not guarantee finalist selection.", "Entiendo que tener una entrada o enviar una solicitud no garantiza ser finalista."), true)}
             {checkbox("winner_terms_ack", label("If selected for an award, I accept the reinvestment and reporting conditions.", "Si recibo un premio, acepto las condiciones de reinversión e informes."), true)}
             {checkbox("contact_ack", label("I agree to be contacted about this competition and my application.", "Acepto que me contacten sobre este concurso y mi solicitud."), true)}
-            {checkbox("privacy_ack", label("I have read and accept the approved privacy notice, including review by authorized evaluators and delivery through Formspree.", "He leído y acepto el aviso de privacidad aprobado, incluida la revisión por evaluadores autorizados y el envío mediante Formspree."), true)}
-            {privacyNoticeUrl && <p className="dinamica-form-privacy"><a href={privacyNoticeUrl} target="_blank" rel="noreferrer">{label("Read the approved privacy notice", "Leer el aviso de privacidad aprobado")}</a></p>}
+            {checkbox("privacy_ack", label("I understand that my application will be sent through Formspree to the DNS and Successment organizers for manual review.", "Entiendo que mi solicitud se enviará mediante Formspree al equipo organizador de DNS y Successment para su revisión manual."), true)}
             <div className="dinamica-marketing-opt-in">{checkbox("marketing_opt_in", label("I would also like to receive other DNS and Successment updates (optional).", "También quiero recibir otras novedades de DNS y Successment (opcional)."))}</div>
           </section>
-          <p className="dinamica-form-privacy">{privacyNoticeUrl
-            ? label("Your application details will be sent directly to the dedicated Formspree form and delivered to the organizer configured in that account. This submission confirms receipt for manual review only; it is not official registration or a guarantee of selection.", "Los datos de tu solicitud se enviarán directamente al formulario Formspree dedicado y llegarán al organizador configurado en esa cuenta. Este envío confirma la recepción para revisión manual; no es una inscripción oficial ni garantiza la selección.")
-            : label("Submissions remain disabled until the approved privacy notice and dedicated Formspree form are configured.", "Los envíos seguirán deshabilitados hasta configurar el aviso de privacidad aprobado y el formulario dedicado de Formspree.")}</p>
+          <p className="dinamica-form-privacy">{label("Your application is sent through Formspree to the DNS and Successment organizers for manual ticket and eligibility review. Do not include passwords, payment card numbers, or identity documents. Submission does not guarantee finalist selection.", "Tu solicitud se enviará mediante Formspree al equipo organizador de DNS y Successment para revisar manualmente la entrada y la elegibilidad. No incluyas contraseñas, números de tarjetas ni documentos de identidad. Enviar la solicitud no garantiza ser finalista.")}</p>
         </>}
       </div>
 
@@ -536,7 +532,7 @@ export function StartupApplicationForm({ language, formVisible, submissionEnable
           </button>}
       </div>
 
-      {!submissionEnabled && <p id="dinamica-submit-disabled" className="dinamica-form-note" role="note">{label("Applications are not accepting submissions yet. The complete form is available to review while the dedicated Formspree form, recipient, privacy notice, and launch approvals are finalized. Your answers are not saved when you leave this page.", "Todavía no se aceptan solicitudes. Puedes revisar el formulario completo mientras se finalizan el Formspree dedicado, el destinatario, el aviso de privacidad y las aprobaciones de lanzamiento. Tus respuestas no se guardan al salir de esta página.")}</p>}
+      {!submissionEnabled && <p id="dinamica-submit-disabled" className="dinamica-form-note" role="note">{label("Applications are not open yet. You can review the complete form, but your answers are not saved when you leave this page.", "El formulario todavía no está abierto. Puedes revisar todas sus secciones, pero tus respuestas no se guardarán al salir de esta página.")}</p>}
       {formError && <p className="dinamica-form-error" role="alert" aria-live="assertive">{formError}</p>}
       <p className="dinamica-form-privacy">{label("Your application is reviewed manually. A valid ticket is required, but purchasing one does not guarantee finalist selection.", "Tu solicitud se revisará manualmente. Se requiere una entrada válida, pero comprarla no garantiza ser finalista.")}</p>
     </form>

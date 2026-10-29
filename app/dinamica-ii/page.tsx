@@ -8,7 +8,6 @@ import {
   DINAMICA_FORM_VISIBLE,
   DINAMICA_FORM_SUBMISSION_ENABLED,
   DINAMICA_LAUNCH_READY,
-  DINAMICA_PRIVACY_NOTICE_URL,
   isDinamicPageAvailable,
 } from "@/lib/dinamica-ii/config"
 
@@ -118,7 +117,6 @@ export default function DinamicaIIPageRoute() {
         <DinamicaIIPage
           formVisible={DINAMICA_FORM_VISIBLE}
           submissionEnabled={DINAMICA_FORM_SUBMISSION_ENABLED}
-          privacyNoticeUrl={DINAMICA_PRIVACY_NOTICE_URL}
         />
       </main>
       <Footer />

@@ -9,15 +9,15 @@ This section is the source of truth for the public `/dinamica-ii` application. T
 3. The site displays **Application Received / Solicitud recibida** only after Formspree returns a successful response. It creates no confirmation number and does not claim that an automatic email was sent to the participant.
 4. Successment verifies ticket payment and startup eligibility manually, then sends any official confirmation through the approved process. A ticket or received application does not guarantee finalist selection.
 
-DINAMICA II temporarily reuses `FORMSPREE_ENDPOINT` from `lib/form-config.ts` (`https://formspree.io/f/mvzeyakd`). This does not change how any other form submits. Before opening applications, the Formspree owner must confirm that this form accepts DINAMICA II submissions and that its configured recipient is the institutional mailbox. A successful HTTP response does not verify the recipient.
+DINAMICA II reuses `FORMSPREE_ENDPOINT` from `lib/form-config.ts` (`https://formspree.io/f/mvzeyakd`). This does not change how any other form submits. A successful HTTP response confirms Formspree accepted the request; it does not verify which mailbox receives its notifications.
 
 ### Staging and release controls
 
-Use a Vercel Preview deployment protected by Deployment Protection to review the full form. Preview submissions are always disabled. Production submission remains off until the endpoint owner and institutional recipient are confirmed, the approved privacy notice is published, and applications are explicitly opened. Do not send a test to the shared endpoint until its owner authorizes the test and recipient.
+Use a Vercel Preview deployment protected by Deployment Protection to review the full form. Preview submissions are always disabled. Production submissions are controlled by one variable: `DINAMICA_APPLICATIONS_OPEN`. Keep it `false` until the organizer is ready to accept public applications. Setting it to `true` allows any visitor to submit to the existing Formspree endpoint.
 
-The competition page and announcement are visible in Production for review, even while applications are closed. The Home promotion and search indexing remain gated. The sending control is `DINAMICA_APPLICATIONS_OPEN=true`; it only works in Production when `DINAMICA_FORMSPREE_ENDPOINT_CONFIRMED=true`, `DINAMICA_PRIVACY_APPROVED=true`, and `DINAMICA_PRIVACY_NOTICE_URL` is a valid HTTPS URL. Set the endpoint confirmation only after the owner confirms the shared endpoint and institutional recipient. Keep `DINAMICA_APPLICATIONS_OPEN=false` until privacy and opening approvals are received. The form schema validates every application before sending. Preview submissions are not enabled.
+The competition page and announcement are visible in Production for review, even while applications are closed. The Home promotion and search indexing retain separate controls. Set `DINAMICA_APPLICATIONS_OPEN=true` in the Production environment to accept submissions; the endpoint is fixed and validated in code. The form schema validates every application before sending. Preview submissions are not enabled. The form includes a plain-language disclosure that submissions pass through Formspree and are reviewed manually; it does not link to a separate privacy policy.
 
-When the form ID or any approval is absent, the form remains viewable in Production and local/protected preview, but the final submit action is disabled. Local form values remain only in React memory for the active page session; they are not saved to browser storage or a database.
+When the application window is closed, the form remains viewable in Production and local/protected preview, but the final submit action is disabled. Local form values remain only in React memory for the active page session; they are not saved to browser storage or a database.
 
 ### Retired public endpoints and retained data
 

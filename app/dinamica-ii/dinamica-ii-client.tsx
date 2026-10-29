@@ -165,7 +165,7 @@ const copy = {
   },
 } as const
 
-export function DinamicaIIPage({ formVisible, submissionEnabled, privacyNoticeUrl }: { formVisible: boolean; submissionEnabled: boolean; privacyNoticeUrl: string }) {
+export function DinamicaIIPage({ formVisible, submissionEnabled }: { formVisible: boolean; submissionEnabled: boolean }) {
   const { language } = useLanguage()
   const t = copy[language]
 
@@ -287,7 +287,6 @@ export function DinamicaIIPage({ formVisible, submissionEnabled, privacyNoticeUr
           language={language}
           formVisible={formVisible}
           submissionEnabled={submissionEnabled}
-          privacyNoticeUrl={privacyNoticeUrl}
           openingSoon={t.openingSoon}
           openingNote={t.openingNote}
           ticketUrl={DINAMICA_TICKETS.general}
