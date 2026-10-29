@@ -15,9 +15,9 @@ The dedicated form is configured with `NEXT_PUBLIC_DINAMICA_FORMSPREE_FORM_ID`; 
 
 Use a Vercel Preview deployment protected by Deployment Protection to review the full form without an endpoint. Submission remains off until the dedicated Formspree form, institutional recipient, approved privacy notice, duplicate policy, manual-review procedure, and launch authorization are confirmed. For an authorized preview send, configure the dedicated form ID and set `DINAMICA_FORMSPREE_ENABLED`, `DINAMICA_APPLICATIONS_OPEN`, `DINAMICA_PREVIEW_ENABLED`, `DINAMICA_PREVIEW_FORM_ENABLED`, `DINAMICA_PREVIEW_SUBMISSIONS_ENABLED`, privacy approval, duplicate-policy approval, and the approved privacy URL. Use fictitious data and submit only to the authorized test form.
 
-Production requires the coordinated public launch and Home-promotion flags, `DINAMICA_APPLICATIONS_OPEN=true`, `DINAMICA_FORMSPREE_ENABLED=true`, the dedicated public Formspree form ID, the approved privacy notice, privacy approval, duplicate-policy approval, and the joint landing/form launch authorization. These remain off until approved. Preview flags stay off in Production. The preview page remains `noindex`.
+The competition page and announcement are visible in Production for review, even while applications are closed. The Home promotion and search indexing remain gated. Enabling actual submission requires the coordinated public launch and Home-promotion flags, `DINAMICA_APPLICATIONS_OPEN=true`, `DINAMICA_FORMSPREE_ENABLED=true`, the dedicated public Formspree form ID, the approved privacy notice, privacy approval, duplicate-policy approval, and the joint landing/form launch authorization. Preview flags stay off in Production.
 
-When the form ID or any approval is absent, the form remains viewable in local/protected preview, but the final submit action is disabled. Local form values remain only in React memory for the active page session; they are not saved to browser storage or a database.
+When the form ID or any approval is absent, the form remains viewable in Production and local/protected preview, but the final submit action is disabled. Local form values remain only in React memory for the active page session; they are not saved to browser storage or a database.
 
 ### Retired public endpoints and retained data
 

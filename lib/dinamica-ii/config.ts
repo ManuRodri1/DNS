@@ -10,8 +10,9 @@ import {
 
 export { DINAMICA_ASSETS, DINAMICA_CAMPAIGN, DINAMICA_CANONICAL_URL, DINAMICA_PATH, DINAMICA_TICKETS }
 
-// All public-facing promotion is opt-in. Preview access and test submissions
-// use separate explicit controls and must be protected by the deployment.
+// Public content and application delivery have separate release gates.
+// The competition page and announcement can be viewed in production while
+// submission remains closed pending the Formspree and approval requirements.
 export const DINAMICA_PUBLIC_LAUNCH =
   process.env.DINAMICA_PUBLIC_LAUNCH === "true" && DINAMICA_PUBLIC_LAUNCH_ENABLED
 export const DINAMICA_HOME_PROMOTION_ENABLED =
@@ -58,13 +59,15 @@ export const DINAMICA_LAUNCH_READY =
   process.env.VERCEL_ENV === "production" &&
   DINAMICA_PUBLIC_LAUNCH && DINAMICA_HOME_PROMOTION_ENABLED && DINAMICA_FORM_AVAILABLE
 
-export const DINAMICA_FORM_VISIBLE = DINAMICA_LAUNCH_READY || DINAMICA_PREVIEW_AVAILABLE
+export const DINAMICA_PUBLIC_CONTENT_VISIBLE =
+  process.env.VERCEL_ENV === "production" || DINAMICA_PREVIEW_AVAILABLE
+
+export const DINAMICA_FORM_VISIBLE = DINAMICA_PUBLIC_CONTENT_VISIBLE
 
 export const DINAMICA_COMPETITION_MODAL_ENABLED =
-  DINAMICA_LAUNCH_READY ||
-  DINAMICA_PREVIEW_AVAILABLE
+  DINAMICA_PUBLIC_CONTENT_VISIBLE
 
 export function isDinamicPageAvailable() {
-  return DINAMICA_LAUNCH_READY || DINAMICA_PREVIEW_AVAILABLE
+  return DINAMICA_PUBLIC_CONTENT_VISIBLE
 }
 

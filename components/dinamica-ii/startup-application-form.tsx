@@ -536,7 +536,7 @@ export function StartupApplicationForm({ language, formVisible, submissionEnable
           </button>}
       </div>
 
-      {!submissionEnabled && <p id="dinamica-submit-disabled" className="dinamica-form-note" role="note">{label("Preview only: the complete form is visible, but submissions are disabled until the dedicated Formspree form, recipient, privacy notice, and launch approvals are in place. Nothing is saved in this browser.", "Vista previa: el formulario está completo, pero los envíos están deshabilitados hasta configurar el formulario Formspree dedicado, el destinatario, el aviso de privacidad y las aprobaciones de lanzamiento. Nada se guarda en este navegador.")}</p>}
+      {!submissionEnabled && <p id="dinamica-submit-disabled" className="dinamica-form-note" role="note">{label("Applications are not accepting submissions yet. The complete form is available to review while the dedicated Formspree form, recipient, privacy notice, and launch approvals are finalized. Your answers are not saved when you leave this page.", "Todavía no se aceptan solicitudes. Puedes revisar el formulario completo mientras se finalizan el Formspree dedicado, el destinatario, el aviso de privacidad y las aprobaciones de lanzamiento. Tus respuestas no se guardan al salir de esta página.")}</p>}
       {formError && <p className="dinamica-form-error" role="alert" aria-live="assertive">{formError}</p>}
       <p className="dinamica-form-privacy">{label("Your application is reviewed manually. A valid ticket is required, but purchasing one does not guarantee finalist selection.", "Tu solicitud se revisará manualmente. Se requiere una entrada válida, pero comprarla no garantiza ser finalista.")}</p>
     </form>
