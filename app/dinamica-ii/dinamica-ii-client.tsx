@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowDown, ArrowRight, ExternalLink } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
-import { DINAMICA_ASSETS, DINAMICA_TICKETS } from "@/lib/dinamica-ii/config"
+import { DINAMICA_ASSETS, DINAMICA_TICKETS } from "@/lib/dinamica-ii/public-config"
 import { StartupApplicationForm } from "@/components/dinamica-ii/startup-application-form"
 import "./dinamica-ii.css"
 
@@ -21,7 +21,7 @@ const copy = {
     ticket: "Get Your DNS Ticket",
     eligibility: "Check Eligibility",
     ticketNote:
-      "A valid paid DNS 2027 ticket unlocks application submission. Purchasing a ticket does not guarantee selection.",
+      "Submit your ticket details with the application. DNS will verify payment and eligibility after you apply. A ticket does not guarantee finalist selection.",
     event: "April 8–9, 2027 · Santo Domingo",
     initiative: "A regional initiative",
     institutionalTitle: "DINAMICA II initiative",
@@ -42,13 +42,12 @@ const copy = {
       "Demonstrable plan to enter or expand in the Dominican Republic",
     ],
     processLabel: "02 / The process",
-    processTitle: "Five steps to the stage",
+    processTitle: "Four steps to the stage",
     steps: [
-      "Get a DNS 2027 ticket or verify your existing valid ticket.",
-      "Complete your startup application, including your product, target markets, team, preferred pitch language and Dominican connection.",
-      "Verify your ticket to submit. You can prepare the form before purchasing, but only verified ticket holders can submit.",
-      "Applications are evaluated against published criteria; up to 10 startups will pitch live.",
-      "One startup wins the US$8,500 Grand Prize; another receives US$4,250 as Runner-Up. Winners reinvest in their business and report on results.",
+      "Complete the four-section application and provide your ticket purchase details.",
+      "Submit your application for review. This confirms receipt, not official registration.",
+      "The DNS team manually checks ticket payment and eligibility, then confirms, requests more information, or declines the application.",
+      "After manual verification, DNS provides an official confirmation and eligible applications enter the evaluation queue; up to 10 startups will pitch live.",
     ],
     juryLabel: "03 / Jury evaluation",
     juryTitle: "What the jury looks for",
@@ -74,7 +73,7 @@ const copy = {
       ["Do I need to be based in the Dominican Republic?", "No. A legally established startup with Dominican operations, Dominican origins, or a demonstrable entry or expansion strategy in the DR may qualify."],
       ["Can diaspora founders apply?", "Yes, if their startup meets the program criteria and establishes the qualifying Dominican connection."],
       ["What about digital nomads or international founders?", "Yes, where the startup meets the requirements and shows a credible Dominican market-entry or expansion plan, or another qualifying connection. Nomad status alone is not an eligibility shortcut."],
-      ["Do I need a ticket?", "Yes. Complete your application and verify a valid paid DNS 2027 ticket before final submission. Existing eligible ticket holders can verify without buying again."],
+      ["Do I need a ticket?", "Yes. Include the ticket purchase email, ticket type, and any receipt or purchase reference you have. DNS will verify your purchase after you submit; an application remains pending until the team confirms eligibility."],
       ["Are applications open?", "The official window and closing date will be announced on this page. A ticket does not guarantee entry to the finalist shortlist."],
       ["What language should I pitch in?", "English presentations are preferred for DNS's international audience. Spanish-only pitches are welcome, and language support will be available for selected finalists. English slides are encouraged, but Spanish slides are not grounds for automatic rejection."],
     ],
@@ -99,7 +98,7 @@ const copy = {
     ticket: "Consigue tu entrada DNS",
     eligibility: "Comprueba tu elegibilidad",
     ticketNote:
-      "Una entrada DNS 2027 válida y pagada habilita el envío de la solicitud. Comprar una entrada no garantiza la selección.",
+      "Incluye los datos de tu entrada en la solicitud. DNS verificará el pago y la elegibilidad después de que envíes el formulario. Tener una entrada no garantiza ser finalista.",
     event: "8–9 de abril de 2027 · Santo Domingo",
     initiative: "Una iniciativa regional",
     institutionalTitle: "Iniciativa DINAMICA II",
@@ -120,13 +119,12 @@ const copy = {
       "Plan demostrable para entrar o expandirse en República Dominicana",
     ],
     processLabel: "02 / El proceso",
-    processTitle: "Cinco pasos hasta el escenario",
+    processTitle: "Cuatro pasos hasta el escenario",
     steps: [
-      "Compra una entrada DNS 2027 o verifica una entrada válida que ya tengas.",
-      "Completa la solicitud de tu startup con el producto, mercados objetivo, equipo, idioma de presentación y vínculo dominicano.",
-      "Verifica tu entrada para enviar la solicitud. Puedes preparar el formulario antes de comprar, pero solo quienes tengan una entrada verificada pueden enviarlo.",
-      "Las solicitudes se evalúan con los criterios publicados; hasta 10 startups presentarán en vivo.",
-      "Una startup gana el gran premio de US$8,500 y otra recibe US$4,250 por el segundo lugar. Las ganadoras reinvierten en su negocio e informan sus resultados.",
+      "Completa las cuatro secciones de la solicitud e incluye los datos de tu entrada.",
+      "Envía la solicitud para revisión. Esto confirma que fue recibida, no que la inscripción esté aprobada.",
+      "El equipo DNS verifica manualmente el pago y la elegibilidad; después confirma, solicita más información o rechaza la solicitud.",
+      "Después de la verificación manual, DNS envía una confirmación oficial y las solicitudes elegibles pasan a la cola de evaluación; hasta 10 startups presentarán en vivo.",
     ],
     juryLabel: "03 / Evaluación del jurado",
     juryTitle: "Qué evalúa el jurado",
@@ -152,7 +150,7 @@ const copy = {
       ["¿Debo vivir en República Dominicana?", "No. Puede calificar una startup legalmente constituida con operaciones u origen dominicano, o con una estrategia demostrable de entrada o expansión en RD."],
       ["¿Pueden participar fundadores de la diáspora?", "Sí, si su startup cumple los criterios del programa y establece el vínculo dominicano requerido."],
       ["¿Y los nómadas digitales o fundadores internacionales?", "Sí, cuando la startup cumple los requisitos y demuestra un plan creíble de entrada o expansión en el mercado dominicano u otro vínculo válido. La condición de nómada, por sí sola, no otorga elegibilidad."],
-      ["¿Necesito una entrada?", "Sí. Completa tu solicitud y verifica una entrada DNS 2027 válida y pagada antes del envío final. Quienes ya tengan una entrada elegible pueden verificarla sin comprar otra."],
+      ["¿Necesito una entrada?", "Sí. Incluye el correo de compra, el tipo de entrada y cualquier recibo o referencia que tengas. DNS verificará la compra después del envío; la solicitud queda pendiente hasta confirmar la elegibilidad."],
       ["¿Ya están abiertas las solicitudes?", "El período oficial y la fecha de cierre se anunciarán en esta página. Tener una entrada no garantiza entrar en la lista de finalistas."],
       ["¿En qué idioma debo presentar?", "Se prefieren presentaciones en inglés para la audiencia internacional de DNS. También se aceptan presentaciones solo en español y habrá apoyo de idioma para finalistas seleccionados. Se recomiendan diapositivas en inglés, pero las diapositivas en español no son motivo de rechazo automático."],
     ],
@@ -167,15 +165,7 @@ const copy = {
   },
 } as const
 
-const institutions = [
-  { name: "BCIE", src: DINAMICA_ASSETS.bcie, width: 240, height: 100, className: "dinamica-logo-bcie" },
-  { name: "Global Gateway", src: DINAMICA_ASSETS.globalGateway, width: 200, height: 115, className: "dinamica-logo-gateway" },
-  { name: "Unión Europea", src: DINAMICA_ASSETS.europeanUnion, width: 310, height: 164, className: "dinamica-logo-eu" },
-  { name: "Cooperación Alemana", src: DINAMICA_ASSETS.germanCooperation, width: 735, height: 417, className: "dinamica-logo-german" },
-  { name: "KfW", src: DINAMICA_ASSETS.kfw, width: 866, height: 497, className: "dinamica-logo-kfw" },
-]
-
-export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applicationsOpen: boolean; privacyNoticeUrl: string }) {
+export function DinamicaIIPage({ formVisible, submissionEnabled, privacyNoticeUrl }: { formVisible: boolean; submissionEnabled: boolean; privacyNoticeUrl: string }) {
   const { language } = useLanguage()
   const t = copy[language]
 
@@ -237,12 +227,15 @@ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applica
           <h2 id="institution-title">{t.institutionalTitle}</h2>
           <p>{t.institutional}</p>
         </div>
-        <div className="dinamica-institution-logos" aria-label={language === "en" ? "DINAMICA II institutional partners" : "Instituciones aliadas de DINAMICA II"}>
-          {institutions.map((institution) => (
-            <div className={`dinamica-logo-cell ${institution.className}`} key={institution.name}>
-              <Image src={institution.src} alt={institution.name} width={institution.width} height={institution.height} sizes="(max-width: 680px) 42vw, 18vw" />
-            </div>
-          ))}
+        <div className="dinamica-institution-lockup">
+          <Image
+            src={DINAMICA_ASSETS.institutionalLockup}
+            alt={language === "en" ? "Official DINAMICA II institutional partnership lockup" : "Composición institucional oficial de DINAMICA II"}
+            width={DINAMICA_ASSETS.institutionalLockupWidth}
+            height={DINAMICA_ASSETS.institutionalLockupHeight}
+            sizes="(max-width: 600px) calc(100vw - 44px), (max-width: 1100px) 90vw, 820px"
+            style={{ objectFit: "contain" }}
+          />
         </div>
       </section>
 
@@ -292,12 +285,12 @@ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applica
         </div>
         <StartupApplicationForm
           language={language}
-          applicationsOpen={applicationsOpen}
+          formVisible={formVisible}
+          submissionEnabled={submissionEnabled}
           privacyNoticeUrl={privacyNoticeUrl}
           openingSoon={t.openingSoon}
           openingNote={t.openingNote}
           ticketUrl={DINAMICA_TICKETS.general}
-          onTicketVerified={() => trackPrizeEvent("prize_ticket_verified", language)}
         />
       </section>
 

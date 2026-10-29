@@ -6,6 +6,8 @@ import { Header } from "@/components/header"
 import { LanguageProvider } from "@/lib/language-context"
 import { AIGuideWidget } from "@/components/ai-guide/ai-guide-widget"
 import { EventUpdateModal } from "@/components/event-update-modal"
+import { CompetitionAnnouncementModal } from "@/components/dinamica-ii/competition-announcement-modal"
+import { DINAMICA_COMPETITION_MODAL_ENABLED } from "@/lib/dinamica-ii/config"
 import {
   EVENT_DISPLAY_NAME,
   EVENT_END_DATE,
@@ -185,7 +187,7 @@ export default function RootLayout({
           <Header />
           {children}
           <AIGuideWidget />
-          <EventUpdateModal />
+          {DINAMICA_COMPETITION_MODAL_ENABLED ? <CompetitionAnnouncementModal /> : <EventUpdateModal />}
         </LanguageProvider>
         {/* Klaviyo Onsite Script */}
         <Script

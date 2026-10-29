@@ -4,8 +4,11 @@ import { timingSafeEqual } from "node:crypto"
 let adminClient: SupabaseClient | undefined
 
 export function getDinamicaAdminClient() {
-  const url = process.env.DINAMICA_SUPABASE_URL
-  const key = process.env.DINAMICA_SUPABASE_SECRET_KEY || process.env.DINAMICA_SUPABASE_SERVICE_ROLE_KEY
+  const isPreview = process.env.VERCEL_ENV === "preview" || process.env.NODE_ENV !== "production"
+  const url = isPreview ? process.env.DINAMICA_PREVIEW_SUPABASE_URL : process.env.DINAMICA_SUPABASE_URL
+  const key = isPreview
+    ? process.env.DINAMICA_PREVIEW_SUPABASE_SECRET_KEY || process.env.DINAMICA_PREVIEW_SUPABASE_SERVICE_ROLE_KEY
+    : process.env.DINAMICA_SUPABASE_SECRET_KEY || process.env.DINAMICA_SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) throw new Error("dinamica_storage_unavailable")
 
   if (!adminClient) {
@@ -17,7 +20,8 @@ export function getDinamicaAdminClient() {
 }
 
 export function getDinamicaOperatorToken() {
-  const token = process.env.DINAMICA_OPERATOR_TOKEN
+  const isPreview = process.env.VERCEL_ENV === "preview" || process.env.NODE_ENV !== "production"
+  const token = isPreview ? process.env.DINAMICA_PREVIEW_OPERATOR_TOKEN : process.env.DINAMICA_OPERATOR_TOKEN
   if (!token || token.length < 32) throw new Error("dinamica_operator_unavailable")
   return token
 }

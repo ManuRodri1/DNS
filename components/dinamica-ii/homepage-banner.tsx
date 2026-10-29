@@ -3,11 +3,15 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
-import { DINAMICA_HOME_PROMOTION_ENABLED, DINAMICA_PATH } from "@/lib/dinamica-ii/config"
+import {
+  DINAMICA_PATH,
+  DINAMICA_PUBLIC_HOME_PROMOTION_ENABLED,
+  DINAMICA_PUBLIC_LAUNCH_ENABLED,
+} from "@/lib/dinamica-ii/public-config"
 
 export function DinamicaIIHomepageBanner() {
   const { language } = useLanguage()
-  if (!DINAMICA_HOME_PROMOTION_ENABLED) return null
+  if (!DINAMICA_PUBLIC_LAUNCH_ENABLED || !DINAMICA_PUBLIC_HOME_PROMOTION_ENABLED) return null
 
   const en = language === "en"
   return (

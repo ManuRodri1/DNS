@@ -1,0 +1,1449 @@
+.env.example                                       |   7 +
+ app/api/dinamica-ii/draft/[id]/route.ts            |   6 +-
+ app/api/dinamica-ii/draft/route.ts                 |   7 +-
+ app/api/dinamica-ii/operator/export/route.ts       |  28 +++-
+ app/api/dinamica-ii/operator/issue-token/route.ts  |  16 ++-
+ app/dinamica-ii/dinamica-ii-client.tsx             |  25 ++--
+ app/dinamica-ii/dinamica-ii.css                    |  18 +--
+ app/dinamica-ii/page.tsx                           |   4 +-
+ app/layout.tsx                                     |   4 +-
+ app/robots.ts                                      |   4 +-
+ app/sitemap.ts                                     |   4 +-
+ components/dinamica-ii/homepage-banner.tsx         |   8 +-
+ .../dinamica-ii/startup-application-form.tsx       |  28 ++--
+ docs/dinamica-ii-operations.md                     |  62 +++++----
+ docs/dinamica-ii-technical-report.md               | 154 +++++++--------------
+ lib/dinamica-ii/application-schema.ts              |   5 +-
+ lib/dinamica-ii/config.ts                          |  75 +++++-----
+ 17 files changed, 218 insertions(+), 237 deletions(-)
+
+diff --git a/.env.example b/.env.example
+index 03aacf0..6ee429d 100644
+--- a/.env.example
++++ b/.env.example
+@@ -23,12 +23,19 @@ DINAMICA_SUPABASE_URL=
+ DINAMICA_SUPABASE_SECRET_KEY=
+ DINAMICA_OPERATOR_TOKEN=
+ DINAMICA_PUBLIC_LAUNCH=false
++# Public mirrors for the two client-visible campaign gates. Set alongside their server-only counterparts.
++NEXT_PUBLIC_DINAMICA_PUBLIC_LAUNCH=false
++NEXT_PUBLIC_DINAMICA_HOME_PROMOTION_ENABLED=false
+ # Communications approval gate for the DINAMICA II Home promotion. Keep false until JJM and BCIE communications approval.
+ DINAMICA_HOME_PROMOTION_ENABLED=false
+ DINAMICA_APPLICATIONS_OPEN=false
+ DINAMICA_PRIVACY_APPROVED=false
+ DINAMICA_DUPLICATE_POLICY_APPROVED=false
+ DINAMICA_PRIVACY_NOTICE_URL=
++# Staging only. Enable only on an access-protected Vercel Preview deployment.
++DINAMICA_PREVIEW_ENABLED=false
++DINAMICA_PREVIEW_FORM_ENABLED=false
++DINAMICA_PREVIEW_MODAL_ENABLED=false
+ 
+ # Airtable — Speakers workspace (separate base)
+ # Used by: lib/airtable-speakers.ts → getSpeakers(), getSpeakerBySlug()
+diff --git a/app/api/dinamica-ii/draft/[id]/route.ts b/app/api/dinamica-ii/draft/[id]/route.ts
+index 6dd8acd..3891c68 100644
+--- a/app/api/dinamica-ii/draft/[id]/route.ts
++++ b/app/api/dinamica-ii/draft/[id]/route.ts
+@@ -23,7 +23,11 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
+       .maybeSingle()
+     if (error) throw error
+     if (!data) return NextResponse.json({ code: "verification_token_expired" }, { status: 404 })
+-    return NextResponse.json({ payload: data.payload }, { headers: { "Cache-Control": "no-store" } })
++    const payload = data.payload && typeof data.payload === "object" ? data.payload as Record<string, unknown> : {}
++    const safePayload = Object.fromEntries(
++      Object.entries(payload).filter(([key]) => !/(token|secret|password)/i.test(key)),
++    )
++    return NextResponse.json({ payload: safePayload }, { headers: { "Cache-Control": "no-store" } })
+   } catch (error) {
+     console.error("[dinamica] Draft could not be read", error instanceof Error ? error.message : "unknown")
+     return NextResponse.json({ code: "submission_unavailable" }, { status: 503 })
+diff --git a/app/api/dinamica-ii/draft/route.ts b/app/api/dinamica-ii/draft/route.ts
+index c784403..0a4d10f 100644
+--- a/app/api/dinamica-ii/draft/route.ts
++++ b/app/api/dinamica-ii/draft/route.ts
+@@ -19,6 +19,9 @@ export async function POST(request: Request) {
+     const body = await request.json() as Record<string, unknown>
+     const payload = draftPayloadSchema.safeParse(body.payload)
+     if (!payload.success) return NextResponse.json({ code: "required_information_missing" }, { status: 400 })
++    const safePayload = Object.fromEntries(
++      Object.entries(payload.data).filter(([key]) => !/(token|secret|password)/i.test(key)),
++    )
+ 
+     const client = getDinamicaAdminClient()
+     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+@@ -26,7 +29,7 @@ export async function POST(request: Request) {
+       const tokenHash = createHash("sha256").update(body.token.trim()).digest("hex")
+       const { data, error } = await client
+         .from("dinamica_application_drafts")
+-        .update({ payload: payload.data, updated_at: new Date().toISOString(), expires_at: expiresAt })
++        .update({ payload: safePayload, updated_at: new Date().toISOString(), expires_at: expiresAt })
+         .eq("id", body.id)
+         .eq("access_token_hash", tokenHash)
+         .gt("expires_at", new Date().toISOString())
+@@ -42,7 +45,7 @@ export async function POST(request: Request) {
+     const id = randomUUID()
+     const { data, error } = await client
+       .from("dinamica_application_drafts")
+-      .insert({ id, access_token_hash: tokenHash, payload: payload.data, expires_at: expiresAt })
++      .insert({ id, access_token_hash: tokenHash, payload: safePayload, expires_at: expiresAt })
+       .select("id")
+       .single()
+     if (error) throw error
+diff --git a/app/api/dinamica-ii/operator/export/route.ts b/app/api/dinamica-ii/operator/export/route.ts
+index af5da11..fbe6e97 100644
+--- a/app/api/dinamica-ii/operator/export/route.ts
++++ b/app/api/dinamica-ii/operator/export/route.ts
+@@ -5,7 +5,7 @@ export const runtime = "nodejs"
+ 
+ function csvCell(value: unknown) {
+   const raw = typeof value === "string" ? value : JSON.stringify(value ?? "")
+-  const text = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw
++  const text = /^[\s]*[=+\-@]/.test(raw) ? `'${raw}` : raw
+   return `"${text.replaceAll('"', '""')}"`
+ }
+ 
+@@ -15,13 +15,33 @@ export async function GET(request: Request) {
+     const client = getDinamicaAdminClient()
+     const { data, error } = await client
+       .from("dinamica_applications")
+-      .select("id,status,ticket_reference,payload,submitted_at,reviewer_notes,reviewer_scores,reviewed_at")
++      .select("id,status,ticket_reference,payload,submitted_at")
+       .eq("status", "final_submitted")
+       .order("submitted_at", { ascending: true })
+     if (error) throw error
+ 
+-    const columns = ["id", "status", "ticket_reference", "submitted_at", "payload", "reviewer_notes", "reviewer_scores", "reviewed_at"]
+-    const rows = (data || []).map((row) => columns.map((column) => csvCell(row[column as keyof typeof row])).join(","))
++    const payloadColumns = [
++      "founder_name", "founder_email", "founder_phone", "founder_role", "contact_language",
++      "founder_origin_country", "founder_residence_country", "founder_city", "pitch_language",
++      "representative_ticket_email", "cofounders", "linkedin_url", "founder_website",
++      "startup_legal_name", "startup_brand_name", "incorporation_country", "registration_proof",
++      "startup_profile_url", "founded_year", "stage", "sector", "operation_countries",
++      "headquarters_country", "team_size", "company_description", "connections",
++      "connection_explanation", "connection_evidence_url", "diaspora", "nomad",
++      "customer_problem", "innovation", "export_markets", "demand_evidence", "scale_milestones",
++      "impact_contribution", "team_capacity", "prize_use", "pitch_deck_url", "demo_url",
++      "external_reference", "customer_count_range", "monthly_revenue_range",
++      "active_export_customers", "expected_market_entry", "accuracy_ack", "authority_ack",
++      "judging_ack", "selection_ack", "winner_terms_ack", "contact_ack", "privacy_ack",
++      "marketing_opt_in", "prior_funding", "conflicts",
++    ]
++    const columns = ["id", "status", "ticket_reference", "submitted_at", ...payloadColumns]
++    const rows = (data || []).map((row) => {
++      const payload = row.payload && typeof row.payload === "object" ? row.payload as Record<string, unknown> : {}
++      return [row.id, row.status, row.ticket_reference, row.submitted_at, ...payloadColumns.map((column) => payload[column])]
++        .map(csvCell)
++        .join(",")
++    })
+     const csv = [columns.join(","), ...rows].join("\r\n")
+     return new NextResponse(csv, {
+       status: 200,
+diff --git a/app/api/dinamica-ii/operator/issue-token/route.ts b/app/api/dinamica-ii/operator/issue-token/route.ts
+index 2166250..83e2ddd 100644
+--- a/app/api/dinamica-ii/operator/issue-token/route.ts
++++ b/app/api/dinamica-ii/operator/issue-token/route.ts
+@@ -27,16 +27,28 @@ export async function POST(request: Request) {
+     const tokenHash = createHash("sha256").update(token).digest("hex")
+     const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString()
+     const client = getDinamicaAdminClient()
+-    const { error } = await client.from("dinamica_ticket_verifications").insert({
++    const verification = {
+       ticket_reference: body.data.ticketReference,
+       representative_email: body.data.representativeEmail.toLowerCase(),
+       ticket_type: body.data.ticketType,
+       payment_verified_at: new Date().toISOString(),
+       verification_token_hash: tokenHash,
+       expires_at: expiresAt,
+-    })
++    }
++    const { data: existing, error: lookupError } = await client
++      .from("dinamica_ticket_verifications")
++      .select("id, consumed_at")
++      .eq("ticket_reference", verification.ticket_reference)
++      .maybeSingle()
++    if (lookupError) throw lookupError
++    if (existing?.consumed_at) return NextResponse.json({ code: "ticket_already_used" }, { status: 409 })
++
++    const { data: issued, error } = existing
++      ? await client.from("dinamica_ticket_verifications").update(verification).eq("id", existing.id).is("consumed_at", null).select("id").maybeSingle()
++      : await client.from("dinamica_ticket_verifications").insert(verification).select("id").maybeSingle()
+     if (error?.code === "23505") return NextResponse.json({ code: "ticket_already_used" }, { status: 409 })
+     if (error) throw error
++    if (!issued) return NextResponse.json({ code: "ticket_already_used" }, { status: 409 })
+ 
+     return NextResponse.json({ token, expiresAt }, { status: 201, headers: { "Cache-Control": "no-store" } })
+   } catch (error) {
+diff --git a/app/dinamica-ii/dinamica-ii-client.tsx b/app/dinamica-ii/dinamica-ii-client.tsx
+index 7cffbed..4c0bc9e 100644
+--- a/app/dinamica-ii/dinamica-ii-client.tsx
++++ b/app/dinamica-ii/dinamica-ii-client.tsx
+@@ -4,7 +4,7 @@ import Image from "next/image"
+ import Link from "next/link"
+ import { ArrowDown, ArrowRight, ExternalLink } from "lucide-react"
+ import { useLanguage } from "@/lib/language-context"
+-import { DINAMICA_ASSETS, DINAMICA_TICKETS } from "@/lib/dinamica-ii/config"
++import { DINAMICA_ASSETS, DINAMICA_TICKETS } from "@/lib/dinamica-ii/public-config"
+ import { StartupApplicationForm } from "@/components/dinamica-ii/startup-application-form"
+ import "./dinamica-ii.css"
+ 
+@@ -167,14 +167,6 @@ const copy = {
+   },
+ } as const
+ 
+-const institutions = [
+-  { name: "BCIE", src: DINAMICA_ASSETS.bcie, width: 240, height: 100, className: "dinamica-logo-bcie" },
+-  { name: "Global Gateway", src: DINAMICA_ASSETS.globalGateway, width: 200, height: 115, className: "dinamica-logo-gateway" },
+-  { name: "Unión Europea", src: DINAMICA_ASSETS.europeanUnion, width: 310, height: 164, className: "dinamica-logo-eu" },
+-  { name: "Cooperación Alemana", src: DINAMICA_ASSETS.germanCooperation, width: 735, height: 417, className: "dinamica-logo-german" },
+-  { name: "KfW", src: DINAMICA_ASSETS.kfw, width: 866, height: 497, className: "dinamica-logo-kfw" },
+-]
+-
+ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applicationsOpen: boolean; privacyNoticeUrl: string }) {
+   const { language } = useLanguage()
+   const t = copy[language]
+@@ -237,12 +229,15 @@ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applica
+           <h2 id="institution-title">{t.institutionalTitle}</h2>
+           <p>{t.institutional}</p>
+         </div>
+-        <div className="dinamica-institution-logos" aria-label={language === "en" ? "DINAMICA II institutional partners" : "Instituciones aliadas de DINAMICA II"}>
+-          {institutions.map((institution) => (
+-            <div className={`dinamica-logo-cell ${institution.className}`} key={institution.name}>
+-              <Image src={institution.src} alt={institution.name} width={institution.width} height={institution.height} sizes="(max-width: 680px) 42vw, 18vw" />
+-            </div>
+-          ))}
++        <div className="dinamica-institution-lockup">
++          <Image
++            src={DINAMICA_ASSETS.institutionalLockup}
++            alt={language === "en" ? "Official DINAMICA II institutional partnership lockup" : "Composición institucional oficial de DINAMICA II"}
++            width={DINAMICA_ASSETS.institutionalLockupWidth}
++            height={DINAMICA_ASSETS.institutionalLockupHeight}
++            sizes="(max-width: 600px) calc(100vw - 44px), (max-width: 1100px) 90vw, 820px"
++            style={{ objectFit: "contain" }}
++          />
+         </div>
+       </section>
+ 
+diff --git a/app/dinamica-ii/dinamica-ii.css b/app/dinamica-ii/dinamica-ii.css
+index 260c53a..779682a 100644
+--- a/app/dinamica-ii/dinamica-ii.css
++++ b/app/dinamica-ii/dinamica-ii.css
+@@ -122,14 +122,8 @@
+ .dinamica-institution-intro .dinamica-kicker { margin-bottom: 8px; }
+ .dinamica-institution-intro h2 { margin-bottom: 10px; font: 600 1.2rem/1.3 var(--font-display), sans-serif; letter-spacing: -0.03em; }
+ .dinamica-institution-intro > p:last-child { margin-bottom: 0; color: var(--din-muted); font: 400 0.76rem/1.55 var(--font-sans), sans-serif; }
+-.dinamica-institution-logos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; gap: clamp(14px, 2vw, 32px); }
+-.dinamica-logo-cell { display: flex; min-width: 0; height: 76px; align-items: center; justify-content: center; }
+-.dinamica-logo-cell img { display: block; width: auto; max-width: 100%; height: auto; max-height: 62px; object-fit: contain; }
+-.dinamica-logo-bcie img { max-width: 132px; max-height: 50px; }
+-.dinamica-logo-gateway img { max-width: 112px; max-height: 62px; }
+-.dinamica-logo-eu img { max-width: 128px; max-height: 68px; }
+-.dinamica-logo-german img { max-width: 120px; max-height: 68px; }
+-.dinamica-logo-kfw img { max-width: 98px; max-height: 60px; }
++.dinamica-institution-lockup { width: min(100%, 820px); margin-inline: auto; padding: 10px; background: #fff; }
++.dinamica-institution-lockup img { display: block; width: 100%; height: auto; object-fit: contain; }
+ 
+ .dinamica-section { display: grid; grid-template-columns: minmax(190px, 0.72fr) minmax(0, 1.28fr); column-gap: clamp(40px, 7vw, 112px); padding: clamp(64px, 7vw, 100px) max(6vw, calc((100vw - 1200px) / 2)); }
+ .dinamica-section-heading { min-width: 0; }
+@@ -275,13 +269,7 @@
+   .dinamica-event-date { margin-top: 15px; }
+   .dinamica-hero-index { display: none; }
+   .dinamica-institutions { gap: 24px; padding: 38px 22px 42px; }
+-  .dinamica-institution-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
+-  .dinamica-logo-cell { height: 72px; }
+-  .dinamica-logo-cell:last-child { grid-column: 1 / -1; }
+-  .dinamica-logo-bcie img { max-width: 130px; }
+-  .dinamica-logo-eu img { max-width: 130px; }
+-  .dinamica-logo-german img { max-width: 140px; }
+-  .dinamica-logo-kfw img { max-width: 110px; }
++  .dinamica-institution-lockup { width: calc(100% + 44px); margin-inline: -22px; padding: 0; }
+   .dinamica-section { grid-template-columns: minmax(0, 1fr); row-gap: 23px; padding: 54px 22px; }
+   .dinamica-section-heading h2 { max-width: 560px; }
+   .dinamica-connection-list { grid-column: auto; margin-top: 0; }
+diff --git a/app/dinamica-ii/page.tsx b/app/dinamica-ii/page.tsx
+index 0cfeadc..780eef9 100644
+--- a/app/dinamica-ii/page.tsx
++++ b/app/dinamica-ii/page.tsx
+@@ -6,8 +6,8 @@ import {
+   DINAMICA_CANONICAL_URL,
+   DINAMICA_ASSETS,
+   DINAMICA_FORM_AVAILABLE,
++  DINAMICA_LAUNCH_READY,
+   DINAMICA_PRIVACY_NOTICE_URL,
+-  DINAMICA_PUBLIC_LAUNCH,
+   isDinamicPageAvailable,
+ } from "@/lib/dinamica-ii/config"
+ 
+@@ -34,7 +34,7 @@ export const metadata: Metadata = {
+   publisher: "Digital Nomad Summit",
+   category: "Business",
+   alternates: { canonical: DINAMICA_CANONICAL_URL },
+-  robots: DINAMICA_PUBLIC_LAUNCH
++  robots: DINAMICA_LAUNCH_READY
+     ? {
+         index: true,
+         follow: true,
+diff --git a/app/layout.tsx b/app/layout.tsx
+index 1b3baf0..86abe71 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -6,6 +6,8 @@ import { Header } from "@/components/header"
+ import { LanguageProvider } from "@/lib/language-context"
+ import { AIGuideWidget } from "@/components/ai-guide/ai-guide-widget"
+ import { EventUpdateModal } from "@/components/event-update-modal"
++import { CompetitionAnnouncementModal } from "@/components/dinamica-ii/competition-announcement-modal"
++import { DINAMICA_COMPETITION_MODAL_ENABLED } from "@/lib/dinamica-ii/config"
+ import {
+   EVENT_DISPLAY_NAME,
+   EVENT_END_DATE,
+@@ -185,7 +187,7 @@ export default function RootLayout({
+           <Header />
+           {children}
+           <AIGuideWidget />
+-          <EventUpdateModal />
++          {DINAMICA_COMPETITION_MODAL_ENABLED ? <CompetitionAnnouncementModal /> : <EventUpdateModal />}
+         </LanguageProvider>
+         {/* Klaviyo Onsite Script */}
+         <Script
+diff --git a/app/robots.ts b/app/robots.ts
+index 8ada795..e5f8771 100644
+--- a/app/robots.ts
++++ b/app/robots.ts
+@@ -1,12 +1,12 @@
+ import type { MetadataRoute } from "next"
+-import { DINAMICA_PUBLIC_LAUNCH } from "@/lib/dinamica-ii/config"
++import { DINAMICA_LAUNCH_READY } from "@/lib/dinamica-ii/config"
+ 
+ export default function robots(): MetadataRoute.Robots {
+   return {
+     rules: {
+       userAgent: "*",
+       allow: "/",
+-      disallow: ["/api/", "/_next/", ...(!DINAMICA_PUBLIC_LAUNCH ? ["/dinamica-ii"] : [])],
++      disallow: ["/api/", "/_next/", ...(!DINAMICA_LAUNCH_READY ? ["/dinamica-ii"] : [])],
+     },
+     sitemap: "https://www.digitalnomadsummit.co/sitemap.xml",
+   }
+diff --git a/app/sitemap.ts b/app/sitemap.ts
+index 632532a..ae8dac3 100644
+--- a/app/sitemap.ts
++++ b/app/sitemap.ts
+@@ -1,6 +1,6 @@
+ import type { MetadataRoute } from "next"
+ import { getSpeakerSlugs } from "@/lib/data/speakers"
+-import { DINAMICA_PUBLIC_LAUNCH, DINAMICA_CANONICAL_URL } from "@/lib/dinamica-ii/config"
++import { DINAMICA_LAUNCH_READY, DINAMICA_CANONICAL_URL } from "@/lib/dinamica-ii/config"
+ 
+ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+   const baseUrl = "https://www.digitalnomadsummit.co"
+@@ -121,7 +121,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+     ...speakerEntries,
+   ]
+ 
+-  if (DINAMICA_PUBLIC_LAUNCH) {
++  if (DINAMICA_LAUNCH_READY) {
+     entries.push({
+       url: DINAMICA_CANONICAL_URL,
+       lastModified: currentDate,
+diff --git a/components/dinamica-ii/homepage-banner.tsx b/components/dinamica-ii/homepage-banner.tsx
+index b2a7b52..b5bade0 100644
+--- a/components/dinamica-ii/homepage-banner.tsx
++++ b/components/dinamica-ii/homepage-banner.tsx
+@@ -3,11 +3,15 @@
+ import Link from "next/link"
+ import { ArrowRight } from "lucide-react"
+ import { useLanguage } from "@/lib/language-context"
+-import { DINAMICA_HOME_PROMOTION_ENABLED, DINAMICA_PATH } from "@/lib/dinamica-ii/config"
++import {
++  DINAMICA_PATH,
++  DINAMICA_PUBLIC_HOME_PROMOTION_ENABLED,
++  DINAMICA_PUBLIC_LAUNCH_ENABLED,
++} from "@/lib/dinamica-ii/public-config"
+ 
+ export function DinamicaIIHomepageBanner() {
+   const { language } = useLanguage()
+-  if (!DINAMICA_HOME_PROMOTION_ENABLED) return null
++  if (!DINAMICA_PUBLIC_LAUNCH_ENABLED || !DINAMICA_PUBLIC_HOME_PROMOTION_ENABLED) return null
+ 
+   const en = language === "en"
+   return (
+diff --git a/components/dinamica-ii/startup-application-form.tsx b/components/dinamica-ii/startup-application-form.tsx
+index 1e8d3fb..b5c63ac 100644
+--- a/components/dinamica-ii/startup-application-form.tsx
++++ b/components/dinamica-ii/startup-application-form.tsx
+@@ -1,6 +1,6 @@
+ "use client"
+ 
+-import { useCallback, useEffect, useMemo, useState } from "react"
++import { useCallback, useEffect, useState } from "react"
+ import { ArrowLeft, ArrowRight, Check, LoaderCircle, ShieldCheck } from "lucide-react"
+ 
+ type Language = "en" | "es"
+@@ -17,7 +17,7 @@ type Props = {
+ type FieldSpec = {
+   name: string
+   label: Record<Language, string>
+-  type?: "email" | "url" | "tel" | "number" | "select" | "textarea" | "checkbox"
++  type?: "email" | "url" | "tel" | "number" | "password" | "select" | "textarea" | "checkbox"
+   required?: boolean
+   max?: number
+   options?: Array<{ value: string; en: string; es: string }>
+@@ -36,8 +36,8 @@ const fields: FieldSpec[][] = [
+     { name: "founder_city", label: { en: "City", es: "Ciudad" }, required: true },
+     { name: "pitch_language", label: { en: "Primary pitch language", es: "Idioma principal para presentar" }, type: "select", required: true, options: [{ value: "en", en: "English", es: "Inglés" }, { value: "es", en: "Spanish", es: "Español" }] },
+     { name: "representative_ticket_email", label: { en: "Applicant representative's ticket email", es: "Correo asociado a la entrada del representante" }, type: "email", required: true },
+-    { name: "ticket_reference", label: { en: "Verified ticket reference", es: "Referencia de entrada verificada" }, wide: true },
+-    { name: "ticket_token", label: { en: "One-time verification token", es: "Token de verificación de un solo uso" }, wide: true },
++    { name: "ticket_reference", label: { en: "Paid ticket reference", es: "Referencia de entrada pagada" }, wide: true },
++    { name: "ticket_token", label: { en: "DNS-issued verification token", es: "Token de verificación emitido por DNS" }, type: "password", wide: true },
+     { name: "cofounders", label: { en: "Cofounder names and emails (optional)", es: "Nombres y correos de cofundadores (opcional)" }, wide: true },
+     { name: "linkedin_url", label: { en: "LinkedIn profile (optional)", es: "Perfil de LinkedIn (opcional)" }, type: "url" },
+     { name: "founder_website", label: { en: "Website (optional)", es: "Sitio web (opcional)" }, type: "url" },
+@@ -56,7 +56,7 @@ const fields: FieldSpec[][] = [
+     { name: "team_size", label: { en: "Approximate team size", es: "Tamaño aproximado del equipo" }, type: "number", required: true },
+     { name: "company_description", label: { en: "One-sentence company description", es: "Descripción de la empresa en una oración" }, type: "textarea", required: true, max: 300, wide: true },
+     { name: "connection_explanation", label: { en: "Explain and support your Dominican connection", es: "Explica y sustenta el vínculo con República Dominicana" }, type: "textarea", required: true, max: 1000, wide: true },
+-    { name: "connection_evidence_url", label: { en: "Evidence URL (optional)", es: "URL de evidencia (opcional)" }, type: "url", wide: true },
++    { name: "connection_evidence_url", label: { en: "Evidence URL", es: "URL de evidencia" }, type: "url", required: true, wide: true },
+   ],
+   [
+     { name: "customer_problem", label: { en: "Customer problem and product / service", es: "Problema del cliente y producto / servicio" }, type: "textarea", required: true, max: 500, wide: true },
+@@ -76,7 +76,8 @@ const fields: FieldSpec[][] = [
+     { name: "expected_market_entry", label: { en: "Expected market entry date", es: "Fecha prevista de entrada al mercado" }, required: true },
+   ],
+   [
+-    { name: "accuracy_ack", label: { en: "I confirm the information is accurate and I am authorized to represent this company.", es: "Confirmo que la información es correcta y que estoy autorizado para representar a esta empresa." }, type: "checkbox", required: true },
++    { name: "accuracy_ack", label: { en: "I confirm the information provided is accurate.", es: "Confirmo que la información proporcionada es correcta." }, type: "checkbox", required: true },
++    { name: "authority_ack", label: { en: "I am authorized to represent this startup in this application.", es: "Estoy autorizado para representar a esta startup en esta solicitud." }, type: "checkbox", required: true },
+     { name: "judging_ack", label: { en: "I consent to eligibility screening and judging.", es: "Acepto la revisión de elegibilidad y la evaluación del jurado." }, type: "checkbox", required: true },
+     { name: "selection_ack", label: { en: "I understand a ticket purchase does not guarantee selection.", es: "Entiendo que comprar una entrada no garantiza la selección." }, type: "checkbox", required: true },
+     { name: "winner_terms_ack", label: { en: "If awarded, I accept the reinvestment and reporting conditions.", es: "Si recibo un premio, acepto las condiciones de reinversión e informes." }, type: "checkbox", required: true },
+@@ -112,10 +113,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+   const [receipt, setReceipt] = useState("")
+   const [receiptTimestamp, setReceiptTimestamp] = useState("")
+   const [draftState, setDraftState] = useState<"idle" | "saving" | "saved" | "error">("idle")
+-  const draftCredentials = useMemo(() => ({
+-    id: typeof window === "undefined" ? "" : sessionStorage.getItem("dinamica-draft-id") || "",
+-    token: typeof window === "undefined" ? "" : sessionStorage.getItem("dinamica-draft-token") || "",
+-  }), [])
++  const [draftRestored, setDraftRestored] = useState(false)
+ 
+   useEffect(() => {
+     if (!applicationsOpen) return
+@@ -137,6 +135,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+       setConnections(Array.isArray(payload.connections) ? payload.connections : [])
+       setDiaspora(payload.diaspora === true)
+       setNomad(payload.nomad === true)
++      setDraftRestored(true)
+     }).catch(() => {
+       sessionStorage.removeItem("dinamica-draft-id")
+       sessionStorage.removeItem("dinamica-draft-token")
+@@ -230,7 +229,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+           token: values.ticket_token,
+           representativeEmail: values.representative_ticket_email,
+           payload: { ...values, connections, diaspora, nomad },
+-          draftId: draftCredentials.id || undefined,
++          draftId: sessionStorage.getItem("dinamica-draft-id") || undefined,
+           draftToken: sessionStorage.getItem("dinamica-draft-token") || undefined,
+         }),
+       })
+@@ -263,7 +262,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+ 
+   if (receipt) {
+     const localReceiptTime = receiptTimestamp ? new Intl.DateTimeFormat(language === "en" ? "en-US" : "es-DO", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Santo_Domingo" }).format(new Date(receiptTimestamp)) : ""
+-    return <div className="dinamica-opening-card" role="status"><ShieldCheck size={25} aria-hidden="true" /><h3>{t ? "Application received" : "Solicitud recibida"}</h3><p>{t ? "Your official submission reference is" : "La referencia oficial de tu solicitud es"} <b>{receipt}</b>. {t ? "Submitted" : "Enviada"}: <b>{localReceiptTime} AST</b>. {t ? "Keep it for your records. No confirmation email is configured." : "Guárdala para tus registros. No hay un correo de confirmación configurado."}</p></div>
++    return <div className="dinamica-opening-card" role="status"><ShieldCheck size={25} aria-hidden="true" /><h3>{t ? "Application received" : "Solicitud recibida"}</h3><p>{t ? "Your official submission reference is" : "La referencia oficial de tu solicitud es"} <b>{receipt}</b>. {t ? "Received" : "Recibida"}: <b>{localReceiptTime} AST</b>. {t ? "Submission does not guarantee finalist selection. No confirmation email is configured." : "El envío no garantiza ser finalista. No hay un correo de confirmación configurado."}</p></div>
+   }
+ 
+   return (
+@@ -272,6 +271,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+         <div className="dinamica-form-progress-track"><span style={{ width: `${((step + 1) / 4) * 100}%` }} /></div>
+         <p>{t ? `Step ${step + 1} of 4` : `Paso ${step + 1} de 4`} · {sectionTitles[language][step]}</p>
+       </div>
++      {draftRestored && <p className="dinamica-draft-state" role="status">{t ? "Continue your application. Your application has not been submitted." : "Continúa tu solicitud. Tu solicitud aún no ha sido enviada."}</p>}
+       <fieldset className="dinamica-form-step" aria-describedby={error ? "dinamica-form-error" : undefined}>
+         <legend>{sectionTitles[language][step]}</legend>
+         <div className="dinamica-form-grid">
+@@ -295,7 +295,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+             if (field.type === "textarea") {
+               return <label className={`dinamica-field ${field.wide ? "dinamica-field-wide" : ""}`} key={field.name} htmlFor={field.name}><span>{label}{field.required ? " *" : ""}</span><textarea {...common} maxLength={field.max} rows={4} />{invalid && <small>{t ? "This field is required." : "Este campo es obligatorio."}</small>}<small>{(values[field.name] || "").length}{field.max ? ` / ${field.max}` : ""}</small></label>
+             }
+-            return <label className={`dinamica-field ${field.wide ? "dinamica-field-wide" : ""}`} key={field.name} htmlFor={field.name}><span>{label}{field.required ? " *" : ""}</span><input {...common} type={field.type || "text"} maxLength={field.max} />{invalid && <small>{t ? "This field is required." : "Este campo es obligatorio."}</small>}</label>
++            return <label className={`dinamica-field ${field.wide ? "dinamica-field-wide" : ""}`} key={field.name} htmlFor={field.name}><span>{label}{field.required ? " *" : ""}</span><input {...common} type={field.type || "text"} autoComplete={field.type === "password" ? "off" : undefined} maxLength={field.max} />{invalid && <small>{t ? "This field is required." : "Este campo es obligatorio."}</small>}</label>
+           })}
+         </div>
+         {step === 3 && privacyNoticeUrl && <p className="dinamica-privacy-link">{t ? "Privacy notice: " : "Aviso de privacidad: "}<a href={privacyNoticeUrl} target="_blank" rel="noreferrer">{t ? "Read the approved notice" : "Consulta el aviso aprobado"}</a>.</p>}
+@@ -311,7 +311,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+         <div className="dinamica-form-action-end">{draftState !== "idle" && <span className="dinamica-draft-state">{draftState === "saving" ? (t ? "Saving draft…" : "Guardando borrador…") : draftState === "saved" ? (t ? "Draft saved" : "Borrador guardado") : (t ? "Draft could not be saved" : "No se pudo guardar el borrador")}</span>}{step < 3 ? <button type="button" className="dinamica-button dinamica-button-primary" onClick={() => void moveNext()}>{t ? "Next" : "Siguiente"}<ArrowRight size={16} /></button> : <button type="submit" className="dinamica-button dinamica-button-primary" disabled={submitting || !verified}>{submitting ? <LoaderCircle size={16} className="dinamica-spin" /> : <Check size={16} />}{t ? "Submit application" : "Enviar solicitud"}</button>}</div>
+       </div>
+       {error && <p id="dinamica-form-error" className="dinamica-form-error" role="alert">{error}</p>}
+-      <p className="dinamica-form-privacy">{t ? "Drafts are stored securely on the server. Uploaded documents are not stored; provide a public pitch deck URL." : "Los borradores se guardan de forma segura en el servidor. No se almacenan documentos; proporciona una URL pública del pitch deck."}</p>
++      <p className="dinamica-form-privacy">{t ? "Your application has not been submitted. Drafts are stored securely on the server. Uploaded documents are not stored; provide a public pitch deck URL." : "Tu solicitud aún no ha sido enviada. Los borradores se guardan de forma segura en el servidor. No se almacenan documentos; proporciona una URL pública del pitch deck."}</p>
+     </form>
+   )
+ }
+diff --git a/docs/dinamica-ii-operations.md b/docs/dinamica-ii-operations.md
+index 013b45a..a3587d4 100644
+--- a/docs/dinamica-ii-operations.md
++++ b/docs/dinamica-ii-operations.md
+@@ -1,49 +1,51 @@
+ # DINAMICA II operations
+ 
+-## Launch controls
++## Launch and staging controls
+ 
+-Set `DINAMICA_PUBLIC_LAUNCH=true` only after JJM and BCIE communications approval. Set `DINAMICA_APPLICATIONS_OPEN=true` only after the application window is approved. Final form access also requires `DINAMICA_PRIVACY_APPROVED=true`, an approved `DINAMICA_PRIVACY_NOTICE_URL`, `DINAMICA_DUPLICATE_POLICY_APPROVED=true`, Supabase server credentials, and `DINAMICA_OPERATOR_TOKEN`. All values default to closed or empty. Preview deployments remain `noindex` and the public sitemap excludes the route until the public launch flag is true.
++The public release is one coordinated state. Set `DINAMICA_PUBLIC_LAUNCH=true`, `DINAMICA_HOME_PROMOTION_ENABLED=true`, `NEXT_PUBLIC_DINAMICA_PUBLIC_LAUNCH=true`, `NEXT_PUBLIC_DINAMICA_HOME_PROMOTION_ENABLED=true`, and `DINAMICA_APPLICATIONS_OPEN=true` together only after institutional approval and launch readiness. The two `NEXT_PUBLIC_` values are public build-time mirrors used only by the client-rendered Home banner; they contain no secrets. `DINAMICA_LAUNCH_READY` also requires `DINAMICA_PRIVACY_APPROVED=true`, `DINAMICA_DUPLICATE_POLICY_APPROVED=true`, an approved `DINAMICA_PRIVACY_NOTICE_URL`, the dedicated Supabase server credentials, and `DINAMICA_OPERATOR_TOKEN`. Every public control defaults to off. The route stays not found, the route is omitted from the public sitemap, indexing is disabled, the Home banner is hidden, and the existing event-update popup remains active until the coordinated launch state is ready.
+ 
+-The home banner component is prepared but intentionally not mounted on the homepage.
++Staging access is separate. On a Vercel Preview deployment protected by Vercel Deployment Protection, explicitly set `DINAMICA_PREVIEW_ENABLED=true`. Set `DINAMICA_PREVIEW_FORM_ENABLED=true` to test drafts and submissions, and `DINAMICA_PREVIEW_MODAL_ENABLED=true` to review the competition popup. The application and privacy prerequisites still apply. Do not enable these preview flags in Production. Preview pages remain `noindex`; public campaign flags stay false during QA.
++
++The Home promotion component is mounted in the existing Home layout, but renders only when `DINAMICA_LAUNCH_READY` is true. The root layout selects exactly one modal: the existing event update before launch, then the DINAMICA II competition announcement after launch approval (or explicitly in protected preview for review). The new modal uses its own session key.
+ 
+ ## Supabase setup
+ 
+-Apply the generated migration in `supabase/migrations/20261024171157_dinamica_ii_applications.sql` to a dedicated DINAMICA II Supabase project. The existing `NEXT_PUBLIC_SUPABASE_URL` points to the active “Unitipro” project, which contains unrelated invoicing and business tables as well as DNS content; do not use its secret key for this application. Set `DINAMICA_SUPABASE_URL` and a server-only `DINAMICA_SUPABASE_SECRET_KEY` for the isolated project. Never add the key to a `NEXT_PUBLIC_` variable or commit it.
++Apply `supabase/migrations/20261024171157_dinamica_ii_applications.sql` to a dedicated DINAMICA II Supabase project. Do not use the unrelated active project or its secret key. Set `DINAMICA_SUPABASE_URL` and a server-only `DINAMICA_SUPABASE_SECRET_KEY` (or service-role key). Never use a `NEXT_PUBLIC_` variable or commit a secret.
++
++The migration creates private tables for one-use ticket verifications, expiring drafts, final submissions, and rate-limit windows. RLS is enabled and public roles have no table grants; only `service_role` can access records and execute the RPCs. The official export filters `final_submitted` records. The migration also prevents duplicate final submissions with the same normalized legal startup name and incorporation country; the duplicate-policy approval must confirm that rule.
++
++## Ticket verification
++
++There is no Stripe API credential or automatic Stripe lookup in this repository. A specifically authorized DNS ticket operator must open the Stripe Dashboard using their own DNS-approved account, locate the order/payment by its Stripe order or Checkout Session reference, verify that payment status is complete/paid, identify a DNS 2027 General Admission or VIP ticket (or a previously purchased ticket still valid under the rescheduling policy), and check the ticket buyer email against the applicant representative's ticket email. The operator must not rely on screenshots, unchecked declarations, or an unverified reference.
+ 
+-The migration creates separate private tables for one-use ticket verifications, expiring drafts, final-submitted applications, and rate-limit windows. RLS is enabled, public roles have no table grants, and the two RPCs are executable only by `service_role`. The official CSV export reads `final_submitted` rows only. The migration blocks duplicate final submissions with the same normalized legal startup name and incorporation country; confirm that matching rule as part of the duplicate-policy approval before opening applications.
++Only an authorized operator holding `DINAMICA_OPERATOR_TOKEN` can call `POST /api/dinamica-ii/operator/issue-token`. The API requires a payment-verified assertion and ticket type after that manual review. It issues a cryptographically random token, stores only its hash, binds it to the unique ticket reference and normalized representative email, and returns the raw token once. Deliver the token to that representative through a DNS-approved private channel; do not put it in analytics, logs, email analytics, or a public support ticket. The participant enters the ticket email, reference, and token; final submission rechecks the binding and atomically consumes the token with creation of the official application.
+ 
+-## Ticket verification fallback
++Tokens expire after 72 hours. To reissue, the operator must repeat the Stripe and identity checks and issue a new token for the same reference; this replaces any still-unconsumed token, including an expired or lost token. A consumed reference cannot be reissued. To revoke an unconsumed token without replacement, an authorized database operator sets its `expires_at` to the current time in the private verification table and records the action in the approved operational audit log. No public endpoint can issue or revoke a token. Existing paid tickets can use `ticketType: "legacy_eligible"` only after the operator confirms the rescheduling policy.
+ 
+-There is no Stripe API secret or order lookup integration in this repository. An authorized operator must confirm paid status and DNS 2027 eligibility directly in Stripe before issuing a verification token. Keep `DINAMICA_OPERATOR_TOKEN` at least 32 characters and store it only as a server secret. A verified operator can issue a one-time token with:
++This is manual, operator-verified validation. It is not an automatic Stripe integration.
+ 
+-```http
+-POST /api/dinamica-ii/operator/issue-token
+-Authorization: Bearer <DINAMICA_OPERATOR_TOKEN>
+-Content-Type: application/json
++## Applications, privacy, exports, and confirmation
+ 
+-{
+-  "ticketReference": "<unique Stripe order or session reference>",
+-  "representativeEmail": "founder@example.com",
+-  "ticketType": "general_admission",
+-  "paymentVerified": true
+-}
+-```
++The four-step form supports drafts before ticket verification. Draft access expires after 30 days; the browser stores only the random draft ID and access token in `sessionStorage`. Expired rows remain in the private table until an approved retention cleanup is applied, so confirm and implement the deletion schedule before opening the form. The server rejects token, secret, and password fields from persisted draft payloads and removes such keys from recovered legacy payloads. Drafts do not create official submissions and are excluded from exports. The raw ticket-verification token is sent only to verification/submission endpoints and removed from the official payload.
+ 
+-The endpoint returns a random token once; it stores only the token hash, binds it to the representative email and ticket reference, and expires it after 72 hours. Share the token with that representative through the approved channel. The token is consumed atomically with final submission and cannot submit twice. Existing eligible tickets may use `ticketType: "legacy_eligible"` after the operator checks the applicable rescheduling policy.
++Final submissions are validated server-side and saved with a unique application ID, `final_submitted` status, ticket reference, payload, and timestamp in the same database transaction that consumes the ticket verification. The operator export endpoint requires `DINAMICA_OPERATOR_TOKEN`, filters final submissions, emits individual columns for application metadata and application fields, and escapes quotes and spreadsheet formulas. It does not export tokens or drafts.
+ 
+-This fallback is an operator-verified workflow. It does not perform live Stripe verification, and the UI must not describe it as automatic Stripe validation.
++After persistence, the form displays the application ID and receipt timestamp in the selected language and explicitly says that submission does not guarantee finalist selection. **No transactional email provider or delivery integration is configured; this is a launch blocker.** Do not claim an email was sent. The current interface explicitly reports that no confirmation email is configured.
+ 
+-## Drafts, submissions, and email
++Pitch decks are accepted as URLs, including a link to a PDF; private uploads are not implemented. No private or sensitive documents should be put in public object storage. A privacy notice covering personal and company data, retention, evaluator access, and participant rights must be approved before opening the form.
+ 
+-Drafts are stored in the private Supabase table for 30 days. The browser stores only a random draft ID and access token in `sessionStorage`; the raw ticket verification token is not included in the draft payload. Drafts are not part of the official queue. Final submissions are validated server-side and inserted as `final_submitted` in one transaction with consumption of the matching ticket verification.
++## Content and institutional identity
+ 
+-The project has no configured transactional email provider. A successful response shows the immutable application ID and does not claim that an email was sent. Pitch decks are accepted as URLs; private document upload is not configured.
++The approved 1600 × 545 institutional lockup is stored at `public/dinamica-ii-institutional-lockup.png` and rendered as a single proportional image. Do not separate or individually render any partner marks; do not crop, recolor, filter, or transform this lockup. No beneficiary quotation has been supplied for the institutional announcement. The quotation, speaker name, and title remain pending approved content; do not invent or attribute a quote.
+ 
+-## Pending approvals
++## Remaining launch prerequisites
+ 
+-- Approve the application privacy notice and retention terms before setting `DINAMICA_PRIVACY_APPROVED=true`.
+-- Approve the duplicate-application policy before setting `DINAMICA_DUPLICATE_POLICY_APPROVED=true`.
+-- Review the provided institutional lockup assets with Sacha/Ivanna. The supplied BCIE image is navy on white despite its filename; the European Union JPG contains a baked-in checkerboard.
+-- Confirm whether DNS 2027 Stripe session/product IDs and the ticket holder identity-matching policy are sufficient for a future direct server-side Stripe integration.
+-- Provision or designate the isolated DINAMICA II Supabase project and apply the migration before enabling draft persistence or submissions.
+-- Provide an approved transactional email service before promising email confirmations.
++- Obtain institutional approval for the landing page, application form, popup, and Home banner as one release.
++- Approve and publish the privacy notice and retention terms.
++- Implement and verify the approved retention cleanup for expired drafts and submitted applications.
++- Approve the duplicate-application policy.
++- Provision the isolated Supabase project, apply the migration, and verify backups and operator access.
++- Confirm DNS ticket operators, Stripe Dashboard access, and the legacy-ticket eligibility policy.
++- Integrate and verify an idempotent transactional email provider before launch.
++- Obtain the beneficiary quote, speaker name, and title for the separate institutional announcement, if that communication is in scope.
++- Configure and verify Vercel Deployment Protection before enabling any Preview flags.
+diff --git a/docs/dinamica-ii-technical-report.md b/docs/dinamica-ii-technical-report.md
+index 0a17561..47eb8bf 100644
+--- a/docs/dinamica-ii-technical-report.md
++++ b/docs/dinamica-ii-technical-report.md
+@@ -1,124 +1,72 @@
+ # DINAMICA II Startup Prize — DNS 2027
+ 
+-Technical implementation report · 24 October 2026
++Implementation and launch-readiness report · 28 October 2026
+ 
+-## Delivery status
++## Current status
+ 
+-- Work is on `feature/dinamica-ii-2027` in the existing `C:\Proyectos\DNS` checkout.
+-- Local preview: `http://localhost:3000/dinamica-ii` when running `npm run dev`.
+-- Public production access, application submission and indexing remain gated by server-side configuration.
+-- No production deployment was made. The Supabase migration was prepared but not applied.
++- The checkout was on `main`, clean before this work. `feature/dinamica-ii-2027` points to the common feature commit and is 4 commits behind `main`; work was applied to the current `main` checkout without switching branches or resetting files.
++- No production deployment was made, and no public campaign flag was enabled.
++- Local staging preview: `http://localhost:3001/dinamica-ii` during QA only. The server used test-only placeholder values and is not a protected remote preview. No shareable protected preview URL is available.
++- The public route, official form, Home banner, indexing and competition popup are fail-closed until the coordinated public flags, application prerequisites and backend configuration are ready.
+ 
+-## Page and content
++## Implemented
+ 
+-The bilingual English/Spanish page uses the existing DNS header, footer, fonts and coral accent. Its bespoke photo-led sequence presents the prize first, followed by the DINAMICA II institutional lockup, eligibility, process, judging weights, application entry point, FAQ and partner CTA. Copy includes the Dominican market connection requirement, the one valid paid DNS ticket condition, ticket-purchase disclaimer, five judging criteria, prize amounts, finalist limit, and disclosed reinvestment/reporting condition.
++- Replaced the five standalone institutional marks with the supplied official PNG at `public/dinamica-ii-institutional-lockup.png`. The original image is 1600 × 545 px. It is shown as one `next/image` with fixed intrinsic dimensions, responsive `sizes`, `object-fit: contain`, no URL transformation and a white surrounding surface.
++- Prepared the bilingual DINAMICA II announcement modal. It reuses the existing modal's session frequency, close control, Escape handling, focus trap and scroll lock. The layout chooses exactly one modal: the event rescheduling notice before public launch; the competition notice after the coordinated launch gate is ready. A dedicated protected-preview flag enables modal review without public promotion.
++- Changed public launch and Home promotion flags to require explicit `true` values. The Home banner reads public build-time mirror flags from a presentation-only config; server launch gates require the matching private and public values to agree. Production `/dinamica-ii` returns not found until the landing and official form can launch together. The route is omitted from the public sitemap and disallowed in robots until launch. Preview pages stay `noindex`; preview route, form and modal review each have separate explicit controls.
++- Kept the four existing application steps. Source audit covers founder/ticket, startup and Dominican connection, all eight narrative prompts and character limits, quantitative signals, and submission declarations. Added a separate authority-to-represent consent, required a Dominican-connection evidence URL, and validate WhatsApp numbers in international `+` format. The marketing opt-in remains separate and unchecked.
++- Kept drafts separate from final applications. Server draft persistence strips token/secret/password keys; the form never includes the raw ticket token in the draft payload or analytics. The UI states that a draft is not an official submission and has not been submitted.
++- Preserved the operator-only manual ticket-verification path. Operators must independently verify payment and ticket eligibility in Stripe; the code does not claim automatic Stripe lookup. An unconsumed token can be reissued by an authorized operator; consumed references cannot be reissued. Submission still consumes the token atomically with official application creation.
++- Changed operator CSV output to individual application columns, with only final submissions included and spreadsheet formula escaping. Export remains operator-authenticated and excludes ticket tokens and drafts.
++- Documented the ticket workflow, release controls, privacy and duplicate-policy prerequisites, private database setup, token handling, email limitation, and the missing institutional beneficiary quote in `docs/dinamica-ii-operations.md`.
+ 
+-The hero uses an existing Cloudinary event photo cropped to remove the old date and venue. The five institutional image URLs were checked and return HTTP 200. BCIE’s supplied logo has a navy mark on white; the EU JPEG has a checkerboard baked into the image. Those two are shown on a light surface; the EU asset still needs Sacha/Ivanna’s brand-owner approval.
++## Existing pieces found in this checkout
+ 
+-The initial route does not appear in the sitemap and is disallowed in robots until `DINAMICA_PUBLIC_LAUNCH=true`. It has `noindex` metadata by default and returns not found in production before launch. The homepage banner component is mounted after `AttendeeSegments` and before `Tickets`, but remains disabled by `DINAMICA_HOME_PROMOTION_ENABLED=false` until communications approval. The normal DNS header and footer navigation were not changed.
++The route (`app/dinamica-ii/page.tsx`, `dinamica-ii-client.tsx`, `dinamica-ii.css`), schema/config/server helper, four-step form and Home banner were already present. The draft API, ticket verification API, operator token issue/export APIs, submit API and private Supabase migration also existed. These were audited and extended in place; no duplicate form, endpoint, table, checkout or verification system was introduced. The existing event modal remains the only active production announcement until the new launch is explicitly ready.
+ 
+-## Application and data handling
++## Verification performed
+ 
+-The application has four bilingual steps: founder and ticket; startup and Dominican connection; exportability and assessment; representations and submission. It includes autosaved private drafts, server validation, required consent checkboxes, a one-time ticket token flow, ticket verification before final submission, a timestamped reference after successful submission, and an operator-only CSV export. The optional marketing opt-in is separate and unchecked by default. The form accepts a pitch-deck URL and does not upload or store pitch-deck files.
++- Official institutional asset: fetched the exact no-transform Cloudinary URL; response metadata reported PNG, 1600 × 545 px. Visually inspected the complete image before adding it.
++- Local protected-preview simulation: confirmed the new popup copy and CTA, the four form-step views, and the disabled final-submit control without a verified ticket. Test-only sample application fields were used. The dummy Supabase URL intentionally does not resolve; draft save returned its failure state. No data was saved, no ticket was verified, and no application was submitted.
++- A sample export fixture with fictional data is in `artifacts/dinamica-ii/dinamica-ii-sample-export-fixture.csv`. Header and sample row both parse to 59 columns; it is not output from the operator endpoint or a real database export.
++- `npx eslint` on all modified TS/TSX files: passed with no issues.
++- `npm run build`: exited successfully and compiled `/dinamica-ii` and the six existing API routes. Next reports that type and lint validation are skipped by project configuration and logs missing/placeholder unrelated service configuration.
++- `npm run lint`: repository-wide failure from existing errors in unrelated files including `components/ai-guide/ai-guide-widget.tsx`, `components/gl/*`, `components/partners/*`, `components/trusted-network.tsx`, `components/ui/use-toast.ts` and `lib/ai/formatters.ts`.
++- `npx tsc --noEmit`: 18 errors in seven unrelated shared UI files; no diagnostics point to modified DINAMICA II files.
++- `git diff --check`: passed.
++- Hallmark instructions were applied as a manual visual audit. The Hallmark skill is present, but the `hallmark`/`sloplint` executable is not installed or available on PATH, so no Hallmark CLI report or log was generated.
+ 
+-Applications use a dedicated Supabase project configuration, never the current DNS business database credentials:
++## Not verified / launch blockers
+ 
+-- `DINAMICA_SUPABASE_URL`
+-- `DINAMICA_SUPABASE_SECRET_KEY`
+-- `DINAMICA_OPERATOR_TOKEN`
+-- `DINAMICA_PRIVACY_NOTICE_URL`
+-- `DINAMICA_PUBLIC_LAUNCH`
+-- `DINAMICA_APPLICATIONS_OPEN`
+-- `DINAMICA_PRIVACY_APPROVED`
+-- `DINAMICA_DUPLICATE_POLICY_APPROVED`
+-
+-The `.env.example` documents these settings. Launch, form, privacy and duplicate-policy flags default to false. The submission form remains closed until these approvals and dedicated database settings are present.
+-
+-No Stripe secret is configured and no ticket API integration exists in the workspace. As an operational fallback, DNS staff verify paid-ticket status directly in Stripe, then issue a short-lived token through a protected operator endpoint. The app validates and consumes that token once. This flow is operator-verified, not automatic Stripe verification. No real ticket verification or live application submission was performed.
+-
+-The migration creates private application and draft tables, a hashed token store, rate-limit state and an atomic submit RPC. Tables are restricted to server-side service access; application rows contain founder/company contact details and must not be exposed to anonymous or authenticated browser clients. The receipt reports the actual database submission timestamp in America/Santo_Domingo time. No email provider is configured, so the receipt explicitly says there is no confirmation email.
+-
+-The current DNS Supabase project is named “Unitipro” and is not wired to this feature. Its catalog reported `public.press_items` with RLS disabled. That unrelated table was not modified. Review the [Supabase Row Level Security guide](https://supabase.com/docs/guides/database/postgres/row-level-security) before any public access is enabled.
+-
+-## Configuration required before launch
+-
+-1. Create or designate a separate Supabase project for DINAMICA II, then apply `supabase/migrations/20261024171157_dinamica_ii_applications.sql` there and verify policies, RPC execution and retention.
+-2. Add a paid ticket verification integration or approve the documented manual Stripe verification procedure and train authorized operators.
+-3. Approve and publish the privacy notice, review the duplicate-matching rule in the operations guide, and set both approval flags.
+-4. Add production environment variables in the deployment environment, then test with a real paid ticket and approved operators before opening applications.
+-5. Set `DINAMICA_APPLICATIONS_OPEN=true` only when DNS is ready to accept and review submissions. Set `DINAMICA_PUBLIC_LAUNCH=true` only when the page is ready for public indexing.
+-6. Approve or replace the supplied EU logo asset. Do not claim confirmation email until a provider is configured and tested.
+-
+-## Quality checks
+-
+-- `npm run build`: passed after stopping the overlapping dev server; Next.js compiled the route and all six API handlers.
+-- `npm run lint`: repository-wide run fails on pre-existing unused imports/variables, unescaped quotes and other lint errors outside the DINAMICA II files. Existing warnings also include raw `<img>` usage.
+-- `npx tsc --noEmit`: reports 18 existing errors in seven unrelated files (`components/sponsor-cta.tsx`, `components/ui/*`, and other shared UI); no diagnostic references a DINAMICA II file.
+-- Visual review: desktop plus 320, 375, 414, 768 and 1440 CSS-pixel viewports. Measured document width stays within viewport at all five sizes. Hero amount was reduced at mobile widths after review to avoid clipping.
+-- Accessibility implementation includes native field labels, fieldset/legend grouping, inline required-field errors, `aria-invalid`, keyboard-visible focus, semantic headings, and reduced-motion overrides.
+-- Page/form event hooks call `window.gtag` when it exists, with no form or founder data in event parameters. The current layout does not load Google Analytics, so no analytics event was sent or verified.
+-- Hallmark custom/bespoke route and review are logged in `.hallmark/log.json`. The official `sloplint` executable was not available, so Hallmark checks were reviewed manually. The EU image’s baked checkerboard remains the only brand-asset exception pending approval.
+-- No real submissions, paid-ticket lookups, outbound confirmation emails, migration application or production deployment were performed.
++- No protected remote preview URL exists yet. Configure Vercel Deployment Protection, dedicated preview database credentials and the preview-only flags before sharing staging.
++- Draft access expires at 30 days, but expired rows are not automatically deleted. Implement and verify the approved privacy-retention cleanup before launch.
++- Draft create/update/retrieve/expiry, official submission, ticket verification, duplicate prevention, database transaction, operator issue/reissue, CSV download and export permissions were not integration-tested against the dedicated Supabase project; it is not provisioned/configured in this checkout.
++- No valid test ticket, Stripe account review or historical-ticket payment record was used. Real Stripe operations and purchases were not performed.
++- No transactional email provider or idempotent delivery integration exists. The page correctly does not claim an email was sent. Email delivery remains a launch blocker until an approved provider is integrated and verified.
++- The privacy notice and duplicate-submission policy need institutional approval. No approved beneficiary quotation, beneficiary name or title was supplied for the separate institutional release.
++- Desktop popup and form views were inspected locally. Mobile/tablet device-viewport screenshots, saved desktop/mobile screenshots, and full responsive interaction QA were not produced in this run.
++- No real application export sample, confirmation receipt from persisted data, or screenshot evidence was generated. Do not treat the local test data as evidence of a successful save or ticket check.
+ 
+ ## Changed files
+ 
+-## Visual polish iteration — 2026-10-24
+-
+-This follow-up is a visual refinement of the existing `/dinamica-ii` route. It retains the approved copy, DNS brand palette and typography, photo, route, bilingual content, shared footer and all application/ticket/backend behavior. No deployment was made.
+-
+-- The shared header now has a route-specific solid-dark treatment on `/dinamica-ii`: black background, white DNS logo/navigation, and sticky in-flow positioning. The Home page retains its original fixed, scroll-aware header behavior.
+-- The hero keeps the supplied event photo and approved prize/copy, improves the horizontal contrast gradient and amount scaling, and adjusts mobile spacing. The assistant overlap with the legal note at 390px was addressed.
+-- Updated the EU image to the user-supplied Cloudinary JPEG. It loaded successfully on the page; the image was also visually checked at 3840×2160 and has a clean white background. Institutional logo order remains BCIE, Global Gateway, EU, German Cooperation, KfW.
+-- Eligibility, the five process steps, jury weights, pre-opening application block, FAQ, partnership section and final CTA received spacing and hierarchy refinements. FAQ remains native `<details>/<summary>` with keyboard support and visible focus. The shared global footer was retained without altering its links or credits.
+-- Hallmark audit recorded 0 critical, 3 major and 2 minor findings before implementation. Its responsive review covered 320, 360, 375, 390, 430, 768, 1024, 1280, 1440 and 1920 CSS-pixel widths; none showed horizontal overflow. EN/ES switching and keyboard FAQ expansion were also manually checked. Home header behavior was checked independently.
+-- Rendered screenshots: [1440 viewport](../artifacts/dinamica-ii/dinamica-ii-1440.png), [1440 full page](../artifacts/dinamica-ii/dinamica-ii-1440-full.png), [390 viewport](../artifacts/dinamica-ii/dinamica-ii-390.png), [390 full page](../artifacts/dinamica-ii/dinamica-ii-390-full.png).
+-- The shared mobile menu's accessible controls and close/backdrop handlers were inspected in source. Its open/close interaction was not confirmed in the browser: the available in-app viewport override did not resize its fixed 987px viewport. Existing CTAs were checked for preserved destinations; the paid-ticket Stripe link was not activated.
+-- `npm run lint` still fails on pre-existing repo-wide errors outside this page. Targeted ESLint on `components/header.tsx` and `app/dinamica-ii/dinamica-ii-client.tsx` exits 0 with two existing `<img>` performance warnings in the shared header and no errors. `npx tsc --noEmit` still reports 18 errors in unrelated shared UI files; none points to DINAMICA II or the edited shared header. `sloplint` is not installed. The final `next build` attempt initialized but stalled at “Creating an optimized production build” with no further output and was interrupted, so this iteration does not claim a successful build; the earlier build result above belongs to the prior implementation pass.
+-- No application submission, ticket verification, Stripe operation, database change or production deployment was performed.
+-
+-Files changed in this visual pass:
+-
+-- `components/header.tsx`
+-- `app/dinamica-ii/dinamica-ii.css`
+-- `lib/dinamica-ii/config.ts`
+-- `.hallmark/log.json`
+-- `docs/dinamica-ii-technical-report.md`
+-- Four screenshots under `artifacts/dinamica-ii/` listed above.
+-
+-## Visual polish iteration 3 — 2026-10-24
+-
+-This iteration restores the shared DNS header behavior and adds responsive art direction and motion to the existing route. Approved content, URLs, language switching, application state, ticket verification, Stripe links, analytics hooks, backend routes and footer links remain unchanged.
+-
+-- `components/header.tsx` no longer forces `/dinamica-ii` into a separate solid-black header. It uses the shared IntersectionObserver behavior again: transparent hero with white logo/navigation, white capsule with dark navigation over marked light sections, and fixed positioning throughout. The Home route keeps its existing behavior.
+-- The hero keeps the original Cloudinary photograph and copy while using separate wide, laptop and mobile crops. The image wash, `clamp()` amount scale, mobile stacking and full viewport hero prevent QR dominance, text clipping and header overlap across 320, 375, 390, 430, 768, 1280, 1366, 1440 and 1920 CSS-pixel viewports.
+-- Hero elements use a staggered reveal; sections, logos, process rows and jury rows use a short opacity/translate reveal. FAQ state, CTA focus/hover and jury transitions remain subtle, with explicit `prefers-reduced-motion` overrides and no count-up, parallax, rotation or infinite animation.
+-- `DinamicaIIHomepageBanner` is mounted after `AttendeeSegments` and before `Tickets`. It contains the approved EN/ES promotion copy and `/dinamica-ii` CTA, but is hidden by default through `DINAMICA_HOME_PROMOTION_ENABLED=false`. A staging run with the flag enabled confirmed the copy and placement without changing the Tickets section.
+-- `DINAMICA_ASSETS.heroWide`, `heroLaptop` and `heroMobile` are the new art-directed crops. The EU asset remains the supplied Cloudinary JPG and stays in the institutional order BCIE, Global Gateway, EU, German Cooperation, KfW.
+-- Hallmark audit was completed and logged in `.hallmark/log.json` with the existing DNS palette/type preserved. The audit records the shared dynamic header, crop strategy, motion limits, responsive checks and feature-flag gate. The official `sloplint` executable is not installed; manual rendered review was used.
+-- Current screenshots: [1440 hero](../artifacts/dinamica-ii/iter3-1440-hero.png), [1440 full page](../artifacts/dinamica-ii/iter3-1440-full.png), [390 hero](../artifacts/dinamica-ii/iter3-390-hero.png), and [390 full page](../artifacts/dinamica-ii/iter3-390-full.png). The staging promotion was also reviewed with the flag enabled on port 3004; that temporary server was stopped afterward.
+-- `npm run build` passes after the hero and header changes. Targeted ESLint exits 0 with only the two existing shared-header `<img>` warnings. `npx tsc --noEmit` still reports 18 unrelated shared UI errors and none points to the edited DINAMICA II files or header. No deployment was made.
+-
+-## Original implementation changed files
+-
+ - `.env.example`
+-- `.hallmark/preflight.json`
+-- `.hallmark/log.json`
+-- `app/robots.ts`
+-- `app/sitemap.ts`
+-- `app/dinamica-ii/page.tsx`
+-- `app/dinamica-ii/dinamica-ii-client.tsx`
+-- `app/dinamica-ii/dinamica-ii.css`
+-- `components/dinamica-ii/startup-application-form.tsx`
+-- `components/dinamica-ii/homepage-banner.tsx`
+-- `lib/dinamica-ii/config.ts`
+-- `lib/dinamica-ii/application-schema.ts`
+-- `lib/dinamica-ii/supabase-server.ts`
+-- `app/api/dinamica-ii/verify-ticket/route.ts`
+-- `app/api/dinamica-ii/submit/route.ts`
+ - `app/api/dinamica-ii/draft/route.ts`
+ - `app/api/dinamica-ii/draft/[id]/route.ts`
+-- `app/api/dinamica-ii/operator/issue-token/route.ts`
+ - `app/api/dinamica-ii/operator/export/route.ts`
+-- `supabase/migrations/20261024171157_dinamica_ii_applications.sql`
++- `app/api/dinamica-ii/operator/issue-token/route.ts`
++- `app/dinamica-ii/dinamica-ii-client.tsx`
++- `app/dinamica-ii/dinamica-ii.css`
++- `app/dinamica-ii/page.tsx`
++- `app/layout.tsx`
++- `app/robots.ts`
++- `app/sitemap.ts`
++- `components/dinamica-ii/competition-announcement-modal.tsx`
++- `components/dinamica-ii/homepage-banner.tsx`
++- `components/dinamica-ii/startup-application-form.tsx`
+ - `docs/dinamica-ii-operations.md`
+ - `docs/dinamica-ii-technical-report.md`
++- `artifacts/dinamica-ii/dinamica-ii-sample-export-fixture.csv`
++- `lib/dinamica-ii/application-schema.ts`
++- `lib/dinamica-ii/config.ts`
++- `lib/dinamica-ii/public-config.ts`
++- `public/dinamica-ii-institutional-lockup.png`
+diff --git a/lib/dinamica-ii/application-schema.ts b/lib/dinamica-ii/application-schema.ts
+index 8b9846e..afb7fec 100644
+--- a/lib/dinamica-ii/application-schema.ts
++++ b/lib/dinamica-ii/application-schema.ts
+@@ -6,7 +6,7 @@ const optionalText = (max: number) => z.string().trim().max(max).optional().defa
+ export const applicationSchema = z.object({
+   founder_name: requiredText(160),
+   founder_email: z.string().trim().email().max(254),
+-  founder_phone: requiredText(50),
++  founder_phone: z.string().trim().regex(/^\+[1-9]\d{6,14}$/, "Use international format, including country code"),
+   founder_role: requiredText(120),
+   contact_language: z.enum(["en", "es"]),
+   founder_origin_country: requiredText(120),
+@@ -33,7 +33,7 @@ export const applicationSchema = z.object({
+   company_description: requiredText(300),
+   connections: z.array(z.enum(["operations_dr", "dominican_origin", "market_plan_dr"])).min(1),
+   connection_explanation: requiredText(1000),
+-  connection_evidence_url: z.union([z.string().url().max(2048), z.literal("")]).optional().default(""),
++  connection_evidence_url: z.string().url().max(2048),
+   diaspora: z.boolean().optional().default(false),
+   nomad: z.boolean().optional().default(false),
+   customer_problem: requiredText(500),
+@@ -52,6 +52,7 @@ export const applicationSchema = z.object({
+   active_export_customers: z.enum(["yes", "no"]),
+   expected_market_entry: requiredText(80),
+   accuracy_ack: z.literal("yes"),
++  authority_ack: z.literal("yes"),
+   judging_ack: z.literal("yes"),
+   selection_ack: z.literal("yes"),
+   winner_terms_ack: z.literal("yes"),
+diff --git a/lib/dinamica-ii/config.ts b/lib/dinamica-ii/config.ts
+index d78361f..0ef95fa 100644
+--- a/lib/dinamica-ii/config.ts
++++ b/lib/dinamica-ii/config.ts
+@@ -1,23 +1,31 @@
+-export const DINAMICA_PATH = "/dinamica-ii"
+-export const DINAMICA_CANONICAL_URL = "https://www.digitalnomadsummit.co/dinamica-ii"
+-export const DINAMICA_CAMPAIGN = "dinamica_ii_2027"
+-
+-// The public competition page and its Home announcement are enabled by default
+-// so a Vercel deployment works without a dashboard-only environment toggle.
+-// Set either variable to "false" when the content needs to be hidden.
+-export const DINAMICA_PUBLIC_LAUNCH = process.env.DINAMICA_PUBLIC_LAUNCH !== "false"
+-export const DINAMICA_HOME_PROMOTION_ENABLED = process.env.DINAMICA_HOME_PROMOTION_ENABLED !== "false"
++import {
++  DINAMICA_ASSETS,
++  DINAMICA_CAMPAIGN,
++  DINAMICA_CANONICAL_URL,
++  DINAMICA_PATH,
++  DINAMICA_PUBLIC_LAUNCH_ENABLED,
++  DINAMICA_PUBLIC_HOME_PROMOTION_ENABLED,
++  DINAMICA_TICKETS,
++} from "@/lib/dinamica-ii/public-config"
++
++export { DINAMICA_ASSETS, DINAMICA_CAMPAIGN, DINAMICA_CANONICAL_URL, DINAMICA_PATH, DINAMICA_TICKETS }
++
++// All public-facing promotion is opt-in. Preview access and test submissions
++// use separate explicit controls and must be protected by the deployment.
++export const DINAMICA_PUBLIC_LAUNCH =
++  process.env.DINAMICA_PUBLIC_LAUNCH === "true" && DINAMICA_PUBLIC_LAUNCH_ENABLED
++export const DINAMICA_HOME_PROMOTION_ENABLED =
++  process.env.DINAMICA_HOME_PROMOTION_ENABLED === "true" && DINAMICA_PUBLIC_HOME_PROMOTION_ENABLED
+ export const DINAMICA_APPLICATIONS_OPEN = process.env.DINAMICA_APPLICATIONS_OPEN === "true"
+ export const DINAMICA_PRIVACY_APPROVED = process.env.DINAMICA_PRIVACY_APPROVED === "true"
+ export const DINAMICA_DUPLICATE_POLICY_APPROVED = process.env.DINAMICA_DUPLICATE_POLICY_APPROVED === "true"
+ export const DINAMICA_PRIVACY_NOTICE_URL = process.env.DINAMICA_PRIVACY_NOTICE_URL || ""
+ 
+ export const DINAMICA_PREVIEW_AVAILABLE =
+-  process.env.NODE_ENV !== "production" || process.env.VERCEL_ENV === "preview"
++  process.env.NODE_ENV !== "production" ||
++  (process.env.VERCEL_ENV === "preview" && process.env.DINAMICA_PREVIEW_ENABLED === "true")
+ 
+-export const DINAMICA_FORM_AVAILABLE =
+-  DINAMICA_PUBLIC_LAUNCH &&
+-  DINAMICA_APPLICATIONS_OPEN &&
++const DINAMICA_BACKEND_READY =
+   DINAMICA_PRIVACY_APPROVED &&
+   DINAMICA_DUPLICATE_POLICY_APPROVED &&
+   Boolean(process.env.DINAMICA_SUPABASE_URL) &&
+@@ -25,34 +33,21 @@ export const DINAMICA_FORM_AVAILABLE =
+   Boolean(process.env.DINAMICA_OPERATOR_TOKEN) &&
+   Boolean(DINAMICA_PRIVACY_NOTICE_URL)
+ 
+-export const DINAMICA_TICKETS = {
+-  general: "https://buy.stripe.com/aFa3cv13zaUPdae5w68EM08",
+-  vip: "https://buy.stripe.com/bJecN5bId7IDdae1fQ8EM09",
+-} as const
+-
+-export const DINAMICA_ASSETS = {
+-  heroWide: "https://res.cloudinary.com/dzebed7jw/image/upload/c_crop,x_900,y_450,w_3000,h_2000/c_limit,w_2400,q_auto:good/v1792860690/DSC06370_ulzfoh.jpg",
+-  heroLaptop: "https://res.cloudinary.com/dzebed7jw/image/upload/c_crop,x_1100,y_500,w_2600,h_1900/c_limit,w_2000,q_auto:good/v1792860690/DSC06370_ulzfoh.jpg",
+-  heroMobile: "https://res.cloudinary.com/dzebed7jw/image/upload/c_crop,x_1450,y_500,w_1800,h_2400/c_limit,w_1400,q_auto:good/v1792860690/DSC06370_ulzfoh.jpg",
+-  hero: "https://res.cloudinary.com/dzebed7jw/image/upload/c_crop,x_1100,y_500,w_2600,h_1900/c_limit,w_2000,q_auto:good/v1792860690/DSC06370_ulzfoh.jpg",
+-  // Use the DNS event identity for link previews. The hero photo is reserved
+-  // for the page itself so WhatsApp and social crawlers do not surface the QR.
+-  social: "https://www.digitalnomadsummit.co/og-image.jpg",
+-  socialWidth: 1024,
+-  socialHeight: 1024,
+-  bcie: "https://res.cloudinary.com/dzebed7jw/image/upload/v1792860647/bcie-logo-white_shgdsg.png",
+-  globalGateway: "https://res.cloudinary.com/dzebed7jw/image/upload/v1792860647/GG_logo-BLUE_nasfpt.png",
+-  europeanUnion: "https://res.cloudinary.com/dzebed7jw/image/upload/v1792863821/European-Union-Logo_axqlzz.jpg",
+-  germanCooperation: "https://res.cloudinary.com/dzebed7jw/image/upload/v1792860647/6ee8a0a302a011d40741d3de937df8b6_uejna3.jpg",
+-  kfw: "https://res.cloudinary.com/dzebed7jw/image/upload/v1792860647/kfw3694_eabaj7.jpg",
+-} as const
+-
+-export const DINAMICA_ASSET_NOTES = {
+-  bcie: "The supplied bcie-logo-white asset renders as a navy mark on a white background.",
+-  europeanUnion: "The supplied JPEG has a clean white background, verified at 3840×2160; use on the light institutional surface.",
+-} as const
++export const DINAMICA_FORM_AVAILABLE =
++  DINAMICA_APPLICATIONS_OPEN &&
++  DINAMICA_BACKEND_READY &&
++  ((DINAMICA_PUBLIC_LAUNCH && DINAMICA_HOME_PROMOTION_ENABLED) ||
++    (DINAMICA_PREVIEW_AVAILABLE && process.env.DINAMICA_PREVIEW_FORM_ENABLED === "true"))
++
++export const DINAMICA_LAUNCH_READY =
++  process.env.VERCEL_ENV !== "preview" &&
++  DINAMICA_PUBLIC_LAUNCH && DINAMICA_HOME_PROMOTION_ENABLED && DINAMICA_FORM_AVAILABLE
++
++export const DINAMICA_COMPETITION_MODAL_ENABLED =
++  DINAMICA_LAUNCH_READY ||
++  (DINAMICA_PREVIEW_AVAILABLE && process.env.DINAMICA_PREVIEW_MODAL_ENABLED === "true")
+ 
+ export function isDinamicPageAvailable() {
+-  return DINAMICA_PUBLIC_LAUNCH || DINAMICA_PREVIEW_AVAILABLE
++  return DINAMICA_LAUNCH_READY || DINAMICA_PREVIEW_AVAILABLE
+ }
+
+Changes:
+
+.env.example
+@@ -23,12 +23,19 @@ DINAMICA_SUPABASE_URL=
+ DINAMICA_SUPABASE_SECRET_KEY=
+ DINAMICA_OPERATOR_TOKEN=
+ DINAMICA_PUBLIC_LAUNCH=false
++# Public mirrors for the two client-visible campaign gates. Set alongside their server-only counterparts.
++NEXT_PUBLIC_DINAMICA_PUBLIC_LAUNCH=false
++NEXT_PUBLIC_DINAMICA_HOME_PROMOTION_ENABLED=false
+ # Communications approval gate for the DINAMICA II Home promotion. Keep false until JJM and BCIE communications approval.
+ DINAMICA_HOME_PROMOTION_ENABLED=false
+ DINAMICA_APPLICATIONS_OPEN=false
+ DINAMICA_PRIVACY_APPROVED=false
+ DINAMICA_DUPLICATE_POLICY_APPROVED=false
+ DINAMICA_PRIVACY_NOTICE_URL=
++# Staging only. Enable only on an access-protected Vercel Preview deployment.
++DINAMICA_PREVIEW_ENABLED=false
++DINAMICA_PREVIEW_FORM_ENABLED=false
++DINAMICA_PREVIEW_MODAL_ENABLED=false
+ 
+ # Airtable — Speakers workspace (separate base)
+ # Used by: lib/airtable-speakers.ts → getSpeakers(), getSpeakerBySlug()
+  +7 -0
+
+app/api/dinamica-ii/draft/[id]/route.ts
+@@ -23,7 +23,11 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
+       .maybeSingle()
+     if (error) throw error
+     if (!data) return NextResponse.json({ code: "verification_token_expired" }, { status: 404 })
+-    return NextResponse.json({ payload: data.payload }, { headers: { "Cache-Control": "no-store" } })
++    const payload = data.payload && typeof data.payload === "object" ? data.payload as Record<string, unknown> : {}
++    const safePayload = Object.fromEntries(
++      Object.entries(payload).filter(([key]) => !/(token|secret|password)/i.test(key)),
++    )
++    return NextResponse.json({ payload: safePayload }, { headers: { "Cache-Control": "no-store" } })
+   } catch (error) {
+     console.error("[dinamica] Draft could not be read", error instanceof Error ? error.message : "unknown")
+     return NextResponse.json({ code: "submission_unavailable" }, { status: 503 })
+  +5 -1
+
+app/api/dinamica-ii/draft/route.ts
+@@ -19,6 +19,9 @@ export async function POST(request: Request) {
+     const body = await request.json() as Record<string, unknown>
+     const payload = draftPayloadSchema.safeParse(body.payload)
+     if (!payload.success) return NextResponse.json({ code: "required_information_missing" }, { status: 400 })
++    const safePayload = Object.fromEntries(
++      Object.entries(payload.data).filter(([key]) => !/(token|secret|password)/i.test(key)),
++    )
+ 
+     const client = getDinamicaAdminClient()
+     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+@@ -26,7 +29,7 @@ export async function POST(request: Request) {
+       const tokenHash = createHash("sha256").update(body.token.trim()).digest("hex")
+       const { data, error } = await client
+         .from("dinamica_application_drafts")
+-        .update({ payload: payload.data, updated_at: new Date().toISOString(), expires_at: expiresAt })
++        .update({ payload: safePayload, updated_at: new Date().toISOString(), expires_at: expiresAt })
+         .eq("id", body.id)
+         .eq("access_token_hash", tokenHash)
+         .gt("expires_at", new Date().toISOString())
+@@ -42,7 +45,7 @@ export async function POST(request: Request) {
+     const id = randomUUID()
+     const { data, error } = await client
+       .from("dinamica_application_drafts")
+-      .insert({ id, access_token_hash: tokenHash, payload: payload.data, expires_at: expiresAt })
++      .insert({ id, access_token_hash: tokenHash, payload: safePayload, expires_at: expiresAt })
+       .select("id")
+       .single()
+     if (error) throw error
+  +5 -2
+
+app/api/dinamica-ii/operator/export/route.ts
+@@ -5,7 +5,7 @@ export const runtime = "nodejs"
+ 
+ function csvCell(value: unknown) {
+   const raw = typeof value === "string" ? value : JSON.stringify(value ?? "")
+-  const text = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw
++  const text = /^[\s]*[=+\-@]/.test(raw) ? `'${raw}` : raw
+   return `"${text.replaceAll('"', '""')}"`
+ }
+ 
+@@ -15,13 +15,33 @@ export async function GET(request: Request) {
+     const client = getDinamicaAdminClient()
+     const { data, error } = await client
+       .from("dinamica_applications")
+-      .select("id,status,ticket_reference,payload,submitted_at,reviewer_notes,reviewer_scores,reviewed_at")
++      .select("id,status,ticket_reference,payload,submitted_at")
+       .eq("status", "final_submitted")
+       .order("submitted_at", { ascending: true })
+     if (error) throw error
+ 
+-    const columns = ["id", "status", "ticket_reference", "submitted_at", "payload", "reviewer_notes", "reviewer_scores", "reviewed_at"]
+-    const rows = (data || []).map((row) => columns.map((column) => csvCell(row[column as keyof typeof row])).join(","))
++    const payloadColumns = [
++      "founder_name", "founder_email", "founder_phone", "founder_role", "contact_language",
++      "founder_origin_country", "founder_residence_country", "founder_city", "pitch_language",
++      "representative_ticket_email", "cofounders", "linkedin_url", "founder_website",
++      "startup_legal_name", "startup_brand_name", "incorporation_country", "registration_proof",
++      "startup_profile_url", "founded_year", "stage", "sector", "operation_countries",
++      "headquarters_country", "team_size", "company_description", "connections",
++      "connection_explanation", "connection_evidence_url", "diaspora", "nomad",
++      "customer_problem", "innovation", "export_markets", "demand_evidence", "scale_milestones",
++      "impact_contribution", "team_capacity", "prize_use", "pitch_deck_url", "demo_url",
++      "external_reference", "customer_count_range", "monthly_revenue_range",
++      "active_export_customers", "expected_market_entry", "accuracy_ack", "authority_ack",
++      "judging_ack", "selection_ack", "winner_terms_ack", "contact_ack", "privacy_ack",
++      "marketing_opt_in", "prior_funding", "conflicts",
++    ]
++    const columns = ["id", "status", "ticket_reference", "submitted_at", ...payloadColumns]
++    const rows = (data || []).map((row) => {
++      const payload = row.payload && typeof row.payload === "object" ? row.payload as Record<string, unknown> : {}
++      return [row.id, row.status, row.ticket_reference, row.submitted_at, ...payloadColumns.map((column) => payload[column])]
++        .map(csvCell)
++        .join(",")
++    })
+     const csv = [columns.join(","), ...rows].join("\r\n")
+     return new NextResponse(csv, {
+       status: 200,
+  +24 -4
+
+app/api/dinamica-ii/operator/issue-token/route.ts
+@@ -27,16 +27,28 @@ export async function POST(request: Request) {
+     const tokenHash = createHash("sha256").update(token).digest("hex")
+     const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString()
+     const client = getDinamicaAdminClient()
+-    const { error } = await client.from("dinamica_ticket_verifications").insert({
++    const verification = {
+       ticket_reference: body.data.ticketReference,
+       representative_email: body.data.representativeEmail.toLowerCase(),
+       ticket_type: body.data.ticketType,
+       payment_verified_at: new Date().toISOString(),
+       verification_token_hash: tokenHash,
+       expires_at: expiresAt,
+-    })
++    }
++    const { data: existing, error: lookupError } = await client
++      .from("dinamica_ticket_verifications")
++      .select("id, consumed_at")
++      .eq("ticket_reference", verification.ticket_reference)
++      .maybeSingle()
++    if (lookupError) throw lookupError
++    if (existing?.consumed_at) return NextResponse.json({ code: "ticket_already_used" }, { status: 409 })
++
++    const { data: issued, error } = existing
++      ? await client.from("dinamica_ticket_verifications").update(verification).eq("id", existing.id).is("consumed_at", null).select("id").maybeSingle()
++      : await client.from("dinamica_ticket_verifications").insert(verification).select("id").maybeSingle()
+     if (error?.code === "23505") return NextResponse.json({ code: "ticket_already_used" }, { status: 409 })
+     if (error) throw error
++    if (!issued) return NextResponse.json({ code: "ticket_already_used" }, { status: 409 })
+ 
+     return NextResponse.json({ token, expiresAt }, { status: 201, headers: { "Cache-Control": "no-store" } })
+   } catch (error) {
+  +14 -2
+
+app/dinamica-ii/dinamica-ii-client.tsx
+@@ -4,7 +4,7 @@ import Image from "next/image"
+ import Link from "next/link"
+ import { ArrowDown, ArrowRight, ExternalLink } from "lucide-react"
+ import { useLanguage } from "@/lib/language-context"
+-import { DINAMICA_ASSETS, DINAMICA_TICKETS } from "@/lib/dinamica-ii/config"
++import { DINAMICA_ASSETS, DINAMICA_TICKETS } from "@/lib/dinamica-ii/public-config"
+ import { StartupApplicationForm } from "@/components/dinamica-ii/startup-application-form"
+ import "./dinamica-ii.css"
+ 
+@@ -167,14 +167,6 @@ const copy = {
+   },
+ } as const
+ 
+-const institutions = [
+-  { name: "BCIE", src: DINAMICA_ASSETS.bcie, width: 240, height: 100, className: "dinamica-logo-bcie" },
+-  { name: "Global Gateway", src: DINAMICA_ASSETS.globalGateway, width: 200, height: 115, className: "dinamica-logo-gateway" },
+-  { name: "Unión Europea", src: DINAMICA_ASSETS.europeanUnion, width: 310, height: 164, className: "dinamica-logo-eu" },
+-  { name: "Cooperación Alemana", src: DINAMICA_ASSETS.germanCooperation, width: 735, height: 417, className: "dinamica-logo-german" },
+-  { name: "KfW", src: DINAMICA_ASSETS.kfw, width: 866, height: 497, className: "dinamica-logo-kfw" },
+-]
+-
+ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applicationsOpen: boolean; privacyNoticeUrl: string }) {
+   const { language } = useLanguage()
+   const t = copy[language]
+@@ -237,12 +229,15 @@ export function DinamicaIIPage({ applicationsOpen, privacyNoticeUrl }: { applica
+           <h2 id="institution-title">{t.institutionalTitle}</h2>
+           <p>{t.institutional}</p>
+         </div>
+-        <div className="dinamica-institution-logos" aria-label={language === "en" ? "DINAMICA II institutional partners" : "Instituciones aliadas de DINAMICA II"}>
+-          {institutions.map((institution) => (
+-            <div className={`dinamica-logo-cell ${institution.className}`} key={institution.name}>
+-              <Image src={institution.src} alt={institution.name} width={institution.width} height={institution.height} sizes="(max-width: 680px) 42vw, 18vw" />
+-            </div>
+-          ))}
++        <div className="dinamica-institution-lockup">
++          <Image
++            src={DINAMICA_ASSETS.institutionalLockup}
++            alt={language === "en" ? "Official DINAMICA II institutional partnership lockup" : "Composición institucional oficial de DINAMICA II"}
++            width={DINAMICA_ASSETS.institutionalLockupWidth}
++            height={DINAMICA_ASSETS.institutionalLockupHeight}
++            sizes="(max-width: 600px) calc(100vw - 44px), (max-width: 1100px) 90vw, 820px"
++            style={{ objectFit: "contain" }}
++          />
+         </div>
+       </section>
+ 
+  +10 -15
+
+app/dinamica-ii/dinamica-ii.css
+@@ -122,14 +122,8 @@
+ .dinamica-institution-intro .dinamica-kicker { margin-bottom: 8px; }
+ .dinamica-institution-intro h2 { margin-bottom: 10px; font: 600 1.2rem/1.3 var(--font-display), sans-serif; letter-spacing: -0.03em; }
+ .dinamica-institution-intro > p:last-child { margin-bottom: 0; color: var(--din-muted); font: 400 0.76rem/1.55 var(--font-sans), sans-serif; }
+-.dinamica-institution-logos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; gap: clamp(14px, 2vw, 32px); }
+-.dinamica-logo-cell { display: flex; min-width: 0; height: 76px; align-items: center; justify-content: center; }
+-.dinamica-logo-cell img { display: block; width: auto; max-width: 100%; height: auto; max-height: 62px; object-fit: contain; }
+-.dinamica-logo-bcie img { max-width: 132px; max-height: 50px; }
+-.dinamica-logo-gateway img { max-width: 112px; max-height: 62px; }
+-.dinamica-logo-eu img { max-width: 128px; max-height: 68px; }
+-.dinamica-logo-german img { max-width: 120px; max-height: 68px; }
+-.dinamica-logo-kfw img { max-width: 98px; max-height: 60px; }
++.dinamica-institution-lockup { width: min(100%, 820px); margin-inline: auto; padding: 10px; background: #fff; }
++.dinamica-institution-lockup img { display: block; width: 100%; height: auto; object-fit: contain; }
+ 
+ .dinamica-section { display: grid; grid-template-columns: minmax(190px, 0.72fr) minmax(0, 1.28fr); column-gap: clamp(40px, 7vw, 112px); padding: clamp(64px, 7vw, 100px) max(6vw, calc((100vw - 1200px) / 2)); }
+ .dinamica-section-heading { min-width: 0; }
+@@ -275,13 +269,7 @@
+   .dinamica-event-date { margin-top: 15px; }
+   .dinamica-hero-index { display: none; }
+   .dinamica-institutions { gap: 24px; padding: 38px 22px 42px; }
+-  .dinamica-institution-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
+-  .dinamica-logo-cell { height: 72px; }
+-  .dinamica-logo-cell:last-child { grid-column: 1 / -1; }
+-  .dinamica-logo-bcie img { max-width: 130px; }
+-  .dinamica-logo-eu img { max-width: 130px; }
+-  .dinamica-logo-german img { max-width: 140px; }
+-  .dinamica-logo-kfw img { max-width: 110px; }
++  .dinamica-institution-lockup { width: calc(100% + 44px); margin-inline: -22px; padding: 0; }
+   .dinamica-section { grid-template-columns: minmax(0, 1fr); row-gap: 23px; padding: 54px 22px; }
+   .dinamica-section-heading h2 { max-width: 560px; }
+   .dinamica-connection-list { grid-column: auto; margin-top: 0; }
+  +3 -15
+
+app/dinamica-ii/page.tsx
+@@ -6,8 +6,8 @@ import {
+   DINAMICA_CANONICAL_URL,
+   DINAMICA_ASSETS,
+   DINAMICA_FORM_AVAILABLE,
++  DINAMICA_LAUNCH_READY,
+   DINAMICA_PRIVACY_NOTICE_URL,
+-  DINAMICA_PUBLIC_LAUNCH,
+   isDinamicPageAvailable,
+ } from "@/lib/dinamica-ii/config"
+ 
+@@ -34,7 +34,7 @@ export const metadata: Metadata = {
+   publisher: "Digital Nomad Summit",
+   category: "Business",
+   alternates: { canonical: DINAMICA_CANONICAL_URL },
+-  robots: DINAMICA_PUBLIC_LAUNCH
++  robots: DINAMICA_LAUNCH_READY
+     ? {
+         index: true,
+         follow: true,
+  +2 -2
+
+app/layout.tsx
+@@ -6,6 +6,8 @@ import { Header } from "@/components/header"
+ import { LanguageProvider } from "@/lib/language-context"
+ import { AIGuideWidget } from "@/components/ai-guide/ai-guide-widget"
+ import { EventUpdateModal } from "@/components/event-update-modal"
++import { CompetitionAnnouncementModal } from "@/components/dinamica-ii/competition-announcement-modal"
++import { DINAMICA_COMPETITION_MODAL_ENABLED } from "@/lib/dinamica-ii/config"
+ import {
+   EVENT_DISPLAY_NAME,
+   EVENT_END_DATE,
+@@ -185,7 +187,7 @@ export default function RootLayout({
+           {children}
+           <AIGuideWidget />
+-          <EventUpdateModal />
++          {DINAMICA_COMPETITION_MODAL_ENABLED ? <CompetitionAnnouncementModal /> : <EventUpdateModal />}
+         </LanguageProvider>
+         {/* Klaviyo Onsite Script */}
+         <Script
+  +3 -1
+
+app/robots.ts
+@@ -1,12 +1,12 @@
+-import { DINAMICA_PUBLIC_LAUNCH } from "@/lib/dinamica-ii/config"
++import { DINAMICA_LAUNCH_READY } from "@/lib/dinamica-ii/config"
+ 
+ export default function robots(): MetadataRoute.Robots {
+   return {
+     rules: {
+       userAgent: "*",
+       allow: "/",
+-      disallow: ["/api/", "/_next/", ...(!DINAMICA_PUBLIC_LAUNCH ? ["/dinamica-ii"] : [])],
++      disallow: ["/api/", "/_next/", ...(!DINAMICA_LAUNCH_READY ? ["/dinamica-ii"] : [])],
+     },
+     sitemap: "https://www.digitalnomadsummit.co/sitemap.xml",
+   }
+  +2 -2
+
+app/sitemap.ts
+@@ -1,6 +1,6 @@
+-import { DINAMICA_PUBLIC_LAUNCH, DINAMICA_CANONICAL_URL } from "@/lib/dinamica-ii/config"
++import { DINAMICA_LAUNCH_READY, DINAMICA_CANONICAL_URL } from "@/lib/dinamica-ii/config"
+ 
+ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+   const baseUrl = "https://www.digitalnomadsummit.co"
+@@ -121,7 +121,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+-  if (DINAMICA_PUBLIC_LAUNCH) {
++  if (DINAMICA_LAUNCH_READY) {
+     entries.push({
+       url: DINAMICA_CANONICAL_URL,
+       lastModified: currentDate,
+  +2 -2
+
+components/dinamica-ii/homepage-banner.tsx
+@@ -3,11 +3,15 @@
+-import { DINAMICA_HOME_PROMOTION_ENABLED, DINAMICA_PATH } from "@/lib/dinamica-ii/config"
++import {
++  DINAMICA_PATH,
++  DINAMICA_PUBLIC_HOME_PROMOTION_ENABLED,
++  DINAMICA_PUBLIC_LAUNCH_ENABLED,
++} from "@/lib/dinamica-ii/public-config"
+ 
+ export function DinamicaIIHomepageBanner() {
+   const { language } = useLanguage()
+-  if (!DINAMICA_HOME_PROMOTION_ENABLED) return null
++  if (!DINAMICA_PUBLIC_LAUNCH_ENABLED || !DINAMICA_PUBLIC_HOME_PROMOTION_ENABLED) return null
+ 
+   const en = language === "en"
+   return (
+  +6 -2
+
+components/dinamica-ii/startup-application-form.tsx
+@@ -1,6 +1,6 @@
+-import { useCallback, useEffect, useMemo, useState } from "react"
++import { useCallback, useEffect, useState } from "react"
+ import { ArrowLeft, ArrowRight, Check, LoaderCircle, ShieldCheck } from "lucide-react"
+ 
+ type Language = "en" | "es"
+@@ -17,7 +17,7 @@ type Props = {
+-  type?: "email" | "url" | "tel" | "number" | "select" | "textarea" | "checkbox"
++  type?: "email" | "url" | "tel" | "number" | "password" | "select" | "textarea" | "checkbox"
+   required?: boolean
+   max?: number
+   options?: Array<{ value: string; en: string; es: string }>
+@@ -36,8 +36,8 @@ const fields: FieldSpec[][] = [
+-    { name: "ticket_reference", label: { en: "Verified ticket reference", es: "Referencia de entrada verificada" }, wide: true },
+-    { name: "ticket_token", label: { en: "One-time verification token", es: "Token de verificación de un solo uso" }, wide: true },
++    { name: "ticket_reference", label: { en: "Paid ticket reference", es: "Referencia de entrada pagada" }, wide: true },
++    { name: "ticket_token", label: { en: "DNS-issued verification token", es: "Token de verificación emitido por DNS" }, type: "password", wide: true },
+     { name: "cofounders", label: { en: "Cofounder names and emails (optional)", es: "Nombres y correos de cofundadores (opcional)" }, wide: true },
+     { name: "linkedin_url", label: { en: "LinkedIn profile (optional)", es: "Perfil de LinkedIn (opcional)" }, type: "url" },
+     { name: "founder_website", label: { en: "Website (optional)", es: "Sitio web (opcional)" }, type: "url" },
+@@ -56,7 +56,7 @@ const fields: FieldSpec[][] = [
+-    { name: "connection_evidence_url", label: { en: "Evidence URL (optional)", es: "URL de evidencia (opcional)" }, type: "url", wide: true },
++    { name: "connection_evidence_url", label: { en: "Evidence URL", es: "URL de evidencia" }, type: "url", required: true, wide: true },
+   ],
+   [
+     { name: "customer_problem", label: { en: "Customer problem and product / service", es: "Problema del cliente y producto / servicio" }, type: "textarea", required: true, max: 500, wide: true },
+@@ -76,7 +76,8 @@ const fields: FieldSpec[][] = [
+-    { name: "accuracy_ack", label: { en: "I confirm the information is accurate and I am authorized to represent this company.", es: "Confirmo que la información es correcta y que estoy autorizado para representar a esta empresa." }, type: "checkbox", required: true },
++    { name: "accuracy_ack", label: { en: "I confirm the information provided is accurate.", es: "Confirmo que la información proporcionada es correcta." }, type: "checkbox", required: true },
++    { name: "authority_ack", label: { en: "I am authorized to represent this startup in this application.", es: "Estoy autorizado para representar a esta startup en esta solicitud." }, type: "checkbox", required: true },
+     { name: "judging_ack", label: { en: "I consent to eligibility screening and judging.", es: "Acepto la revisión de elegibilidad y la evaluación del jurado." }, type: "checkbox", required: true },
+     { name: "selection_ack", label: { en: "I understand a ticket purchase does not guarantee selection.", es: "Entiendo que comprar una entrada no garantiza la selección." }, type: "checkbox", required: true },
+     { name: "winner_terms_ack", label: { en: "If awarded, I accept the reinvestment and reporting conditions.", es: "Si recibo un premio, acepto las condiciones de reinversión e informes." }, type: "checkbox", required: true },
+@@ -112,10 +113,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+-  const draftCredentials = useMemo(() => ({
+-    id: typeof window === "undefined" ? "" : sessionStorage.getItem("dinamica-draft-id") || "",
+-    token: typeof window === "undefined" ? "" : sessionStorage.getItem("dinamica-draft-token") || "",
+-  }), [])
++  const [draftRestored, setDraftRestored] = useState(false)
+ 
+   useEffect(() => {
+     if (!applicationsOpen) return
+@@ -137,6 +135,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
++      setDraftRestored(true)
+     }).catch(() => {
+       sessionStorage.removeItem("dinamica-draft-id")
+       sessionStorage.removeItem("dinamica-draft-token")
+@@ -230,7 +229,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+-          draftId: draftCredentials.id || undefined,
++          draftId: sessionStorage.getItem("dinamica-draft-id") || undefined,
+           draftToken: sessionStorage.getItem("dinamica-draft-token") || undefined,
+         }),
+       })
+@@ -263,7 +262,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+-    return <div className="dinamica-opening-card" role="status"><ShieldCheck size={25} aria-hidden="true" /><h3>{t ? "Application received" : "Solicitud recibida"}</h3><p>{t ? "Your official submission reference is" : "La referencia oficial de tu solicitud es"} <b>{receipt}</b>. {t ? "Submitted" : "Enviada"}: <b>{localReceiptTime} AST</b>. {t ? "Keep it for your records. No confirmation email is configured." : "Guárdala para tus registros. No hay un correo de confirmación configurado."}</p></div>
++    return <div className="dinamica-opening-card" role="status"><ShieldCheck size={25} aria-hidden="true" /><h3>{t ? "Application received" : "Solicitud recibida"}</h3><p>{t ? "Your official submission reference is" : "La referencia oficial de tu solicitud es"} <b>{receipt}</b>. {t ? "Received" : "Recibida"}: <b>{localReceiptTime} AST</b>. {t ? "Submission does not guarantee finalist selection. No confirmation email is configured." : "El envío no garantiza ser finalista. No hay un correo de confirmación configurado."}</p></div>
+   }
+ 
+   return (
+@@ -272,6 +271,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
++      {draftRestored && <p className="dinamica-draft-state" role="status">{t ? "Continue your application. Your application has not been submitted." : "Continúa tu solicitud. Tu solicitud aún no ha sido enviada."}</p>}
+       <fieldset className="dinamica-form-step" aria-describedby={error ? "dinamica-form-error" : undefined}>
+         <legend>{sectionTitles[language][step]}</legend>
+         <div className="dinamica-form-grid">
+@@ -295,7 +295,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+-            return <label className={`dinamica-field ${field.wide ? "dinamica-field-wide" : ""}`} key={field.name} htmlFor={field.name}><span>{label}{field.required ? " *" : ""}</span><input {...common} type={field.type || "text"} maxLength={field.max} />{invalid && <small>{t ? "This field is required." : "Este campo es obligatorio."}</small>}</label>
++            return <label className={`dinamica-field ${field.wide ? "dinamica-field-wide" : ""}`} key={field.name} htmlFor={field.name}><span>{label}{field.required ? " *" : ""}</span><input {...common} type={field.type || "text"} autoComplete={field.type === "password" ? "off" : undefined} maxLength={field.max} />{invalid && <small>{t ? "This field is required." : "Este campo es obligatorio."}</small>}</label>
+           })}
+         </div>
+         {step === 3 && privacyNoticeUrl && <p className="dinamica-privacy-link">{t ? "Privacy notice: " : "Aviso de privacidad: "}<a href={privacyNoticeUrl} target="_blank" rel="noreferrer">{t ? "Read the approved notice" : "Consulta el aviso aprobado"}</a>.</p>}
+@@ -311,7 +311,7 @@ export function StartupApplicationForm({ language, applicationsOpen, privacyNoti
+-      <p className="dinamica-form-privacy">{t ? "Drafts are stored securely on the server. Uploaded documents are not stored; provide a public pitch deck URL." : "Los borradores se guardan de forma segura en el servidor. No se almacenan documentos; proporciona una URL pública del pitch deck."}</p>
++      <p className="dinamica-form-privacy">{t ? "Your application has not been submitted. Drafts are stored securely on the server. Uploaded documents are not stored; provide a public pitch deck URL." : "Tu solicitud aún no ha sido enviada. Los borradores se guardan de forma segura en el servidor. No se almacenan documentos; proporciona una URL pública del pitch deck."}</p>
+     </form>
+   )
+ }
+  +14 -14
+
+docs/dinamica-ii-operations.md
+@@ -1,49 +1,51 @@
+-## Launch controls
++## Launch and staging controls
+ 
+-Set `DINAMICA_PUBLIC_LAUNCH=true` only after JJM and BCIE communications approval. Set `DINAMICA_APPLICATIONS_OPEN=true` only after the application window is approved. Final form access also requires `DINAMICA_PRIVACY_APPROVED=true`, an approved `DINAMICA_PRIVACY_NOTICE_URL`, `DINAMICA_DUPLICATE_POLICY_APPROVED=true`, Supabase server credentials, and `DINAMICA_OPERATOR_TOKEN`. All values default to closed or empty. Preview deployments remain `noindex` and the public sitemap excludes the route until the public launch flag is true.
++The public release is one coordinated state. Set `DINAMICA_PUBLIC_LAUNCH=true`, `DINAMICA_HOME_PROMOTION_ENABLED=true`, `NEXT_PUBLIC_DINAMICA_PUBLIC_LAUNCH=true`, `NEXT_PUBLIC_DINAMICA_HOME_PROMOTION_ENABLED=true`, and `DINAMICA_APPLICATIONS_OPEN=true` together only after institutional approval and launch readiness. The two `NEXT_PUBLIC_` values are public build-time mirrors used only by the client-rendered Home banner; they contain no secrets. `DINAMICA_LAUNCH_READY` also requires `DINAMICA_PRIVACY_APPROVED=true`, `DINAMICA_DUPLICATE_POLICY_APPROVED=true`, an approved `DINAMICA_PRIVACY_NOTICE_URL`, the dedicated Supabase server credentials, and `DINAMICA_OPERATOR_TOKEN`. Every public control defaults to off. The route stays not found, the route is omitted from the public sitemap, indexing is disabled, the Home banner is hidden, and the existing event-update popup remains active until the coordinated launch state is ready.
+ 
+-The home banner component is prepared but intentionally not mounted on the homepage.
++Staging access is separate. On a Vercel Preview deployment protected by Vercel Deployment Protection, explicitly set `DINAMICA_PREVIEW_ENABLED=true`. Set `DINAMICA_PREVIEW_FORM_ENABLED=true` to test drafts and submissions, and `DINAMICA_PREVIEW_MODAL_ENABLED=true` to review the competition popup. The application and privacy prerequisites still apply. Do not enable these preview flags in Production. Preview pages remain `noindex`; public campaign flags stay false during QA.
++
++The Home promotion component is mounted in the existing Home layout, but renders only when `DINAMICA_LAUNCH_READY` is true. The root layout selects exactly one modal: the existing event update before launch, then the DINAMICA II competition announcement after launch approval (or explicitly in protected preview for review). The new modal uses its own session key.
+ 
+ ## Supabase setup
+ 
+-Apply the generated migration in `supabase/migrations/20261024171157_dinamica_ii_applications.sql` to a dedicated DINAMICA II Supabase project. The existing `NEXT_PUBLIC_SUPABASE_URL` points to the active “Unitipro” project, which contains unrelated invoicing and business tables as well as DNS content; do not use its secret key for this application. Set `DINAMICA_SUPABASE_URL` and a server-only `DINAMICA_SUPABASE_SECRET_KEY` for the isolated project. Never add the key to a `NEXT_PUBLIC_` variable or commit it.
++Apply `supabase/migrations/20261024171157_dinamica_ii_applications.sql` to a dedicated DINAMICA II Supabase project. Do not use the unrelated active project or its secret key. Set `DINAMICA_SUPABASE_URL` and a server-only `DINAMICA_SUPABASE_SECRET_KEY` (or service-role key). Never use a `NEXT_PUBLIC_` variable or commit a secret.
++
++The migration creates private tables for one-use ticket verifications, expiring drafts, final submissions, and rate-limit windows. RLS is enabled and public roles have no table grants; only `service_role` can access records and execute the RPCs. The official export filters `final_submitted` records. The migration also prevents duplicate final submissions with the same normalized legal startup name and incorporation country; the duplicate-policy approval must confirm that rule.
++
++## Ticket verification
++
++There is no Stripe API credential or automatic Stripe lookup in this repository. A specifically authorized DNS ticket operator must open the Stripe Dashboard using their own DNS-approved account, locate the order/payment by its Stripe order or Checkout Session reference, verify that payment status is complete/paid, identify a DNS 2027 General Admission or VIP ticket (or a previously purchased ticket still valid under the rescheduling policy), and check the ticket buyer email against the applicant representative's ticket email. The operator must not rely on screenshots, unchecked declarations, or an unverified reference.
+ 
+-The migration creates separate private tables for one-use ticket verifications, expiring drafts, final-submitted applications, and rate-limit windows. RLS is enabled, public roles have no table grants, and the two RPCs are executable only by `service_role`. The official CSV export reads `final_submitted` rows only. The migration blocks duplicate final submissions with the same normalized legal startup name and incorporation country; confirm that matching rule as part of the duplicate-policy approval before opening applications.
++Only an authorized operator holding `DINAMICA_OPERATOR_TOKEN` can call `POST /api/dinamica-ii/operator/issue-token`. The API requires a payment-verified assertion and ticket type after that manual review. It issues a cryptographically random token, stores only its hash, binds it to the unique ticket reference and normalized representative email, and returns the raw token once. Deliver the token to that representative through a DNS-approved private channel; do not put it in analytics, logs, email analytics, or a public support ticket. The participant enters the ticket email, reference, and token; final submission rechecks the binding and atomically consumes the token with creation of the official application.
+ 
+-## Ticket verification fallback
++Tokens expire after 72 hours. To reissue, the operator must repeat the Stripe and identity checks and issue a new token for the same reference; this replaces any still-unconsumed token, including an expired or lost token. A consumed reference cannot be reissued. To revoke an unconsumed token without replacement, an authorized database operator sets its `expires_at` to the current time in the private verification table and records the action in the approved operational audit log. No public endpoint can issue or revoke a token. Existing paid tickets can use `ticketType: "legacy_eligible"` only after the operator confirms the rescheduling policy.
+ 
+-There is no Stripe API secret or order lookup integration in this repository. An authorized operator must confirm paid status and DNS 2027 eligibility directly in Stripe before issuing a verification token. Keep `DINAMICA_OPERATOR_TOKEN` at least 32 characters and store it only as a server secret. A verified operator can issue a one-time token with:
++This is manual, operator-verified validation. It is not an automatic Stripe integration.
+ 
+-```http
+-POST /api/dinamica-ii/operator/issue-token
+-Authorization: Bearer <DINAMICA_OPERATOR_TOKEN>
+-Content-Type: application/json
++## Applications, privacy, exports, and confirmation
+ 
+-{
+-  "ticketReference": "<unique Stripe order or session reference>",
+-  "representativeEmail": "founder@example.com",
+-  "ticketType": "general_admission",
+-  "paymentVerified": true
+-}
+-```
++The four-step form supports drafts before ticket verification. Draft access expires after 30 days; the browser stores only the random draft ID and access token in `sessionStorage`. Expired rows remain in the private table until an approved retention cleanup is applied, so confirm and implement the deletion schedule before opening the form. The server rejects token, secret, and password fields from persisted draft payloads and removes such keys from recovered legacy payloads. Drafts do not create official submissions and are excluded from exports. The raw ticket-verification token is sent only to verification/submission endpoints and removed from the official payload.
+ 
+-The endpoint returns a random token once; it stores only the token hash, binds it to the representative email and ticket reference, and expires it after 72 hours. Share the token with that representative through the approved channel. The token is consumed atomically with final submission and cannot submit twice. Existing eligible tickets may use `ticketType: "legacy_eligible"` after the operator checks the applicable rescheduling policy.
++Final submissions are validated server-side and saved with a unique application ID, `final_submitted` status, ticket reference, payload, and timestamp in the same database transaction that consumes the ticket verification. The operator export endpoint requires `DINAMICA_OPERATOR_TOKEN`, filters final submissions, emits individual columns for application metadata and application fields, and escapes quotes and spreadsheet formulas. It does not export tokens or drafts.
+ 
+-This fallback is an operator-verified workflow. It does not perform live Stripe verification, and the UI must not describe it as automatic Stripe validation.
++After persistence, the form displays the application ID and receipt timestamp in the selected language and explicitly says that submission does not guarantee finalist selection. **No transactional email provider or delivery integration is configured; this is a launch blocker.** Do not claim an email was sent. The current interface explicitly reports that no confirmation email is configured.
+ 
+-## Drafts, submissions, and email
++Pitch decks are accepted as URLs, including a link to a PDF; private uploads are not implemented. No private or sensitive documents should be put in public object storage. A privacy notice covering personal and company data, retention, evaluator access, and participant rights must be approved before opening the form.
+ 
+-Drafts are stored in the private Supabase table for 30 days. The browser stores only a random draft ID and access token in `sessionStorage`; the raw ticket verification token is not included in the draft payload. Drafts are not part of the official queue. Final submissions are validated server-side and inserted as `final_submitted` in one transaction with consumption of the matching ticket verification.
++## Content and institutional identity
+ 
+-The project has no configured transactional email provider. A successful response shows the immutable application ID and does not claim that an email was sent. Pitch decks are accepted as URLs; private document upload is not configured.
++The approved 1600 × 545 institutional lockup is stored at `public/dinamica-ii-institutional-lockup.png` and rendered as a single proportional image. Do not separate or individually render any partner marks; do not crop, recolor, filter, or transform this lockup. No beneficiary quotation has been supplied for the institutional announcement. The quotation, speaker name, and title remain pending approved content; do not invent or attribute a quote.
+ 
+-## Pending approvals
++## Remaining launch prerequisites
+ 
+-- Approve the application privacy notice and retention terms before setting `DINAMICA_PRIVACY_APPROVED=true`.
+-- Approve the duplicate-application policy before setting `DINAMICA_DUPLICATE_POLICY_APPROVED=true`.
+-- Review the provided institutional lockup assets with Sacha/Ivanna. The supplied BCIE image is navy on white despite its filename; the European Union JPG contains a baked-in checkerboard.
+-- Confirm whether DNS 2027 Stripe session/product IDs and the ticket holder identity-matching policy are sufficient for a future direct server-side Stripe integration.
+-- Provision or designate the isolated DINAMICA II Supabase project and apply the migration before enabling draft persistence or submissions.
+-- Provide an approved transactional email service before promising email confirmations.
++- Obtain institutional approval for the landing page, application form, popup, and Home banner as one release.
++- Approve and publish the privacy notice and retention terms.
++- Implement and verify the approved retention cleanup for expired drafts and submitted applications.
++- Approve the duplicate-application policy.
++- Provision the isolated Supabase project, apply the migration, and verify backups and operator access.
++- Confirm DNS ticket operators, Stripe Dashboard access, and the legacy-ticket eligibility policy.
++- Integrate and verify an idempotent transactional email provider before launch.
++- Obtain the beneficiary quote, speaker name, and title for the separate institutional announcement, if that communication is in scope.
++- Configure and verify Vercel Deployment Protection before enabling any Preview flags.
+  +32 -30
+
+docs/dinamica-ii-technical-report.md
+@@ -1,124 +1,72 @@
+-Technical implementation report · 24 October 2026
++Implementation and launch-readiness report · 28 October 2026
+ 
+-## Delivery status
++## Current status
+ 
+-- Work is on `feature/dinamica-ii-2027` in the existing `C:\Proyectos\DNS` checkout.
+-- Local preview: `http://localhost:3000/dinamica-ii` when running `npm run dev`.
+-- Public production access, application submission and indexing remain gated by server-side configuration.
+-- No production deployment was made. The Supabase migration was prepared but not applied.
++- The checkout was on `main`, clean before this work. `feature/dinamica-ii-2027` points to the common feature commit and is 4 commits behind `main`; work was applied to the current `main` checkout without switching branches or resetting files.
++- No production deployment was made, and no public campaign flag was enabled.
++- Local staging preview: `http://localhost:3001/dinamica-ii` during QA only. The server used test-only placeholder values and is not a protected remote preview. No shareable protected preview URL is available.
++- The public route, official form, Home banner, indexing and competition popup are fail-closed until the coordinated public flags, application prerequisites and backend configuration are ready.
+ 
+-## Page and content
++## Implemented
+ 
+-The bilingual English/Spanish page uses the existing DNS header, footer, fonts and coral accent. Its bespoke photo-led sequence presents the prize first, followed by the DINAMICA II institutional lockup, eligibility, process, judging weights, application entry point, FAQ and partner CTA. Copy includes the Dominican market connection requirement, the one valid paid DNS ticket condition, ticket-purchase disclaimer, five judging criteria, prize amounts, finalist limit, and disclosed reinvestment/reporting condition.
++- Replaced the five standalone institutional marks with the supplied official PNG at `public/dinamica-ii-institutional-lockup.png`. The original image is 1600 × 545 px. It is shown as one `next/image` with fixed intrinsic dimensions, responsive `sizes`, `object-fit: contain`, no URL transformation and a white surrounding surface.
++- Prepared the bilingual DINAMICA II announcement modal. It reuses the existing modal's session frequency, close control, Escape handling, focus trap and scroll lock. The layout chooses exactly one modal: the event rescheduling notice before public launch; the competition notice after the coordinated launch gate is ready. A dedicated protected-preview flag enables modal review without public promotion.
++- Changed public launch and Home promotion flags to require explicit `true` values. The Home banner reads public build-time mirror flags from a presentation-only config; server launch gates require the matching private and public values to agree. Production `/dinamica-ii` returns not found until the landing and official form can launch together. The route is omitted from the public sitemap and disallowed in robots until launch. Preview pages stay `noindex`; preview route, form and modal review each have separate explicit controls.
++- Kept the four existing application steps. Source audit covers founder/ticket, startup and Dominican connection, all eight narrative prompts and character limits, quantitative signals, and submission declarations. Added a separate authority-to-represent consent, required a Dominican-connection evidence URL, and validate WhatsApp numbers in international `+` format. The marketing opt-in remains separate and unchecked.
++- Kept drafts separate from final applications. Server draft persistence strips token/secret/password keys; the form never includes the raw ticket token in the draft payload or analytics. The UI states that a draft is not an official submission and has not been submitted.
++- Preserved the operator-only manual ticket-verification path. Operators must independently verify payment and ticket eligibility in Stripe; the code does not claim automatic Stripe lookup. An unconsumed token can be reissued by an authorized operator; consumed references cannot be reissued. Submission still consumes the token atomically with official application creation.
++- Changed operator CSV output to individual application columns, with only final submissions included and spreadsheet formula escaping. Export remains operator-authenticated and excludes ticket tokens and drafts.
++- Documented the ticket workflow, release controls, privacy and duplicate-policy prerequisites, private database setup, token handling, email limitation, and the missing institutional beneficiary quote in `docs/dinamica-ii-operations.md`.
+ 
+-The hero uses an existing Cloudinary event photo cropped to remove the old date and venue. The five institutional image URLs were checked and return HTTP 200. BCIE’s supplied logo has a navy mark on white; the EU JPEG has a checkerboard baked into the image. Those two are shown on a light surface; the EU asset still needs Sacha/Ivanna’s brand-owner approval.
++## Existing pieces found in this checkout
+ 
+-The initial route does not appear in the sitemap and is disallowed in robots until `DINAMICA_PUBLIC_LAUNCH=true`. It has `noindex` metadata by default and returns not found in production before launch. The homepage banner component is mounted after `AttendeeSegments` and before `Tickets`, but remains disabled by `DINAMICA_HOME_PROMOTION_ENABLED=false` until communications approval. The normal DNS header and footer navigation were not changed.
++The route (`app/dinamica-ii/page.tsx`, `dinamica-ii-client.tsx`, `dinamica-ii.css`), schema/config/server helper, four-step form and Home banner were already present. The draft API, ticket verification API, operator token issue/export APIs, submit API and private Supabase migration also existed. These were audited and extended in place; no duplicate form, endpoint, table, checkout or verification system was introduced. The existing event modal remains the only active production announcement until the new launch is explicitly ready.
+ 
+-## Application and data handling
++## Verification performed
+ 
+-The application has four bilingual steps: founder and ticket; startup and Dominican connection; exportability and assessment; representations and submission. It includes autosaved private drafts, server validation, required consent checkboxes, a one-time ticket token flow, ticket verification before final submission, a timestamped reference after successful submission, and an operator-only CSV export. The optional marketing opt-in is separate and unchecked by default. The form accepts a pitch-deck URL and does not upload or store pitch-deck files.
++- Official institutional asset: fetched the exact no-transform Cloudinary URL; response metadata reported PNG, 1600 × 545 px. Visually inspected the complete image before adding it.
++- Local protected-preview simulation: confirmed the new popup copy and CTA, the four form-step views, and the disabled final-submit control without a verified ticket. Test-only sample application fields were used. The dummy Supabase URL intentionally does not resolve; draft save returned its failure state. No data was saved, no ticket was verified, and no application was submitted.
++- A sample export fixture with fictional data is in `artifacts/dinamica-ii/dinamica-ii-sample-export-fixture.csv`. Header and sample row both parse to 59 columns; it is not output from the operator endpoint or a real database export.
++- `npx eslint` on all modified TS/TSX files: passed with no issues.
++- `npm run build`: exited successfully and compiled `/dinamica-ii` and the six existing API routes. Next reports that type and lint validation are skipped by project configuration and logs missing/placeholder unrelated service configuration.
++- `npm run lint`: repository-wide failure from existing errors in unrelated files including `components/ai-guide/ai-guide-widget.tsx`, `components/gl/*`, `components/partners/*`, `components/trusted-network.tsx`, `components/ui/use-toast.ts` and `lib/ai/formatters.ts`.
++- `npx tsc --noEmit`: 18 errors in seven unrelated shared UI files; no diagnostics point to modified DINAMICA II files.
++- `git diff --check`: passed.
++- Hallmark instructions were applied as a manual visual audit. The Hallmark skill is present, but the `hallmark`/`sloplint` executable is not installed or available on PATH, so no Hallmark CLI report or log was generated.
+ 
+-Applications use a dedicated Supabase project configuration, never the current DNS business database credentials:
++## Not verified / launch blockers
+ 
+-- `DINAMICA_SUPABASE_URL`
+-- `DINAMICA_SUPABASE_SECRET_KEY`
+-- `DINAMICA_OPERATOR_TOKEN`
+-- `DINAMICA_PRIVACY_NOTICE_URL`
+-- `DINAMICA_PUBLIC_LAUNCH`
+-- `DINAMICA_APPLICATIONS_OPEN`
+-- `DINAMICA_PRIVACY_APPROVED`
+-- `DINAMICA_DUPLICATE_POLICY_APPROVED`
+-
+-The `.env.example` documents these settings. Launch, form, privacy and duplicate-policy flags default to false. The submission form remains closed until these approvals and dedicated database settings are present.
+-
+-No Stripe secret is configured and no ticket API integration exists in the workspace. As an operational fallback, DNS staff verify paid-ticket status directly in Stripe, then issue a short-lived token through a protected operator endpoint. The app validates and consumes that token once. This flow is operator-verified, not automatic Stripe verification. No real ticket verification or live application submission was performed.
+-
+-The migration creates private application and draft tables, a hashed token store, rate-limit state and an atomic submit RPC. Tables are restricted to server-side service access; application rows contain founder/company contact details and must not be exposed to anonymous or authenticated browser clients. The receipt reports the actual database submission timestamp in America/Santo_Domingo time. No email provider is configured, so the receipt explicitly says there is no confirmation email.
+-
+-The current DNS Supabase project is named “Unitipro” and is not wired to this feature. Its catalog reported `public.press_items` with RLS disabled. That unrelated table was not modified. Review the [Supabase Row Level Security guide](https://supabase.com/docs/guides/database/postgres/row-level-security) before any public access is enabled.
+-
+-## Configuration required before launch
+-
+-1. Create or designate a separate Supabase project for DINAMICA II, then apply `supabase/migrations/20261024171157_dinamica_ii_applications.sql` there and verify policies, RPC execution and retention.
+
+... (more changes truncated)
+  +28 -33
+[full diff: rtk git diff --no-compact]

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next"
 import { getSpeakerSlugs } from "@/lib/data/speakers"
-import { DINAMICA_PUBLIC_LAUNCH, DINAMICA_CANONICAL_URL } from "@/lib/dinamica-ii/config"
+import { DINAMICA_LAUNCH_READY, DINAMICA_CANONICAL_URL } from "@/lib/dinamica-ii/config"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.digitalnomadsummit.co"
@@ -121,7 +121,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...speakerEntries,
   ]
 
-  if (DINAMICA_PUBLIC_LAUNCH) {
+  if (DINAMICA_LAUNCH_READY) {
     entries.push({
       url: DINAMICA_CANONICAL_URL,
       lastModified: currentDate,

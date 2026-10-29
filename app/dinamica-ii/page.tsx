@@ -5,9 +5,10 @@ import { DinamicaIIPage } from "./dinamica-ii-client"
 import {
   DINAMICA_CANONICAL_URL,
   DINAMICA_ASSETS,
-  DINAMICA_FORM_AVAILABLE,
+  DINAMICA_FORM_VISIBLE,
+  DINAMICA_FORM_SUBMISSION_ENABLED,
+  DINAMICA_LAUNCH_READY,
   DINAMICA_PRIVACY_NOTICE_URL,
-  DINAMICA_PUBLIC_LAUNCH,
   isDinamicPageAvailable,
 } from "@/lib/dinamica-ii/config"
 
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   publisher: "Digital Nomad Summit",
   category: "Business",
   alternates: { canonical: DINAMICA_CANONICAL_URL },
-  robots: DINAMICA_PUBLIC_LAUNCH
+  robots: DINAMICA_LAUNCH_READY
     ? {
         index: true,
         follow: true,
@@ -115,7 +116,8 @@ export default function DinamicaIIPageRoute() {
       />
       <main id="main-content">
         <DinamicaIIPage
-          applicationsOpen={DINAMICA_FORM_AVAILABLE}
+          formVisible={DINAMICA_FORM_VISIBLE}
+          submissionEnabled={DINAMICA_FORM_SUBMISSION_ENABLED}
           privacyNoticeUrl={DINAMICA_PRIVACY_NOTICE_URL}
         />
       </main>
