@@ -2,8 +2,9 @@
 
 import { useLanguage } from "@/lib/language-context"
 import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
-import { FORMSPREE_ENDPOINT, submitPublicForm } from "@/lib/form-config"
+import { useEffect, useRef, useState } from "react"
+import { submitToWeb3Forms } from "@/lib/web3forms"
+import { Web3FormsCaptcha } from "@/components/forms/web3forms-captcha"
 
 // ─── Speaker application content ───────────────────────────────────────────
 const speakerContent = {
@@ -240,24 +241,34 @@ export function SpeakerForm({
 }) {
   const { language } = useLanguage()
   const t = speakerContent[language]
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
+  const [captchaToken, setCaptchaToken] = useState("")
+  const submitLock = useRef(false)
+  const [captchaVersion, setCaptchaVersion] = useState(0)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (status === "loading") return
-    setStatus("loading")
+    if (submitLock.current) return
+    submitLock.current = true
+    setStatus("submitting")
     const form = e.currentTarget
     try {
-      await submitPublicForm(form, {
+      await submitToWeb3Forms(form, {
         sourceForm: "speaker_application",
         sourcePage: "speaker_modal",
         preferredLanguage: language,
         submissionType: "speaker_application",
-      })
+        subject: "DNS 2027 — Speaker Application",
+      }, captchaToken)
       form.reset()
+      setCaptchaToken("")
       setStatus("success")
     } catch {
+      setCaptchaToken("")
+      setCaptchaVersion((version) => version + 1)
       setStatus("error")
+    } finally {
+      submitLock.current = false
     }
   }
 
@@ -293,18 +304,13 @@ export function SpeakerForm({
         <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm font-medium" role="alert" aria-live="assertive">{t.errorMsg}</div>
       )}
 
-      <form action={FORMSPREE_ENDPOINT} method="POST" onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <input type="hidden" name="form_type" value="speaker_application" />
         <input type="hidden" name="source_form" value="speaker_application" />
         <input type="hidden" name="source_page" value="speaker_modal" />
         <input type="hidden" name="preferred_language" value={language} />
         <input type="hidden" name="submission_type" value="speaker_application" />
         <input type="hidden" name="submitted_at" value="" />
-        <div className="absolute -left-[10000px]" aria-hidden="true">
-          <label htmlFor="speaker-company-website">Company website</label>
-          <input id="speaker-company-website" name="_gotcha" tabIndex={-1} autoComplete="off" />
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="sp-fullName" className={labelClass}>{t.fields.fullName} <span className="text-red-500">*</span></label>
@@ -368,13 +374,14 @@ export function SpeakerForm({
           <textarea id="sp-whySpeak" name="why_speak" rows={4} required className={`${inputClass} resize-y`} />
         </div>
 
+        <Web3FormsCaptcha key={captchaVersion} language={language} onVerify={setCaptchaToken} onExpire={() => setCaptchaToken("")} />
         <div className="pt-4 border-t border-gray-100">
           <Button
             type="submit"
-            disabled={status === "loading"}
+            disabled={status === "submitting"}
             className="w-full bg-[#FF5757] hover:bg-white text-white hover:text-[#FF5757] border border-transparent hover:border-[#FF5757] font-bold py-4 text-lg rounded-xl transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {status === "loading" ? (
+            {status === "submitting" ? (
               <span className="flex items-center justify-center space-x-2">
                 <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -402,25 +409,35 @@ export function SponsorForm({
   const { language } = useLanguage()
   const t = content[language]
 
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
+  const [captchaToken, setCaptchaToken] = useState("")
+  const submitLock = useRef(false)
+  const [captchaVersion, setCaptchaVersion] = useState(0)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (status === "loading") return
-    setStatus("loading")
+    if (submitLock.current) return
+    submitLock.current = true
+    setStatus("submitting")
     const form = e.currentTarget
 
     try {
-      await submitPublicForm(form, {
+      await submitToWeb3Forms(form, {
         sourceForm: "sponsor_inquiry",
         sourcePage: "sponsor_modal",
         preferredLanguage: language,
         submissionType: "sponsor_inquiry",
-      })
+        subject: "DNS 2027 — Sponsor Inquiry",
+      }, captchaToken)
       form.reset()
+      setCaptchaToken("")
       setStatus("success")
     } catch {
+      setCaptchaToken("")
+      setCaptchaVersion((version) => version + 1)
       setStatus("error")
+    } finally {
+      submitLock.current = false
     }
   }
 
@@ -467,16 +484,12 @@ export function SponsorForm({
         </div>
       )}
 
-      <form action={FORMSPREE_ENDPOINT} method="POST" onSubmit={handleSubmit} className="space-y-12">
+      <form onSubmit={handleSubmit} className="space-y-12">
         <input type="hidden" name="source_form" value="sponsor_inquiry" />
         <input type="hidden" name="source_page" value="sponsor_modal" />
         <input type="hidden" name="preferred_language" value={language} />
         <input type="hidden" name="submission_type" value="sponsor_inquiry" />
         <input type="hidden" name="submitted_at" value="" />
-        <div className="absolute -left-[10000px]" aria-hidden="true">
-          <label htmlFor="sponsor-company-website">Company website</label>
-          <input id="sponsor-company-website" name="_gotcha" tabIndex={-1} autoComplete="off" />
-        </div>
         {/* --- SECTION 1: BASIC INFORMATION --- */}
         <section>
           <h3 className="font-display text-xl font-bold text-gray-900 border-b border-gray-100 pb-3 mb-6">
@@ -749,13 +762,14 @@ export function SponsorForm({
           </div>
         </section>
 
+        <Web3FormsCaptcha key={captchaVersion} language={language} onVerify={setCaptchaToken} onExpire={() => setCaptchaToken("")} />
         <div className="pt-4 border-t border-gray-100">
           <Button
             type="submit"
-            disabled={status === "loading"}
+            disabled={status === "submitting"}
             className="w-full bg-[#FF5757] hover:bg-white text-white hover:text-[#FF5757] border border-transparent hover:border-[#FF5757] font-bold py-4 text-lg rounded-xl transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed group relative"
           >
-            {status === "loading" ? (
+            {status === "submitting" ? (
               <span className="flex items-center justify-center space-x-2">
                 <svg
                   className="animate-spin -ml-1 mr-3 h-5 w-5 text-white group-hover:text-[#FF5757]"

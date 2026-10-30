@@ -1,21 +1,21 @@
 # DINAMICA II operations
 
-## Current public workflow — direct Formspree
+## Current public workflow — direct Web3Forms
 
 This section is the source of truth for the public `/dinamica-ii` application. The later Supabase and operator notes document retained legacy infrastructure only.
 
 1. Applicants complete four steps in the browser. Required ticket details and the eight published jury answers are included in one submission; optional metrics and supporting details do not block it.
-2. The React form validates the complete payload and posts it once to the existing DNS Formspree endpoint. No Next.js API, Supabase draft, ticket verification request, operator token, or file upload is used by the public flow.
-3. The site displays **Application Received / Solicitud recibida** only after Formspree returns a successful response. It creates no confirmation number and does not claim that an automatic email was sent to the participant.
-4. Successment verifies ticket payment and startup eligibility manually, then sends any official confirmation through the approved process. A ticket or received application does not guarantee finalist selection.
+2. The React form validates the complete payload and posts it directly to `https://api.web3forms.com/submit`. It includes all validated application fields, including the eight jury answers, legal acknowledgements, and submission timestamp. No Next.js API, Supabase draft, ticket verification request, operator token, or file upload is used by the public flow.
+3. The site displays **Application Received — Pending Verification / Solicitud recibida — Pendiente de verificación** only when HTTP succeeds and Web3Forms returns JSON `success: true`. It creates no confirmation number and does not claim that an automatic email was sent to the participant.
+4. Successment manually reviews ticket payment and startup eligibility. A ticket or received application does not guarantee finalist selection.
 
-DINAMICA II reuses `FORMSPREE_ENDPOINT` from `lib/form-config.ts` (`https://formspree.io/f/mvzeyakd`). This does not change how any other form submits. A successful HTTP response confirms Formspree accepted the request; it does not verify which mailbox receives its notifications.
+DINAMICA II uses the shared browser client in `lib/web3forms.ts`, with `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`. The founder's email is sent as both `email` and `replyto`, and the subject includes the startup name. A successful provider response confirms acceptance by the email service, not delivery to a specific inbox.
 
 ### Staging and release controls
 
-Use a Vercel Preview deployment protected by Deployment Protection to review the full form. Preview submissions are always disabled. Production submissions are controlled by one variable: `DINAMICA_APPLICATIONS_OPEN`. Keep it `false` until the organizer is ready to accept public applications. Setting it to `true` allows any visitor to submit to the existing Formspree endpoint.
+Use a Vercel Preview deployment protected by Deployment Protection to review the full form. Preview submissions are always disabled. Production submissions are controlled by `DINAMICA_APPLICATIONS_OPEN`. Keep it `false` until the organizer authorizes public applications. Setting it to `true` opens submissions only in Production; it does not approve the competition launch or replace other institutional approvals.
 
-The competition page and announcement are visible in Production for review, even while applications are closed. The Home promotion and search indexing retain separate controls. Set `DINAMICA_APPLICATIONS_OPEN=true` in the Production environment to accept submissions; the endpoint is fixed and validated in code. The form schema validates every application before sending. Preview submissions are not enabled. The form includes a plain-language disclosure that submissions pass through Formspree and are reviewed manually; it does not link to a separate privacy policy.
+The competition page and announcement are visible in Production for review, even while applications are closed. The Home promotion and search indexing retain separate controls. Set `DINAMICA_APPLICATIONS_OPEN=true` in Production only after institutional authorization. The form schema validates every application before sending. The form discloses that the application is transmitted through Web3Forms to DNS and Successment for manual review. Confirm the approved privacy notice and Web3Forms account configuration before accepting live submissions.
 
 When the application window is closed, the form remains viewable in Production and local/protected preview, but the final submit action is disabled. Local form values remain only in React memory for the active page session; they are not saved to browser storage or a database.
 
@@ -35,13 +35,13 @@ The application table and review-event table have RLS enabled and no `anon` or `
 
 Idempotency prevents a double click or same-session retry from creating another application or sending a second first-attempt notification. A second application for the same normalized startup legal name and incorporation country is also prevented while the first is pending, needs information, or verified; this preserves the existing duplicate rule and still requires JJM approval. Ticket reference remains unique when supplied. A rejected application can be re-submitted under the current index behavior; confirm that policy before production.
 
-### Legacy server-side Formspree notifications — disabled
+### Historical server-side email notifications — retired
 
-The prior server-side notification workflow depended on Supabase persistence and is no longer part of the public application. `/api/dinamica-ii/submit` and `/operator/resend-notification` return HTTP 410. The current React form sends the complete application directly to the existing DNS endpoint only after the production release gates pass.
+The prior server-side notification workflow depended on Supabase persistence and is no longer part of the public application. `/api/dinamica-ii/submit` and `/operator/resend-notification` return HTTP 410. The current React form sends the complete application directly to Web3Forms only after the production release gates pass.
 
 ### Retained protected operator API reference
 
-The routes below are legacy administrative APIs, separate from the public Formspree workflow. They are not exposed as an applicant panel and require the existing operator authorization.
+The routes below are legacy administrative APIs, separate from the current public email-delivery workflow. They are not exposed as an applicant panel and require the existing operator authorization.
 
 Obtain `DINAMICA_OPERATOR_TOKEN` through the DNS secret manager. Never put it in the browser, an email, a spreadsheet, or a command-history log. The API records the operator label supplied in the request; the bearer token controls access.
 
@@ -69,7 +69,7 @@ Download the two CSVs separately with operator authorization:
 
 Rejected records are retained in Supabase but omitted from these two exports. Both files contain clear administrative fields and the application information needed for review. They exclude credentials, draft tokens, and verification tokens, and escape spreadsheet formulas.
 
-Notification retries through this legacy operator endpoint are disabled (HTTP 410). The public application makes one direct Formspree request and does not use this API.
+Notification retries through this legacy operator endpoint are disabled (HTTP 410). The public application makes one direct Web3Forms request and does not use this API.
 
 ### Manual confirmation email templates
 
@@ -168,7 +168,7 @@ The supplied 1600 × 545 institutional lockup remains one proportional image at 
 - An isolated DINAMICA II staging Supabase project; the connected projects are not suitable staging targets.
 - Apply and verify the migration, private access, backups, and authorized operator credentials against that staging project.
 - Approve the privacy notice, retention terms, evaluator access description, and duplicate-submission policy.
-- Confirm the Formspree account owns this endpoint, the configured recipient is the DNS team, and the privacy notice covers this external processor. Keep notifications disabled until then.
+- Confirm the Web3Forms account recipient is the DNS team and the privacy notice covers this external processor before accepting live submissions.
 - Confirm ticket operators, Stripe Dashboard access, valid DNS 2027 ticket types, and the rescheduled-ticket eligibility policy.
 - Confirm operator identity/audit requirements and store individual access secrets safely.
 - Complete protected-preview tests with fictitious data, including draft restore, idempotency, review transitions, notification failure/retry, unauthorized status change, and separate CSV outputs.

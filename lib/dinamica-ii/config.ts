@@ -7,7 +7,6 @@ import {
   DINAMICA_PUBLIC_HOME_PROMOTION_ENABLED,
   DINAMICA_TICKETS,
 } from "@/lib/dinamica-ii/public-config"
-import { FORMSPREE_ENDPOINT } from "@/lib/form-config"
 
 export { DINAMICA_ASSETS, DINAMICA_CAMPAIGN, DINAMICA_CANONICAL_URL, DINAMICA_PATH, DINAMICA_TICKETS }
 
@@ -23,21 +22,11 @@ export const DINAMICA_PREVIEW_AVAILABLE =
   process.env.NODE_ENV !== "production" ||
   (process.env.VERCEL_ENV === "preview" && process.env.DINAMICA_PREVIEW_ENABLED === "true")
 
-const DINAMICA_FORMSPREE_ENDPOINT_VALID = (() => {
-  try {
-    const endpoint = new URL(FORMSPREE_ENDPOINT)
-    return endpoint.protocol === "https:" && endpoint.hostname === "formspree.io" && endpoint.pathname === "/f/mvzeyakd"
-  } catch {
-    return false
-  }
-})()
-
 // Showing the form is a presentation decision. Sending is only enabled in
 // Production and when the organizer explicitly opens the application window.
 export const DINAMICA_FORM_SUBMISSION_ENABLED =
   process.env.VERCEL_ENV === "production" &&
-  DINAMICA_APPLICATIONS_OPEN &&
-  DINAMICA_FORMSPREE_ENDPOINT_VALID
+  DINAMICA_APPLICATIONS_OPEN
 
 // Retain the old name for existing consumers; it means the Production form is open.
 export const DINAMICA_FORM_AVAILABLE = DINAMICA_FORM_SUBMISSION_ENABLED

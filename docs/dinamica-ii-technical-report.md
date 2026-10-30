@@ -1,3 +1,5 @@
+> Historical report: its provider and public-flow references below describe an earlier workflow and are superseded by [the Web3Forms migration report](web3forms-migration.md). For current operations, use that report and `dinamica-ii-operations.md`.
+
 # DINAMICA II — Form UX simplification and direct Formspree
 
 Implementation update · 28 October 2026

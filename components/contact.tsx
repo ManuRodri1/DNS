@@ -3,13 +3,16 @@
 import type React from "react"
 
 import { useLanguage } from "@/lib/language-context"
-import { useState } from "react"
-import { FORMSPREE_ENDPOINT, submitPublicForm } from "@/lib/form-config"
+import { useRef, useState } from "react"
+import { submitToWeb3Forms } from "@/lib/web3forms"
+import { Web3FormsCaptcha } from "@/components/forms/web3forms-captcha"
 
 export function Contact() {
   const { language } = useLanguage()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
+  const [captchaToken, setCaptchaToken] = useState("")
+  const submitLock = useRef(false)
+  const [captchaVersion, setCaptchaVersion] = useState(0)
 
   const content = {
     en: {
@@ -26,7 +29,7 @@ export function Contact() {
       messagePlaceholder: "Founder, Investor, Nomad...",
       submitButton: "Subscribe",
       submittingButton: "Subscribing...",
-      success: "Thanks — you're on the DNS Insider List.",
+      success: "Thanks — the DNS Insider team received your interest.",
       error: "We couldn't submit your details. Please try again.",
     },
     es: {
@@ -43,7 +46,7 @@ export function Contact() {
       messagePlaceholder: "Fundador, Inversionista, Nómada...",
       submitButton: "Suscribirme",
       submittingButton: "Suscribiendo...",
-      success: "Gracias — ya formas parte de la lista DNS Insider.",
+      success: "Gracias — el equipo DNS Insider recibió tu interés.",
       error: "No pudimos enviar tus datos. Inténtalo de nuevo.",
     },
   }
@@ -52,23 +55,29 @@ export function Contact() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (isSubmitting) return
-    setIsSubmitting(true)
-    setStatus("idle")
+    if (submitLock.current) return
+    submitLock.current = true
+    setStatus("submitting")
     const form = e.currentTarget
     try {
-      await submitPublicForm(form, {
+      await submitToWeb3Forms(form, {
         sourceForm: "newsletter",
         sourcePage: "home_contact",
         preferredLanguage: language,
         submissionType: "newsletter_subscription",
-      })
+        subject: "DNS 2027 — Newsletter Subscription",
+      }, captchaToken)
       form.reset()
+      setCaptchaToken("")
+      setCaptchaVersion((version) => version + 1)
       setStatus("success")
     } catch {
+      setCaptchaToken("")
+      setCaptchaVersion((version) => version + 1)
       setStatus("error")
     } finally {
-      setIsSubmitting(false)
+      submitLock.current = false
+      setStatus((current) => current === "submitting" ? "idle" : current)
     }
   }
 
@@ -145,8 +154,6 @@ export function Contact() {
           <div className="animate-fade-up delay-200">
             <div className="bg-[#F7F7F7] border border-[#E0E0E0] rounded-2xl shadow-md p-6 md:p-8">
               <form
-                action={FORMSPREE_ENDPOINT}
-                method="POST"
                 onSubmit={handleSubmit}
                 className="space-y-6"
               >
@@ -155,10 +162,6 @@ export function Contact() {
                 <input type="hidden" name="preferred_language" value={language} />
                 <input type="hidden" name="submission_type" value="newsletter_subscription" />
                 <input type="hidden" name="submitted_at" value="" />
-                <div className="absolute -left-[10000px]" aria-hidden="true">
-                  <label htmlFor="contact-company-website">Company website</label>
-                  <input id="contact-company-website" name="_gotcha" tabIndex={-1} autoComplete="off" />
-                </div>
                 {/* Full Name */}
                 <div>
                   <label htmlFor="name" className="block font-['Inter'] text-sm font-medium text-black mb-2">
@@ -202,6 +205,7 @@ export function Contact() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5757] focus:border-[#FF5757] transition-all font-['Inter'] text-black placeholder:text-gray-400 resize-none bg-white"
                   />
                 </div>
+                <Web3FormsCaptcha key={captchaVersion} language={language} onVerify={setCaptchaToken} onExpire={() => setCaptchaToken("")} />
                 <p
                   className={`min-h-6 text-sm font-medium ${status === "error" ? "text-red-700" : "text-green-700"}`}
                   role={status === "error" ? "alert" : "status"}
@@ -214,10 +218,10 @@ export function Contact() {
                 <div>
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={status === "submitting"}
                     className="w-full px-8 py-3 bg-[#FF5757] text-white font-['Inter'] font-medium rounded-full hover:bg-[#E64545] hover:shadow-lg hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? t.submittingButton : t.submitButton}
+                    {status === "submitting" ? t.submittingButton : t.submitButton}
                   </button>
                 </div>
               </form>

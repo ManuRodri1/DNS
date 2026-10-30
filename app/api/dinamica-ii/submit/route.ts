@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 
-// The public application now posts directly to the existing DNS Formspree endpoint.
-// Keep this route as a compatibility tombstone for stale clients.
+// The public application posts directly to Web3Forms. Keep this route as a compatibility tombstone for stale clients.
 export async function POST() {
-  return NextResponse.json({ code: "direct_formspree_submission_only" }, { status: 410, headers: { "Cache-Control": "no-store" } })
+  return NextResponse.json({ code: "public_submission_disabled" }, { status: 410, headers: { "Cache-Control": "no-store" } })
 }

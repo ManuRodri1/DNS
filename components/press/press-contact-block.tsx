@@ -1,9 +1,10 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { ArrowRight, Check, Mail } from "lucide-react"
-import { FORMSPREE_ENDPOINT, submitPublicForm } from "@/lib/form-config"
+import { submitToWeb3Forms } from "@/lib/web3forms"
+import { Web3FormsCaptcha } from "@/components/forms/web3forms-captcha"
 
 type PressContactBlockProps = {
   language: "en" | "es"
@@ -56,28 +57,38 @@ const content = {
 
 export function PressContactBlock({ language }: PressContactBlockProps) {
   const t = content[language]
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
+  const [captchaToken, setCaptchaToken] = useState("")
+  const submitLock = useRef(false)
+  const [captchaVersion, setCaptchaVersion] = useState(0)
   const fieldClass =
     "w-full rounded-xl border border-white/10 bg-white px-4 py-3 font-sans text-sm text-black outline-none transition-colors placeholder:text-black/35 focus:border-[#FF5757] focus:ring-2 focus:ring-[#FF5757]/25"
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (status === "loading") return
-    setStatus("loading")
+    if (submitLock.current) return
+    submitLock.current = true
+    setStatus("submitting")
 
     const form = event.currentTarget
 
     try {
-      await submitPublicForm(form, {
+      await submitToWeb3Forms(form, {
         sourceForm: "media_inquiry",
         sourcePage: "press",
         preferredLanguage: language,
         submissionType: "media_inquiry",
-      })
+        subject: "DNS 2027 — Media Inquiry",
+      }, captchaToken)
       form.reset()
+      setCaptchaToken("")
       setStatus("success")
     } catch {
+      setCaptchaToken("")
+      setCaptchaVersion((version) => version + 1)
       setStatus("error")
+    } finally {
+      submitLock.current = false
     }
   }
 
@@ -122,7 +133,7 @@ export function PressContactBlock({ language }: PressContactBlockProps) {
               )}
 
               {/* TODO: Replace with dedicated press email when available. */}
-              <form action={FORMSPREE_ENDPOINT} method="POST" onSubmit={handleSubmit} className="relative grid gap-4 sm:grid-cols-2">
+              <form onSubmit={handleSubmit} className="relative grid gap-4 sm:grid-cols-2">
                 <input type="hidden" name="form_type" value="press_inquiry" />
                 <input type="hidden" name="pagina_origen" value="press" />
                 <input type="hidden" name="idioma_actual" value={language} />
@@ -131,11 +142,6 @@ export function PressContactBlock({ language }: PressContactBlockProps) {
                 <input type="hidden" name="preferred_language" value={language} />
                 <input type="hidden" name="submission_type" value="media_inquiry" />
                 <input type="hidden" name="submitted_at" value="" />
-                <div className="absolute -left-[10000px]" aria-hidden="true">
-                  <label htmlFor="press-company-website">Company website</label>
-                  <input id="press-company-website" name="_gotcha" tabIndex={-1} autoComplete="off" />
-                </div>
-
                 <label className="block">
                   <span className="mb-2 block font-sans text-xs font-bold uppercase tracking-[0.14em] text-white/50">{t.name}</span>
                   <input required name="name" className={fieldClass} />
@@ -166,12 +172,13 @@ export function PressContactBlock({ language }: PressContactBlockProps) {
                   <span className="mb-2 block font-sans text-xs font-bold uppercase tracking-[0.14em] text-white/50">{t.message}</span>
                   <textarea required name="message" rows={5} className={fieldClass} />
                 </label>
+                <div className="sm:col-span-2"><Web3FormsCaptcha key={captchaVersion} language={language} onVerify={setCaptchaToken} onExpire={() => setCaptchaToken("")} /></div>
                 <button
                   type="submit"
-                  disabled={status === "loading"}
+                  disabled={status === "submitting"}
                   className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#FF5757] px-6 py-3 font-sans text-sm font-bold text-white transition-all duration-200 hover:bg-white hover:text-[#FF5757] disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2"
                 >
-                  {status === "loading" ? t.submitting : t.submit}
+                  {status === "submitting" ? t.submitting : t.submit}
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </button>
               </form>

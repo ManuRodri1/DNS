@@ -49,11 +49,11 @@ Audit basis: the prior four-step React form, its application schema, and the cur
 | `prior_funding`, `conflicts` | Additional information | Optional | Keep optional in the collapsed group. | Optional disclosure / review context |
 | Accuracy, authority, judging, no-guarantee, award conditions, contact, privacy declarations | Review & Submit | Required | Preserve as separate checkboxes; none is pre-checked. | Required applicant declarations |
 | `marketing_opt_in` | Review & Submit | Optional | Preserve separately, unchecked by default. | Optional marketing consent |
-| Draft IDs, idempotency tokens, receipt IDs, Supabase state, ticket verification state | Technical / previous flow | Obsolete | Excluded from the public payload and UI. Old public API routes are compatibility tombstones returning 410. | Not needed for direct Formspree delivery |
+| Draft IDs, idempotency tokens, receipt IDs, Supabase state, ticket verification state | Technical / previous flow | Obsolete | Excluded from the public payload and UI. Old public API routes are compatibility tombstones returning 410. | Not needed for current direct email delivery |
 
 ## Reduction summary
 
 - Preserve the requested founder, ticket, startup, connection, jury, pitch-deck, declaration, and privacy fields.
 - Remove duplicated founder website and non-eligibility diaspora/nomad flags from the public form.
 - Make all auxiliary metrics and links optional and visually collapsed. The required eight jury answers and mandatory pitch-deck link remain in the core flow.
-- Replace Supabase draft/save, verification, and API submission fields with one in-memory four-step application and one direct Formspree request.
+- Replace Supabase draft/save, verification, and API submission fields with one in-memory four-step application and one direct Web3Forms request.

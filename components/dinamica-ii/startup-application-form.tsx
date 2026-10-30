@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react"
 import { ArrowLeft, ArrowRight, Check, ChevronDown, LoaderCircle, ShieldCheck } from "lucide-react"
 import { applicationSchema, type StartupApplication } from "@/lib/dinamica-ii/application-schema"
-import { FormspreeSubmissionError, sendDinamicaApplicationToFormspree } from "@/lib/dinamica-ii/formspree"
+import { sendDinamicaApplicationToWeb3Forms } from "@/lib/dinamica-ii/web3forms"
+import { Web3FormsCaptcha } from "@/components/forms/web3forms-captcha"
 
 type Language = "en" | "es"
 type Props = {
@@ -46,20 +47,28 @@ const stepNames: Record<Language, string[]> = {
 
 function errorText(code: string, language: Language) {
   const en: Record<string, string> = {
-    formspree_not_configured: "Online submission is not configured yet. Your answers are still here.",
-    formspree_rate_limited: "Formspree is receiving requests too quickly. Wait a moment, then try again.",
-    formspree_rejected: "Formspree could not accept this application. Your answers are still here; review the form and try again.",
-    formspree_network_error: "We could not confirm receipt because of a connection issue. Your answers are still here. Please try again once your connection is stable.",
+    web3forms_not_configured: "Online submission is not configured yet. Your answers are still here.",
+    captcha_required: "Complete the spam protection check before submitting. Your answers are still here.",
+    web3forms_rate_limited: "Too many requests were received. Wait a moment, then try again.",
+    web3forms_rejected: "The service could not accept this application. Your answers are still here; review the form and try again.",
+    web3forms_network_error: "We could not confirm receipt because of a connection issue. Your answers are still here. Please try again once your connection is stable.",
+    web3forms_timeout: "The request timed out. Your answers are still here; please try again.",
+    web3forms_server_error: "The email service had a temporary problem. Your answers are still here; please try again.",
+    web3forms_invalid_response: "We could not confirm receipt. Your answers are still here; please try again.",
     invalid_application: "Review the highlighted answers before submitting.",
   }
   const es: Record<string, string> = {
-    formspree_not_configured: "El envío en línea aún no está configurado. Tus respuestas siguen aquí.",
-    formspree_rate_limited: "Formspree está recibiendo solicitudes muy rápido. Espera un momento e inténtalo de nuevo.",
-    formspree_rejected: "Formspree no pudo aceptar esta solicitud. Tus respuestas siguen aquí; revisa el formulario e inténtalo de nuevo.",
-    formspree_network_error: "No pudimos confirmar la recepción por un problema de conexión. Tus respuestas siguen aquí. Inténtalo de nuevo cuando la conexión esté estable.",
+    web3forms_not_configured: "El envío en línea aún no está configurado. Tus respuestas siguen aquí.",
+    captcha_required: "Completa la protección contra spam antes de enviar. Tus respuestas siguen aquí.",
+    web3forms_rate_limited: "Se recibieron demasiadas solicitudes. Espera un momento e inténtalo de nuevo.",
+    web3forms_rejected: "El servicio no pudo aceptar esta solicitud. Tus respuestas siguen aquí; revisa el formulario e inténtalo de nuevo.",
+    web3forms_network_error: "No pudimos confirmar la recepción por un problema de conexión. Tus respuestas siguen aquí. Inténtalo de nuevo cuando la conexión esté estable.",
+    web3forms_timeout: "La solicitud tardó demasiado. Tus respuestas siguen aquí; inténtalo de nuevo.",
+    web3forms_server_error: "El servicio de correo tuvo un problema temporal. Tus respuestas siguen aquí; inténtalo de nuevo.",
+    web3forms_invalid_response: "No pudimos confirmar la recepción. Tus respuestas siguen aquí; inténtalo de nuevo.",
     invalid_application: "Revisa las respuestas señaladas antes de enviar.",
   }
-  return (language === "en" ? en : es)[code] || (language === "en" ? en.formspree_rejected : es.formspree_rejected)
+  return (language === "en" ? en : es)[code] || (language === "en" ? en.web3forms_rejected : es.web3forms_rejected)
 }
 
 export function StartupApplicationForm({ language, formVisible, submissionEnabled, openingSoon, openingNote, ticketUrl }: Props) {
@@ -72,6 +81,8 @@ export function StartupApplicationForm({ language, formVisible, submissionEnable
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [formError, setFormError] = useState("")
   const [submitting, setSubmitting] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState("")
+  const [captchaVersion, setCaptchaVersion] = useState(0)
   const [received, setReceived] = useState(false)
   const submitLock = useRef(false)
   const headingRef = useRef<HTMLHeadingElement>(null)
@@ -102,7 +113,7 @@ export function StartupApplicationForm({ language, formVisible, submissionEnable
         <ShieldCheck size={25} aria-hidden="true" />
         <h3>{label("Application Received", "Solicitud recibida")}</h3>
         <p>{label("Thank you for applying to DINAMICA II.", "Gracias por participar en DINAMICA II.")}</p>
-        <p>{label("The Digital Nomad Summit team has received your application and will review your ticket information and startup eligibility.", "El equipo de Digital Nomad Summit ha recibido tu solicitud y revisará la información de tu entrada y la elegibilidad de tu startup.")}</p>
+        <p>{label("The Successment team will manually review your payment and eligibility.", "El equipo de Successment revisará manualmente tu pago y elegibilidad.")}</p>
         <p>{label("Your submission is pending verification. You will be contacted if additional information is required.", "Tu solicitud está pendiente de verificación. Nos comunicaremos contigo si necesitamos información adicional.")}</p>
         <p>{label("Submitting an application does not guarantee selection as a finalist.", "Enviar tu solicitud no garantiza la selección como finalista.")}</p>
       </section>
@@ -239,16 +250,12 @@ export function StartupApplicationForm({ language, formVisible, submissionEnable
     setSubmitting(true)
     setFormError("")
     try {
-      await sendDinamicaApplicationToFormspree(parsed.data as StartupApplication, language)
+      await sendDinamicaApplicationToWeb3Forms(parsed.data as StartupApplication, language, captchaToken)
       setReceived(true)
     } catch (cause) {
-      if (cause instanceof FormspreeSubmissionError && cause.fieldNames.length) {
-        const providerErrors = Object.fromEntries(cause.fieldNames.map((name) => [name, label("Check this answer and try again.", "Revisa esta respuesta e inténtalo de nuevo.")]))
-        setFieldErrors((current) => ({ ...current, ...providerErrors }))
-        const fieldName = cause.fieldNames[0]
-        goToStep(fieldName.startsWith("founder_") || fieldName.startsWith("ticket_") || fieldName === "representative_ticket_email" ? 0 : fieldName.startsWith("startup_") || fieldName.startsWith("connection_") || fieldName === "connections" ? 1 : fieldName.endsWith("_ack") || fieldName === "marketing_opt_in" ? 3 : 2)
-      }
-      setFormError(errorText(cause instanceof Error ? cause.message : "formspree_rejected", language))
+      setCaptchaToken("")
+      setCaptchaVersion((version) => version + 1)
+      setFormError(errorText(cause instanceof Error ? cause.message : "web3forms_rejected", language))
     } finally {
       submitLock.current = false
       setSubmitting(false)
@@ -515,10 +522,11 @@ export function StartupApplicationForm({ language, formVisible, submissionEnable
             {checkbox("selection_ack", label("I understand that a ticket or application does not guarantee finalist selection.", "Entiendo que tener una entrada o enviar una solicitud no garantiza ser finalista."), true)}
             {checkbox("winner_terms_ack", label("If selected for an award, I accept the reinvestment and reporting conditions.", "Si recibo un premio, acepto las condiciones de reinversión e informes."), true)}
             {checkbox("contact_ack", label("I agree to be contacted about this competition and my application.", "Acepto que me contacten sobre este concurso y mi solicitud."), true)}
-            {checkbox("privacy_ack", label("I understand that my application will be sent through Formspree to the DNS and Successment organizers for manual review.", "Entiendo que mi solicitud se enviará mediante Formspree al equipo organizador de DNS y Successment para su revisión manual."), true)}
+            {checkbox("privacy_ack", label("I understand that my application will be transmitted through Web3Forms to the DNS and Successment organizers for manual payment and eligibility review.", "Entiendo que mi solicitud se transmitirá mediante Web3Forms al equipo organizador de DNS y Successment para revisar manualmente el pago y la elegibilidad."), true)}
             <div className="dinamica-marketing-opt-in">{checkbox("marketing_opt_in", label("I would also like to receive other DNS and Successment updates (optional).", "También quiero recibir otras novedades de DNS y Successment (opcional)."))}</div>
           </section>
-          <p className="dinamica-form-privacy">{label("Your application is sent through Formspree to the DNS and Successment organizers for manual ticket and eligibility review. Do not include passwords, payment card numbers, or identity documents. Submission does not guarantee finalist selection.", "Tu solicitud se enviará mediante Formspree al equipo organizador de DNS y Successment para revisar manualmente la entrada y la elegibilidad. No incluyas contraseñas, números de tarjetas ni documentos de identidad. Enviar la solicitud no garantiza ser finalista.")}</p>
+          <p className="dinamica-form-privacy">{label("Your application is transmitted through Web3Forms to DNS and Successment for manual review. Do not include passwords, payment card numbers, or identity documents. Submission does not guarantee finalist selection.", "Tu solicitud se transmitirá mediante Web3Forms a DNS y Successment para su revisión manual. No incluyas contraseñas, números de tarjetas ni documentos de identidad. Enviar la solicitud no garantiza ser finalista.")}</p>
+          <Web3FormsCaptcha key={captchaVersion} language={language} onVerify={setCaptchaToken} onExpire={() => setCaptchaToken("")} />
         </>}
       </div>
 
